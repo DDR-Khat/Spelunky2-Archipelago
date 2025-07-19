@@ -43,7 +43,8 @@ game_info = {
     host = "archipelago.gg:38281",
     password = "",
     items_handling = 7, -- full remote
-    message_format = AP.RenderFormat.TEXT
+    message_format = AP.RenderFormat.TEXT,
+    ap_client_version = {0, 5, 1}
 }
 
 save_password = false
@@ -148,7 +149,7 @@ function connect(server, slot, password)
     end
 
     function on_room_info()
-        ap:ConnectSlot(slot, password, game_info.items_handling, {"Lua-APClientPP"}, {0, 4, 9})
+        ap:ConnectSlot(slot, password, game_info.items_handling, {"Lua-APClientPP","NoText"}, game_info.ap_client_version)
     end
 
     function on_slot_connected(slot_data)

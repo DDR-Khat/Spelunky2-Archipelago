@@ -14,7 +14,14 @@ _G.safe_loadlib = function(lib, func)
     local info = debug.getinfo(2, "Sln")
     local caller = info and (info.short_src or info.source or "unknown source") or "unknown source"
     local line = info and info.currentline or "?"
-    local ok, result = xpcall(function() return package.loadlib(lib, func) end, debug.traceback)
+    local script = info.source:sub(1, 1) == '@' and info.source:sub(2) or info.source
+    local folder = script:match("(.*[\\/])")
+    if not folder then
+        folder = "./"
+    end
+    local full_lib_path = folder .. lib
+
+    local ok, result = xpcall(function() return package.loadlib(full_lib_path, func) end, debug.traceback)
     if not ok then
         print(string.format("Failed to load library '%s' (called from %s:%s):\n%s",lib, caller, tostring(line), result))
         return nil
@@ -29,8 +36,8 @@ local APClient = safe_require("client")
 meta = {
     name = "Spelunky 2 Archipelago",
     description = "Adds Archipelago Multiworld Randomizer support!",
-    author = "Eszenn",
-    version = "0.1.2",
+    author = "Eszenn\nDDRKhat",
+    version = "0.1.4",
     unsafe = true
 }
 
@@ -55,10 +62,41 @@ set_callback(function()
 
     
     if state.screen_next == SCREEN.CAMP then
-        savegame.shortcuts = 10
+        if player_options.progressive_worlds then
+            if ap_save.max_world > 4 then
+                set_shortcut_progress(3)
+            elseif ap_save.max_world >= 3 then
+                set_shortcut_progress(2)
+            elseif ap_save.max_world == 2 then
+                set_shortcut_progress(1)
+            else
+                set_shortcut_progress(0)
+            end
+        else
+            if ap_save.unlocked_worlds[THEME.ICE_CAVES] then
+                set_shortcut_progress(3)
+            elseif ap_save.unlocked_worlds[THEME.OLMEC] then
+                set_shortcut_progress(2)
+            elseif ap_save.unlocked_worlds[THEME.JUNGLE] or ap_save.unlocked_worlds[THEME.VOLCANA] then
+                set_shortcut_progress(1)
+            else
+                set_shortcut_progress(0)
+            end
+        end
     end
 end, ON.LOADING)
 
+function set_shortcut_progress(shortcut_number)
+    if shortcut_number == 0 then
+        savegame.shortcuts = 1
+    elseif shortcut_number == 1 then
+        savegame.shortcuts = 4
+    elseif shortcut_number == 2 then
+        savegame.shortcuts = 7
+    else
+        savegame.shortcuts = 10
+    end
+end
 
 set_callback(function()
     local shortcut_uids = get_entities_by(ENT_TYPE.FLOOR_DOOR_STARTING_EXIT, MASK.FLOOR, LAYER.FRONT)
@@ -104,6 +142,12 @@ set_callback(function()
 
     if ap_save.permanent_upgrades.paste ~= 0 then
         player:give_powerup(ENT_TYPE.ITEM_POWERUP_PASTE)
+    end
+
+    if ap_save.permanent_upgrades.compass == 1 then
+        player:give_powerup(ENT_TYPE.ITEM_POWERUP_COMPASS)
+    elseif ap_save.permanent_upgrades.compass == 2 then
+        player:give_powerup(ENT_TYPE.ITEM_POWERUP_SPECIALCOMPASS)
     end
 end, ON.START)
 
@@ -228,37 +272,61 @@ function give_item(type)
     local player = get_player(1, false)
     if player ~= nil then
         if type == ENT_TYPE.ITEM_PICKUP_ROPEPILE then
-            if player.inventory.ropes + 3 > 99 then
-                player.inventory.ropes = 99
+            if savegame[journal.chapters.items][1] then
+                give_entity(player, type)
             else
-                player.inventory.ropes = player.inventory.ropes + 3
+                if player.inventory.ropes + 3 > 99 then
+                    player.inventory.ropes = 99
+                else
+                    player.inventory.ropes = player.inventory.ropes + 3
+                end
             end
 
         elseif type == ENT_TYPE.ITEM_PICKUP_BOMBBAG then
-            if player.inventory.bombs + 3 > 99 then
-                player.inventory.bombs = 99
+            if savegame[journal.chapters.items][2] then
+                give_entity(player, type)
             else
-                player.inventory.bombs = player.inventory.bombs + 3
+                if player.inventory.bombs + 3 > 99 then
+                    player.inventory.bombs = 99
+                else
+                    player.inventory.bombs = player.inventory.bombs + 3
+                end
             end
 
         elseif type == ENT_TYPE.ITEM_PICKUP_BOMBBOX then
-            if player.inventory.bombs + 12 > 99 then
-                player.inventory.bombs = 99
+            if savegame[journal.chapters.items][3] then
+                give_entity(player, type)
             else
-                player.inventory.bombs = player.inventory.bombs + 12
+                if player.inventory.bombs + 12 > 99 then
+                    player.inventory.bombs = 99
+                else
+                    player.inventory.bombs = player.inventory.bombs + 12
+                end
             end
 
         elseif type == ENT_TYPE.ITEM_PICKUP_COOKEDTURKEY and not player:is_cursed() then
-            player.health = player.health + 1
+            if savegame[journal.chapters.items][52] then
+                give_entity(player, type)
+            else
+                player.health = player.health + 1
+            end
 
         elseif type == ENT_TYPE.ITEM_PICKUP_ROYALJELLY and not player:is_cursed() then
-            player.health = player.health + 6
+            if savegame[journal.chapters.items][22] then
+                give_entity(player, type)
+            else
+                player.health = player.health + 6
+            end
 
         elseif type == ENT_TYPE.ITEM_GOLDBAR then
-            add_money_slot(375 + (125 * state.world), 1)
-
+            give_entity(player, type)
         end
     end
+end
+
+function give_entity(player, ent)
+    local newItem = get_entity(spawn_entity(ent, player.x, player.y, player.layer, 0, 0))
+    newItem.stand_counter = 25
 end
 
 
