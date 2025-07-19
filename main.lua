@@ -272,7 +272,7 @@ function give_item(type)
     local player = get_player(1, false)
     if player ~= nil then
         if type == ENT_TYPE.ITEM_PICKUP_ROPEPILE then
-            if savegame[journal.chapters.items][1] then
+            if savegame[journal.chapters[4]][1] then
                 give_entity(player, type)
             else
                 if player.inventory.ropes + 3 > 99 then
@@ -283,7 +283,7 @@ function give_item(type)
             end
 
         elseif type == ENT_TYPE.ITEM_PICKUP_BOMBBAG then
-            if savegame[journal.chapters.items][2] then
+            if savegame[journal.chapters[4]][2] then
                 give_entity(player, type)
             else
                 if player.inventory.bombs + 3 > 99 then
@@ -294,7 +294,7 @@ function give_item(type)
             end
 
         elseif type == ENT_TYPE.ITEM_PICKUP_BOMBBOX then
-            if savegame[journal.chapters.items][3] then
+            if savegame[journal.chapters[4]][3] then
                 give_entity(player, type)
             else
                 if player.inventory.bombs + 12 > 99 then
@@ -305,14 +305,14 @@ function give_item(type)
             end
 
         elseif type == ENT_TYPE.ITEM_PICKUP_COOKEDTURKEY and not player:is_cursed() then
-            if savegame[journal.chapters.items][52] then
+            if savegame[journal.chapters[4]][52] then
                 give_entity(player, type)
             else
                 player.health = player.health + 1
             end
 
         elseif type == ENT_TYPE.ITEM_PICKUP_ROYALJELLY and not player:is_cursed() then
-            if savegame[journal.chapters.items][22] then
+            if savegame[journal.chapters[4]][22] then
                 give_entity(player, type)
             else
                 player.health = player.health + 6
