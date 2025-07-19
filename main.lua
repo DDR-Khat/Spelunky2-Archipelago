@@ -37,7 +37,7 @@ meta = {
     name = "Spelunky 2 Archipelago",
     description = "Adds Archipelago Multiworld Randomizer support!",
     author = "Eszenn\nDDRKhat",
-    version = "0.2.1",
+    version = "0.2.2",
     unsafe = true
 }
 
