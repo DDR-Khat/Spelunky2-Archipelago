@@ -4,7 +4,7 @@ local aplib = safe_loadlib("lua-apclientpp.dll", "luaopen_apclientpp")
 local AP = aplib and aplib() or nil
 
 if not AP then
-    print("Failed to load Archipelago Client!\nIs **lua-apclientpp.dll** in the same folder as **Spel2.exe**?")
+    print("Failed to load Archipelago Client!\nIs **lua-apclientpp.dll** in the mod's folder??")
     return
 end
 
