@@ -47,8 +47,8 @@ This mod allows you to connect to Archipelago in order to play a multiworld rand
 # Installation Instructions
 1. Download the latest version of the Spelunky 2 apworld from the github release page below
 2. Double click the downloaded apworld to automatically install it to Archipelago, or manually move the file into the custom_worlds folder of your Archipelago installation
-3. Download the latest version of Modlunky 2 [here](https://github.com/spelunky-fyi/modlunky2/releases/latest)
-4. Download the latest "Spelunky 2 Archipelago.zip" from the other release page below and extract the contents of the .zip directly to your Spelunky 2 folder
+3. Download the latest version of Modlunky 2 [here](https://github.com/spelunky-fyi/modlunky2/releases/latest) and latest "Spelunky 2 Archipelago.zip" from the other release page below.
+4. Open up Modlunky 2, and drag the "Spelunky 2 Archipelago.zip" onto it -- this will change it to the "Install Mods" tab and at the bottom right use the "Install selected file to existing pack"
 5. Navigate to the Playlunky tab in Modlunky 2, toggle "Spelunky 2 Archipelago" and click "Play!"
     - It is HIGHLY recommended to turn on the "Use Playlunky Save" in the options menu! This mod frequently overwrites the save used by the game, and while it does make backups, errors can occur. I cannot be held liable if you lose your save file while using this mod.
 6. Once on the main menu, you will need to enable the mod manually, as it requires unsafe mode to load the library used to connect to Archipelago

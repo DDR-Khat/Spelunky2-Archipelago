@@ -706,83 +706,123 @@ item_ids = {
     },
     [7] = {
         type = ENT_TYPE.CHAR_ANA_SPELUNKY,
-        name = "Ana Spelunky"
+        name = get_character_name(ENT_TYPE.CHAR_ANA_SPELUNKY),
+        TileX = 0,
+        TileY = 0
     },
     [8] = {
         type = ENT_TYPE.CHAR_MARGARET_TUNNEL,
-        name = "Margaret Tunnel"
+        name = get_character_name(ENT_TYPE.CHAR_MARGARET_TUNNEL),
+        TileX = 0,
+        TileY = 0
     },
     [9] = {
         type = ENT_TYPE.CHAR_COLIN_NORTHWARD,
-        name = "Colin Northward"
+        name = get_character_name(ENT_TYPE.CHAR_COLIN_NORTHWARD),
+        TileX = 0,
+        TileY = 0
     },
     [10] = {
         type = ENT_TYPE.CHAR_ROFFY_D_SLOTH,
-        name = "Roffy D. Sloth"
+        name = get_character_name(ENT_TYPE.CHAR_ROFFY_D_SLOTH),
+        TileX = 0,
+        TileY = 0
     },
     [11] = {
         type = ENT_TYPE.CHAR_BANDA,
-        name = "Alto Singh"
+        name = get_character_name(ENT_TYPE.CHAR_BANDA),
+        TileX = 0,
+        TileY = 0
     },
     [12] = {
         type = ENT_TYPE.CHAR_GREEN_GIRL,
-        name = "Liz Mutton"
+        name = get_character_name(ENT_TYPE.CHAR_GREEN_GIRL),
+        TileX = 0,
+        TileY = 0
     },
     [13] = {
         type = ENT_TYPE.CHAR_AMAZON,
-        name = "Nekka the Eagle"
+        name = get_character_name(ENT_TYPE.CHAR_AMAZON),
+        TileX = 0,
+        TileY = 0
     },
     [14] = {
         type = ENT_TYPE.CHAR_LISE_SYSTEM,
-        name = "LISE Project"
+        name = get_character_name(ENT_TYPE.CHAR_LISE_SYSTEM),
+        TileX = 0,
+        TileY = 0
     },
     [15] = {
         type = ENT_TYPE.CHAR_COCO_VON_DIAMONDS,
-        name = "Coco von Diamonds"
+        name = get_character_name(ENT_TYPE.CHAR_COCO_VON_DIAMONDS),
+        TileX = 0,
+        TileY = 0
     },
     [16] = {
         type = ENT_TYPE.CHAR_MANFRED_TUNNEL,
-        name = "Manfred Tunnel"
+        name = get_character_name(ENT_TYPE.CHAR_MANFRED_TUNNEL),
+        TileX = 0,
+        TileY = 0
     },
     [17] = {
         type = ENT_TYPE.CHAR_OTAKU,
-        name = "Little Jay"
+        name = get_character_name(ENT_TYPE.CHAR_OTAKU),
+        TileX = 0,
+        TileY = 0
     },
     [18] = {
         type = ENT_TYPE.CHAR_TINA_FLAN,
-        name = "Tina Flan"
+        name = get_character_name(ENT_TYPE.CHAR_TINA_FLAN),
+        TileX = 0,
+        TileY = 0
     },
     [19] = {
         type = ENT_TYPE.CHAR_VALERIE_CRUMP,
-        name = "Valerie Crump"
+        name = get_character_name(ENT_TYPE.CHAR_VALERIE_CRUMP),
+        TileX = 0,
+        TileY = 0
     },
     [20] = {
         type = ENT_TYPE.CHAR_AU,
-        name = "Au"
+        name = get_character_name(ENT_TYPE.CHAR_AU),
+        TileX = 0,
+        TileY = 0
     },
     [21] = {
         type = ENT_TYPE.CHAR_DEMI_VON_DIAMONDS,
-        name = "Demi von Diamonds"
+        name = get_character_name(ENT_TYPE.CHAR_DEMI_VON_DIAMONDS),
+        TileX = 0,
+        TileY = 0
     },
     [22] = {
         type = ENT_TYPE.CHAR_PILOT,
-        name = "Pilot",
+        name = get_character_name(ENT_TYPE.CHAR_PILOT),
+        TileX = 0,
+        TileY = 0
     },
     [23] = {
         type = ENT_TYPE.CHAR_PRINCESS_AIRYN,
-        name = "Princess Airyn"
+        name = get_character_name(ENT_TYPE.CHAR_PRINCESS_AIRYN),
+        TileX = 0,
+        TileY = 0
     },
     [24] = {
         type = ENT_TYPE.CHAR_DIRK_YAMAOKA,
-        name = "Dirk Yamaoka"
+        name = get_character_name(ENT_TYPE.CHAR_DIRK_YAMAOKA),
+        TileX = 0,
+        TileY = 0
     },
     [25] = {
         type = ENT_TYPE.CHAR_GUY_SPELUNKY,
-        name = "Guy Spelunky"
+        name = get_character_name(ENT_TYPE.CHAR_GUY_SPELUNKY),
+        TileX = 0,
+        TileY = 0
     },
     [26] = {
         type = ENT_TYPE.CHAR_CLASSIC_GUY,
-        name = "Classic Guy"
+        name = get_character_name(ENT_TYPE.CHAR_CLASSIC_GUY),
+        TileX = 0,
+        TileY = 0
     },
     [27] = {
         type = ENT_TYPE.ITEM_PICKUP_UDJATEYE,
@@ -806,7 +846,9 @@ item_ids = {
     },
     [32] = {
         type = ENT_TYPE.ITEM_EXCALIBUR,
-        name = "Excalibur"
+        name = "Excalibur",
+        TileX = 2,
+        TileY = 10
     },
     [33] = {
         type = ENT_TYPE.ITEM_SCEPTER,
@@ -814,7 +856,9 @@ item_ids = {
     },
     [34] = {
         type = ENT_TYPE.ITEM_HOUYIBOW,
-        name = "Hou Yi's Bow"
+        name = "Hou Yi's Bow",
+        TileX = 7,
+        TileY = 10
     },
     [35] = {
         type = ENT_TYPE.ITEM_LIGHT_ARROW,

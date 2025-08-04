@@ -12,6 +12,7 @@ end
 local ap = nil
 
 -- Various variables to run the client
+local tls_failed = false
 local item_queue = {}
 local send_item_queue = {}
 local ready_for_item = true
@@ -78,7 +79,7 @@ set_callback(function()
     if state.screen == SCREEN.MENU then
         register_option_callback("Spelunky 2 Archipelago", player_options, function(ctx)
             if show_delete_button then
-                    if ctx:win_button("Delete login details") then
+                if ctx:win_button("Delete login details") then
                     write_last_login("wipe")
                     game_info.username = ""
                     game_info.host = "archipelago.gg:38281"
@@ -98,7 +99,7 @@ set_callback(function()
 
                 ctx:win_text("Password")
                 game_info.password = ctx:win_input_text(" ##Password", game_info.password)
-                
+
                 save_password = ctx:win_check("Remember Password",save_password)
             end
             ctx:win_separator()
@@ -116,6 +117,7 @@ set_callback(function()
                     show_connect_button = true
                     prinspect("Disconnecting from the server...")
                     ap = nil
+                    tls_failed = false
                     collectgarbage("collect")
                 end
             end
@@ -123,18 +125,27 @@ set_callback(function()
     end
 
     if ap ~= nil then
-        ap:poll()
+        local ok, err = pcall(function()
+            ap:poll()
+        end)
+        if not ok and debugging then
+            print("[ERROR] during ap:poll -- " .. tostring(err))
+        end
     end
 end, ON.GUIFRAME)
 
-
 function connect(server, slot, password)
     function on_socket_connected()
-        print("Socket connected")
+        local connectType = tls_failed and "Fallback" or "Secure"
+        print(f"[{connectionType}] Socket connected")
     end
 
     function on_socket_error(msg)
-        print("Socket error: " .. msg)
+        if string.match(msg, "TLS handshake failed") then
+            tls_failed = true
+        else
+            print("Socket error: " .. msg)
+        end
         show_connect_button = true
         clear_callback(id)
     end
@@ -153,7 +164,8 @@ function connect(server, slot, password)
     end
 
     function on_slot_connected(slot_data)
-        print("Slot connected")
+        local connectType = tls_failed and "Fallback" or "Secure"
+        print(f"[{connectType}] Slot connected")
 
         show_connect_button = false
         clear_callback(id)
@@ -174,9 +186,9 @@ function connect(server, slot, password)
         player_options.starting_ropes = slot_data.starting_ropes
         player_options.death_link = slot_data.death_link
         ap:Set(f"{ourSlot}_{ourTeam}_worldTab", "Entire map", false, { { operation = "add", value = "Entire map" } }, nil)
-        
+
         if player_options.death_link then
-            ap:ConnectUpdate(nil, {"Lua-APClientPP", "DeathLink"})
+            ap:ConnectUpdate(nil, {"Lua-APClientPP", "NoText", "DeathLink"})
 
             player_options.bypass_ankh = slot_data.bypass_ankh
 
@@ -200,6 +212,7 @@ function connect(server, slot, password)
 
     function on_slot_refused(reasons)
         print("Slot refused: " .. table.concat(reasons, ", "))
+        tls_failed = false
         clear_callback(id)
     end
 
@@ -224,24 +237,66 @@ function connect(server, slot, password)
     end
 
     function on_location_info(items)
-        print("Locations scouted:")
-        for _, item in ipairs(items) do
-            print(item.item)
+        local success, err = pcall(function()
+            debug_print("Locations scouted:")
+            for _, data in ipairs(items or {}) do
+                local receiving = data.player or -1
+                if (receiving ~= ourSlot) then
+                    local item_id = data.item or -1
+
+                    local player_data = apSlots[receiving]
+                    local player_name = player_data and player_data.name or "Unknown Player"
+                    local game_name = apGames[receiving] or "Unknown Game"
+                    local flags = -1
+
+                    if data.flags ~= nil then
+                        if data.flags == 0 or data.flags == 2 then
+                            flags = 0
+                        elseif data.flags == 4 then
+                            flags = 1
+                        elseif data.flags == 1 then
+                            flags = 2
+                        end
+                    end
+
+                    -- Get item and location names using the known game
+                    local item_name = "Unknown Item"
+                    local ok_item, result_item = pcall(function()
+                        return ap:get_item_name(item_id, game_name)
+                    end)
+                    if ok_item and result_item then
+                        item_name = result_item
+                    end
+
+                    table.insert(send_item_queue, #send_item_queue + 1, {item = item_name, target = player_name, classification = flags})
+
+                    debug_print(string.format(
+                            "Item: %s (ID: %d), Owner: %s (Slot: %d), Game: %s, Flags: %s",
+                            item_name, item_id,
+                            player_name, receiving,
+                            game_name, flags
+                    ))
+                end
+            end
+        end)
+
+        if not success then
+            debug_print("[ERROR] on_location_info crashed: " .. tostring(err))
         end
     end
 
     function on_location_checked(locations)
-        print("Locations checked:" .. table.concat(locations, ", "))
-        print("Checked locations: " .. table.concat(ap.checked_locations, ", "))
+        debug_print("Locations checked:" .. table.concat(locations, ", "))
+        debug_print("Checked locations: " .. table.concat(ap.checked_locations, ", "))
     end
 
     function on_data_package_changed(data_package)
-        print("Data package changed:")
-        print(data_package)
+        debug_print("Data package changed:")
+        debug_print(data_package)
     end
 
     function on_print(msg)
-        print(msg)
+        debug_print(msg)
     end
 
     function on_print_json(msg, extra)
@@ -265,26 +320,23 @@ function connect(server, slot, password)
     end
 
     function on_retrieved(map, keys, extra)
-        print("Retrieved:")
-        -- since lua tables won't contain nil values, we can use keys array
+        debug_print("Retrieved:")
         for _, key in ipairs(keys) do
-            print("  " .. key .. ": " .. tostring(map[key]))
+            debug_print("  " .. key .. ": " .. tostring(map[key]))
         end
-        -- extra will include extra fields from Get
-        print("Extra:")
+        debug_print("Extra:")
         for key, value in pairs(extra) do
-            print("  " .. key .. ": " .. tostring(value))
+            debug_print("  " .. key .. ": " .. tostring(value))
         end
-        -- both keys and extra are optional
     end
 
     function on_set_reply(message)
-        print("Set Reply:")
+        debug_print("Set Reply:")
         for key, value in pairs(message) do
-            print("  " .. key .. ": " .. tostring(value))
+            debug_print("  " .. key .. ": " .. tostring(value))
             if key == "value" and type(value) == "table" then
                 for subkey, subvalue in pairs(value) do
-                    print("    " .. subkey .. ": " .. tostring(subvalue))
+                    debug_print("    " .. subkey .. ": " .. tostring(subvalue))
                 end
             end
         end
@@ -301,14 +353,13 @@ function connect(server, slot, password)
     ap:set_items_received_handler(on_items_received)
     ap:set_location_info_handler(on_location_info)
     --ap:set_location_checked_handler(on_location_checked)
-    ap:set_data_package_changed_handler(on_data_package_changed)
+    --ap:set_data_package_changed_handler(on_data_package_changed)
     --ap:set_print_handler(on_print)
-    ap:set_print_json_handler(on_print_json)
+    --ap:set_print_json_handler(on_print_json)
     ap:set_bounced_handler(on_bounced)
-    ap:set_retrieved_handler(on_retrieved)
+    --ap:set_retrieved_handler(on_retrieved)
     ap:set_set_reply_handler(on_set_reply)
 end
-
 
 function set_ap_callbacks()
     set_callback(function()
@@ -318,6 +369,7 @@ function set_ap_callbacks()
             local display
             local msgTitle
             local msgDesc
+            local isTexture = false
             if IsType(item_queue,"table") and #item_queue > 0 then
                 local player = item_queue[1].player
                 item = item_ids[item_queue[1].item]
@@ -330,11 +382,24 @@ function set_ap_callbacks()
                 write_save()
             elseif IsType(send_item_queue, "table") and #send_item_queue >0 then
                 item = (type(send_item_queue[1].item) == "string" and send_item_queue[1].item) or "<Error>"
-                if #item > 34 then
-                    item = item:sub(1, 32) .. "..."
+                if #item > 32 then
+                    item = item:sub(1, 30) .. "..."
                 end
-                display = ENT_TYPE.ITEM_PRESENT
                 local target = send_item_queue[1].target or "<Unknown>"
+                local classification = send_item_queue[1].classification
+                if classification == 0 then
+                    display = generalItem
+                    isTexture = true
+                elseif classification == 1 then
+                    display = trapItem
+                    isTexture = true
+                elseif classification == 2 then
+                    display = progressionItem
+                    isTexture = true
+                else
+                    display = ENT_TYPE.ITEM_PRESENT
+                end
+                prinspect(display)
                 msgTitle = f"Found {target}'s Item from another world!"
                 if #msgTitle > 39 then
                     msgTitle = f"Found {target}'s Item!"
@@ -355,7 +420,12 @@ function set_ap_callbacks()
                 return false
             end, popupFrames)
 
-            ShowFeatBox(display, msgTitle, msgDesc, popupFrames)
+            if item.TileX ~= nil and item.TileY ~= nil then
+                ShowFeatBox(isTexture, display, msgTitle, msgDesc, popupFrames, item.TileX, item.TileY)
+            else
+                ShowFeatBox(isTexture, display, msgTitle, msgDesc, popupFrames)
+            end
+
         end
     end, ON.GAMEFRAME)
 
@@ -394,24 +464,24 @@ function set_ap_callbacks()
 end
 
 
-function verify_locations(location_list)
-    for index, location_id in ipairs(ap_save.checked_locations) do
-        if location_list[index] ~= location_id then
-            send_location(location_id)
-        end
+function complete_goal()
+    ap:StatusUpdate(ap.ClientStatus.GOAL)
+    toast("You have completed your goal!")
+
+    while #item_queue > 0 do
+        local item = item_ids[item_queue[1]]
+        item_handler(item.type)
+
+        table.remove(item_queue, 1)
+        ap_save.last_index = ap_save.last_index + 1
+
+        write_save()
     end
 end
 
-
-function send_location(location_id)
-    ap:LocationChecks({location_id})
-    write_save()
-end
-
-
 function item_handler(type)
     local was_item_processed = false
-    
+
     if not goal_completed then
         for _, item_type in ipairs(item_categories.filler_items) do
             if type == item_type then
@@ -472,22 +542,6 @@ function item_handler(type)
     return was_item_processed
 end
 
-
-function complete_goal()
-    ap:StatusUpdate(ap.ClientStatus.GOAL)
-    toast("You have completed your goal!")
-
-    while #item_queue > 0 do
-        local item = item_ids[item_queue[1]]
-        item_handler(item.type)
-
-        table.remove(item_queue, 1)
-        ap_save.last_index = ap_save.last_index + 1
-
-        write_save()
-    end
-end
-
 function queue_death_link()
     set_global_interval(function()
         if state.screen == SCREEN.LEVEL then
@@ -504,4 +558,35 @@ function queue_death_link()
             clear_callback()
         end
     end, 1)
+end
+
+function send_location(location_id)
+    local success_checked, checked = pcall(function()
+        return ap:LocationChecks({location_id})
+    end)
+
+    if not success_checked then
+        debug_print("ERROR: LocationChecks call failed (Lua error caught): " .. tostring(checked))
+        return
+    end
+
+    if checked then
+        debug_print("We checked a location! Now scouting it for details...")
+        local success_scout, scout_err = pcall(function()
+            ap:LocationScouts({location_id}, 0)
+        end)
+        if not success_scout then
+            debug_print("ERROR: LocationScouts (delayed) call failed: " .. tostring(scout_err))
+        end
+    end
+
+    write_save()
+end
+
+function verify_locations(location_list)
+    for index, location_id in ipairs(ap_save.checked_locations) do
+        if location_list[index] ~= location_id then
+            send_location(location_id)
+        end
+    end
 end

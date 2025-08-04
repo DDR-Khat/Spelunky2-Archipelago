@@ -377,9 +377,7 @@ end
 function update_journal(chapter, index)
     ap_save[chapter][index] = true
 
-    if debugging then
-        prinspect(F"Updated {chapter} entry {journal[chapter][index]}")
-    end
+    debug_print(F"Updated {chapter} entry {journal[chapter][index]}")
 
     local location_name = f"{journal[chapter][index]} Journal Entry"
     local location_id = location_name_to_id[location_name]
@@ -411,9 +409,7 @@ function write_save()
         file:write(json.encode(ap_save))
         file:close()
 
-        if debugging then
-            prinspect(f"Saved data to {path}AP_{game_info.username}_{player_options.seed}.json")
-        end
+        debug_print(f"Saved data to {path}AP_{game_info.username}_{player_options.seed}.json")
     end
 end
 
@@ -426,9 +422,7 @@ function read_save()
         file:close()
         update_game_save()
 
-        if debugging then
-            prinspect(f"Loaded data from {path}AP_{game_info.username}_{player_options.seed}.json")
-        end
+        debug_print(f"Loaded data from {path}AP_{game_info.username}_{player_options.seed}.json")
         
     end
 end

@@ -29,6 +29,12 @@ _G.safe_loadlib = function(lib, func)
     return result
 end
 
+_G.debug_print = function(msg)
+    if debugging then
+        print(msg)
+    end
+end
+
 local Data = safe_require("data")
 local APSave = safe_require("save")
 local APClient = safe_require("client")
@@ -36,19 +42,36 @@ local APClient = safe_require("client")
 meta = {
     name = "Spelunky 2 Archipelago",
     description = "Adds Archipelago Multiworld Randomizer support!",
-    author = "Eszenn\nDDRKhat",
-    version = "0.2.2",
+    author = "DDRKhat\nOriginal: Eszenn",
+    version = "0.2.3",
     unsafe = true
 }
+
+function makeTexture(path, width, height)
+    local definition = TextureDefinition.new()
+    definition.texture_path = path
+    definition.width = width
+    definition.height = height
+    definition.tile_width = width
+    definition.tile_height = height
+    local define = define_texture(definition)
+    if define == nil then
+        print("Failed to define texture: " .. path)
+    else
+        return define
+    end
+end
+
+generalItem = makeTexture("assets/item.png", 128, 128)
+trapItem = makeTexture("assets/trap.png", 128, 128)
+progressionItem = makeTexture("assets/progression.png", 128, 128)
 
 register_option_float('popup_time', 'Popup Timer', 'How long the "You received" or "You sent"! popup lingers.\n(Note: Higher values makes receiving items take longer)\nTime in seconds', 3.5, 0.5, 10)
 
 debugging = false
 
 set_callback(function()
-    if debugging then
-        print("LOADING")
-    end
+    debug_print("LOADING")
 
     if state.screen_next == SCREEN.CHARACTER_SELECT then
         update_characters()
@@ -98,40 +121,9 @@ function set_shortcut_progress(shortcut_number)
     end
 end
 
-set_callback(function()
-    local shortcut_uids = get_entities_by(ENT_TYPE.FLOOR_DOOR_STARTING_EXIT, MASK.FLOOR, LAYER.FRONT)
-
-    for _, uid in ipairs(shortcut_uids) do
-        local shortcut = get_entity(uid)
-        local x, y, layer = get_position(uid)
-
-        unlock_door_at(x,y)
-
-        --[[
-        if shortcut.theme == THEME.DWELLING and (ap_save.unlocked_shortcuts.progressive >= 1 or ap_save.unlocked_shortcuts.dwelling == 1) then
-            unlock_door_at(x, y)
-            
-        elseif shortcut.theme == THEME.OLMEC and (ap_save.unlocked_shortcuts.progressive >= 2 or ap_save.unlocked_shortcuts.olmec == 1) then
-            unlock_door_at(x, y)
-
-        elseif shortcut.theme == THEME.ICE_CAVES and (ap_save.unlocked_shortcuts.progressive == 3 or ap_save.unlocked_shortcuts.ice_caves == 1) then
-            unlock_door_at(x, y)
-        
-        else
-            lock_door_at(x, y)
-
-        end
-        ]]
-    end
-
-end, ON.CAMP)
-
-
 -- This handles all of the permanent upgrades to give the player at the start of every run
 set_callback(function()
-    if debugging then
-        prinspect("START")
-    end
+    debug_print("START")
     
     savegame.shortcuts = ap_save.shortcut_progress
 
@@ -166,9 +158,7 @@ end, ON.RESET)
 
 
 set_callback(function()
-    if debugging then
-        print("LEVEL")
-    end
+    debug_print("LEVEL")
 
     if state.level >= 10 and state.level <= ap_save.permanent_upgrades.checkpoints * 10 then
         state.world_start = 7
@@ -185,9 +175,7 @@ end, ON.LEVEL)
 
 
 set_callback(function()
-    if debugging then
-        print("POST_LEVEL_GENERATION")
-    end
+    debug_print("POST_LEVEL_GENERATION")
 
     local coffin_uids = get_entities_by(ENT_TYPE.ITEM_COFFIN, MASK.ITEM, LAYER.BOTH)
     for _, uid in ipairs(coffin_uids) do
@@ -226,9 +214,7 @@ end, ON.GAMEFRAME)
 
 
 set_callback(function()
-    if debugging then
-        print("TRANSITION")
-    end
+    debug_print("TRANSITION")
 
     if player_options.progressive_worlds then
         if state.world_next > ap_save.max_world then
