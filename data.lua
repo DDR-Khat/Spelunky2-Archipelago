@@ -682,323 +682,472 @@ location_name_to_id = {
 item_ids = {
     [1] = {
         type = ENT_TYPE.ITEM_PICKUP_ROPEPILE,
-        name = "Rope Pile"
+        name = "Rope Pile",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileX = 0,
+        TileY = 0
     },
     [2] = {
         type = ENT_TYPE.ITEM_PICKUP_BOMBBAG,
-        name = "Bomb Bag"
+        name = "Bomb Bag",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileX = 1,
+        TileY = 0
     },
     [3] = {
         type = ENT_TYPE.ITEM_PICKUP_BOMBBOX,
-        name = "Bomb Box"
+        name = "Bomb Box",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileX = 1,
+        TileY = 0
     },
     [4] = {
         type = ENT_TYPE.ITEM_PICKUP_COOKEDTURKEY,
-        name = "Cooked Turkey"
+        name = "Cooked Turkey",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileX = 5,
+        TileY = 3
     },
     [5] = {
         type = ENT_TYPE.ITEM_PICKUP_ROYALJELLY,
-        name = "Royal Jelly"
+        name = "Royal Jelly",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileX = 6,
+        TileY = 1
     },
     [6] = {
         type = ENT_TYPE.ITEM_GOLDBAR,
-        name = "Gold Bar"
+        name = "Gold Bar",
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileX = 12,
+        TileY = 8
     },
     [7] = {
         type = ENT_TYPE.CHAR_ANA_SPELUNKY,
         name = get_character_name(ENT_TYPE.CHAR_ANA_SPELUNKY),
+        display = TEXTURE.DATA_TEXTURES_CHAR_YELLOW_0,
         TileX = 0,
         TileY = 0
     },
     [8] = {
         type = ENT_TYPE.CHAR_MARGARET_TUNNEL,
         name = get_character_name(ENT_TYPE.CHAR_MARGARET_TUNNEL),
+        display = TEXTURE.DATA_TEXTURES_CHAR_MAGENTA_0,
         TileX = 0,
         TileY = 0
     },
     [9] = {
         type = ENT_TYPE.CHAR_COLIN_NORTHWARD,
         name = get_character_name(ENT_TYPE.CHAR_COLIN_NORTHWARD),
+        display = TEXTURE.DATA_TEXTURES_CHAR_CYAN_0,
         TileX = 0,
         TileY = 0
     },
     [10] = {
         type = ENT_TYPE.CHAR_ROFFY_D_SLOTH,
         name = get_character_name(ENT_TYPE.CHAR_ROFFY_D_SLOTH),
+        display = TEXTURE.DATA_TEXTURES_CHAR_BLACK_0,
         TileX = 0,
         TileY = 0
     },
     [11] = {
         type = ENT_TYPE.CHAR_BANDA,
         name = get_character_name(ENT_TYPE.CHAR_BANDA),
+        display = TEXTURE.DATA_TEXTURES_CHAR_CINNABAR_0,
         TileX = 0,
         TileY = 0
     },
     [12] = {
         type = ENT_TYPE.CHAR_GREEN_GIRL,
         name = get_character_name(ENT_TYPE.CHAR_GREEN_GIRL),
+        display = TEXTURE.DATA_TEXTURES_CHAR_GREEN_0,
         TileX = 0,
         TileY = 0
     },
     [13] = {
         type = ENT_TYPE.CHAR_AMAZON,
         name = get_character_name(ENT_TYPE.CHAR_AMAZON),
+        display = TEXTURE.DATA_TEXTURES_CHAR_OLIVE_0,
         TileX = 0,
         TileY = 0
     },
     [14] = {
         type = ENT_TYPE.CHAR_LISE_SYSTEM,
         name = get_character_name(ENT_TYPE.CHAR_LISE_SYSTEM),
+        display = TEXTURE.DATA_TEXTURES_CHAR_WHITE_0,
         TileX = 0,
         TileY = 0
     },
     [15] = {
         type = ENT_TYPE.CHAR_COCO_VON_DIAMONDS,
         name = get_character_name(ENT_TYPE.CHAR_COCO_VON_DIAMONDS),
+        display = TEXTURE.DATA_TEXTURES_CHAR_CERULEAN_0,
         TileX = 0,
         TileY = 0
     },
     [16] = {
         type = ENT_TYPE.CHAR_MANFRED_TUNNEL,
         name = get_character_name(ENT_TYPE.CHAR_MANFRED_TUNNEL),
+        display = TEXTURE.DATA_TEXTURES_CHAR_BLUE_0,
         TileX = 0,
         TileY = 0
     },
     [17] = {
         type = ENT_TYPE.CHAR_OTAKU,
         name = get_character_name(ENT_TYPE.CHAR_OTAKU),
+        display = TEXTURE.DATA_TEXTURES_CHAR_LIME_0,
         TileX = 0,
         TileY = 0
     },
     [18] = {
         type = ENT_TYPE.CHAR_TINA_FLAN,
         name = get_character_name(ENT_TYPE.CHAR_TINA_FLAN),
+        display = TEXTURE.DATA_TEXTURES_CHAR_LEMON_0,
         TileX = 0,
         TileY = 0
     },
     [19] = {
         type = ENT_TYPE.CHAR_VALERIE_CRUMP,
         name = get_character_name(ENT_TYPE.CHAR_VALERIE_CRUMP),
+        display = TEXTURE.DATA_TEXTURES_CHAR_IRIS_0,
         TileX = 0,
         TileY = 0
     },
     [20] = {
         type = ENT_TYPE.CHAR_AU,
         name = get_character_name(ENT_TYPE.CHAR_AU),
+        display = TEXTURE.DATA_TEXTURES_CHAR_GOLD_0,
         TileX = 0,
         TileY = 0
     },
     [21] = {
         type = ENT_TYPE.CHAR_DEMI_VON_DIAMONDS,
         name = get_character_name(ENT_TYPE.CHAR_DEMI_VON_DIAMONDS),
+        display = TEXTURE.DATA_TEXTURES_CHAR_RED_0,
         TileX = 0,
         TileY = 0
     },
     [22] = {
         type = ENT_TYPE.CHAR_PILOT,
         name = get_character_name(ENT_TYPE.CHAR_PILOT),
+        display = TEXTURE.DATA_TEXTURES_CHAR_PINK_0,
         TileX = 0,
         TileY = 0
     },
     [23] = {
         type = ENT_TYPE.CHAR_PRINCESS_AIRYN,
         name = get_character_name(ENT_TYPE.CHAR_PRINCESS_AIRYN),
+        display = TEXTURE.DATA_TEXTURES_CHAR_VIOLET_0,
         TileX = 0,
         TileY = 0
     },
     [24] = {
         type = ENT_TYPE.CHAR_DIRK_YAMAOKA,
         name = get_character_name(ENT_TYPE.CHAR_DIRK_YAMAOKA),
+        display = TEXTURE.DATA_TEXTURES_CHAR_GRAY_0,
         TileX = 0,
         TileY = 0
     },
     [25] = {
         type = ENT_TYPE.CHAR_GUY_SPELUNKY,
         name = get_character_name(ENT_TYPE.CHAR_GUY_SPELUNKY),
+        display = TEXTURE.DATA_TEXTURES_CHAR_KHAKI_0,
         TileX = 0,
         TileY = 0
     },
     [26] = {
         type = ENT_TYPE.CHAR_CLASSIC_GUY,
         name = get_character_name(ENT_TYPE.CHAR_CLASSIC_GUY),
+        display = TEXTURE.DATA_TEXTURES_CHAR_ORANGE_0,
         TileX = 0,
         TileY = 0
     },
     [27] = {
         type = ENT_TYPE.ITEM_PICKUP_UDJATEYE,
-        name = "Udjat Eye"
+        name = "Udjat Eye",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileX = 1,
+        TileY = 1
     },
     [28] = {
         type = ENT_TYPE.ITEM_PICKUP_HEDJET,
-        name = "Hedjet"
+        name = "Hedjet",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileX = 3,
+        TileY = 1
     },
     [29] = {
         type = ENT_TYPE.ITEM_PICKUP_CROWN,
-        name = "Crown"
+        name = "Crown",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileX = 4,
+        TileY = 1
     },
     [30] = {
         type = ENT_TYPE.ITEM_PICKUP_ANKH,
-        name = "Ankh"
+        name = "Ankh",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileX = 5,
+        TileY = 1
     },
     [31] = {
         type = ENT_TYPE.ITEM_PICKUP_TABLETOFDESTINY,
-        name = "Tablet of Destiny"
+        name = "Tablet of Destiny",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileX = 9,
+        TileY = 3
     },
     [32] = {
         type = ENT_TYPE.ITEM_EXCALIBUR,
         name = "Excalibur",
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
         TileX = 2,
         TileY = 10
     },
     [33] = {
         type = ENT_TYPE.ITEM_SCEPTER,
-        name = "Scepter"
+        name = "Scepter",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileX = 1,
+        TileY = 3
     },
     [34] = {
         type = ENT_TYPE.ITEM_HOUYIBOW,
         name = "Hou Yi's Bow",
-        TileX = 7,
-        TileY = 10
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileX = 0,
+        TileY = 5
     },
     [35] = {
         type = ENT_TYPE.ITEM_LIGHT_ARROW,
-        name = "Arrow of Light"
+        name = "Arrow of Light",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileX = 1,
+        TileY = 5
     },
     [36] = {
         type = ENT_TYPE.ITEM_USHABTI,
-        name = "Ushabti"
+        name = "Ushabti",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileX = 3,
+        TileY = 3
     },
     [37] = {
         type = "health",
         name = "Starting Health Upgrade",
-        display = ENT_TYPE.ITEM_BLOOD
+        display = TEXTURE.DATA_TEXTURES_FX_SMALL_0,
+        TileX = 0,
+        TileY = 0
     },
     [38] = {
         type = "bombs",
         name = "Starting Bombs Upgrade",
-        display = ENT_TYPE.ITEM_PICKUP_PLAYERBAG
+        display = TEXTURE.DATA_TEXTURES_CHAR_YELLOW_0,
+        TileX = 1,
+        TileY = 11
     },
     [39] = {
         type = "ropes",
         name = "Starting Ropes Upgrade",
-        display = ENT_TYPE.ITEM_PICKUP_PLAYERBAG
+        display = TEXTURE.DATA_TEXTURES_CHAR_YELLOW_0,
+        TileX = 4,
+        TileY = 12
     },
     [40] = {
         type = "paste",
         name = "Paste",
-        display = ENT_TYPE.ITEM_PICKUP_PASTE
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileX = 3,
+        TileY = 0
     },
     [41] = {
         type = "clover",
         name = "Permanant Four-Leaf Clover",
-        display = ENT_TYPE.ITEM_PICKUP_CLOVER
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileX = 2,
+        TileY = 4
     },
     [42] = {
         type = "compass",
         name = "Progressive Compass",
-        display = ENT_TYPE.ITEM_PICKUP_COMPASS
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileX = 9,
+        TileY = 0
     },
     [43] = {
         type = "eggplant",
         name = "Eggplant",
-        display = ENT_TYPE.ITEM_EGGPLANT
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileX = 4,
+        TileY = 3
     },
     [44] = {
         type = "checkpoints",
-        name = "Cosmic Ocean Checkpoint"
+        name = "Cosmic Ocean Checkpoint",
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileX = 0,
+        TileY = 0
     },
     [45] = {
         type = "progressive_shortcut",
-        name = "Progressive Shortcut"
+        name = "Progressive Shortcut",
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileX = 0,
+        TileY = 0
     },
     [46] = {
         type = "dwelling_shortcut",
-        name = "Dwelling Shortcut"
+        name = "Dwelling Shortcut",
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileX = 0,
+        TileY = 0
     },
     [47] = {
         type = "olmec_shortcut",
-        name = "Olmec's Lair Shortcut"
+        name = "Olmec's Lair Shortcut",
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileX = 0,
+        TileY = 0
     },
     [48] = {
         type = "ice_caves_shortcut",
-        name = "Ice Caves Shortcut"
+        name = "Ice Caves Shortcut",
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileX = 0,
+        TileY = 0
     },
     [49] = {
         type = "max_world",
         name = "Progressive World Unlock",
-        display = ENT_TYPE.ITEM_FLOATING_ORB
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileX = 11,
+        TileY = 14
     },
     [50] = {
         type = "jungle",
-        name = "Jungle"
+        name = "Jungle",
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileX = 0,
+        TileY = 0
     },
     [51] = {
         type = "volcana",
-        name = "Volcana"
+        name = "Volcana",
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileX = 0,
+        TileY = 0
     },
     [52] = {
         type = "olmec",
-        name = "Olmec's Lair"
+        name = "Olmec's Lair",
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileX = 0,
+        TileY = 0
     },
     [53] = {
         type = "tide_pool",
-        name = "Tide Pool"
+        name = "Tide Pool",
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileX = 0,
+        TileY = 0
     },
     [54] = {
         type = "temple",
-        name = "Temple"
+        name = "Temple",
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileX = 0,
+        TileY = 0
     },
     [55] = {
         type = "ice_caves",
-        name = "Ice Caves"
+        name = "Ice Caves",
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileX = 0,
+        TileY = 0
     },
     [56] = {
         type = "neo_babylon",
-        name = "Neo Babylon"
+        name = "Neo Babylon",
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileX = 0,
+        TileY = 0
     },
     [57] = {
         type = "sunken_city",
-        name = "Sunken City"
+        name = "Sunken City",
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileX = 0,
+        TileY = 0
     },
     [58] = {
         type = "cosmic_ocean",
-        name = "Cosmic Ocean"
+        name = "Cosmic Ocean",
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileX = 0,
+        TileY = 0
     },
     [59] = {
         type = "poison",
-        name = "Poison Trap"
+        name = "Poison Trap",
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileX = 0,
+        TileY = 0
     },
     [60] = {
         type = "curse",
-        name = "Curse Trap"
+        name = "Curse Trap",
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileX = 0,
+        TileY = 0
     },
     [61] = {
         type = "ghost",
-        name = "Ghost Trap"
+        name = "Ghost Trap",
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileX = 0,
+        TileY = 0
     },
     [62] = {
         type = "stun",
-        name = "Stun Trap"
+        name = "Stun Trap",
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileX = 0,
+        TileY = 0
     },
     [63] = {
         type = "loose bombs",
-        name = "Loose Bombs Trap"
+        name = "Loose Bombs Trap",
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileX = 0,
+        TileY = 0
     },
     [64] = {
         type = "blind",
-        name = "Blindess Trap"
+        name = "Blindess Trap",
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileX = 0,
+        TileY = 0
     },
     [65] = {
         type = "amnesia",
-        name = "Amnesia Trap"
+        name = "Amnesia Trap",
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileX = 0,
+        TileY = 0
     },
     [66] = {
         type = "angry",
-        name = "Angry Shopkeepers Trap"
+        name = "Angry Shopkeepers Trap",
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileX = 0,
+        TileY = 0
     },
     [67] = {
         type = "punish",
-        name = "Punish Ball Trap"
+        name = "Punish Ball Trap",
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileX = 0,
+        TileY = 0
     }
 }
 

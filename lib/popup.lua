@@ -38,40 +38,9 @@ featBoxTimer = 0
 featBoxData = nil
 
 -- Call this to show a feat box
-function ShowFeatBox(isTexture, entity, title, description, durationFrames, spriteIndex, spriteOffset)
-    if isTexture~=true and not IsType(entity,"number") and (not IsType(entity,"table") or IsNull(entity.uid)) then
-        error(f"Entity arg not ENT_TYPE or entity\nReceived -- {tostring(entity)} / type: {type(entity)}")
-        return
-    end
-    title = title or "Title"
-    description = description or "Description"
-    durationFrames = durationFrames or 60
-    local tex_def
-    local success, texture
-    if isTexture~=true then
-        local makeEntity = IsType(entity,"number")
-        if makeEntity then
-            entity = get_entity(spawn_entity(entity, -1000, -1000, LAYER.FRONT, 0, 0))
-        end
-        success, texture = pcall(function() return entity:get_texture() end)
-        if not success then
-            error("Failed to get texture for FeatBox")
-        end
-        tex_def = get_texture_definition(texture)
-        spriteIndex = spriteIndex or (IsType(entity.type,"table") and not IsNull(entity.type.animations[1]) and not IsNull(entity.type.animations[1].first_tile) and entity.type.animations[1].first_tile)
-                or (not IsNull(entity.animation_frame) and entity.animation_frame)
-                or 0
-        spriteOffset = spriteOffset or 0
-        local tiles_per_row = math.floor(tex_def.width / tex_def.tile_width)
-        if spriteIndex >= tiles_per_row then
-            spriteOffset = math.floor(spriteIndex / tiles_per_row)
-            spriteIndex = spriteIndex % tiles_per_row
-        end
-    else
-        texture = entity
-        spriteIndex = 0
-        spriteOffset = 0
-    end
+function ShowFeatBox(texture, title, description, durationFrames, spriteIndex, spriteOffset)
+    spriteIndex = spriteIndex or 0
+    spriteOffset = spriteOffset or 0
     featBoxData = {
         texture = texture,
         tileX = spriteIndex,
@@ -81,9 +50,6 @@ function ShowFeatBox(isTexture, entity, title, description, durationFrames, spri
         duration = durationFrames
     }
     featBoxTimer = durationFrames
-    if makeEntity then
-        entity:destroy()
-    end
 end
 
 -- Set anchor

@@ -43,7 +43,7 @@ meta = {
     name = "Spelunky 2 Archipelago",
     description = "Adds Archipelago Multiworld Randomizer support!",
     author = "DDRKhat\nOriginal: Eszenn",
-    version = "0.2.3",
+    version = "0.2.4",
     unsafe = true
 }
 
@@ -132,13 +132,13 @@ set_callback(function()
     player.inventory.bombs = player_options.starting_bombs + ap_save.permanent_upgrades.bombs
     player.inventory.ropes = player_options.starting_ropes + ap_save.permanent_upgrades.ropes
 
-    if ap_save.permanent_upgrades.paste ~= 0 then
+    if ap_save.permanent_upgrades.paste ~= 0 and savegame[journal.chapters[4]][4] then
         player:give_powerup(ENT_TYPE.ITEM_POWERUP_PASTE)
     end
 
-    if ap_save.permanent_upgrades.compass == 1 then
+    if ap_save.permanent_upgrades.compass == 1 and savegame[journal.chapters[4]][10] then
         player:give_powerup(ENT_TYPE.ITEM_POWERUP_COMPASS)
-    elseif ap_save.permanent_upgrades.compass == 2 then
+    elseif ap_save.permanent_upgrades.compass == 2 and savegame[journal.chapters[4]][11] then
         player:give_powerup(ENT_TYPE.ITEM_POWERUP_SPECIALCOMPASS)
     end
 end, ON.START)
@@ -146,11 +146,11 @@ end, ON.START)
 set_callback(function()
     set_callback(function()
         clear_callback()
-        if ap_save.unlocked_key_items[8] then
-        waddler_store_entity(ENT_TYPE.ITEM_HOUYIBOW)
+        if ap_save.unlocked_key_items[8] and savegame[journal.chapters[4]][43] then
+            waddler_store_entity(ENT_TYPE.ITEM_HOUYIBOW)
         end
 
-        if ap_save.permanent_upgrades.eggplant ~= 0 then
+        if ap_save.permanent_upgrades.eggplant ~= 0 and savegame[journal.chapters[4]][51] then
             waddler_store_entity(ENT_TYPE.ITEM_EGGPLANT)
         end
     end, ON.PRE_LEVEL_GENERATION)
@@ -311,7 +311,8 @@ function give_item(type)
 end
 
 function give_entity(player, ent)
-    local newItem = get_entity(spawn_entity(ent, player.x, player.y, player.layer, 0, 0))
+    local playerX, playerY, playerLayer = get_position(player.uid)
+    local newItem = get_entity(spawn_entity(ent, playerX, playerY, playerLayer, 0, 0))
     newItem.stand_counter = 25
 end
 

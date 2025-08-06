@@ -366,14 +366,13 @@ function set_ap_callbacks()
         local popupFrames = math.ceil(options.popup_time*60)
         if state.screen == SCREEN.LEVEL and ready_for_item then
             local item
-            local display
+            local display = generalItem
             local msgTitle
             local msgDesc
-            local isTexture = false
             if IsType(item_queue,"table") and #item_queue > 0 then
                 local player = item_queue[1].player
                 item = item_ids[item_queue[1].item]
-                display = item.display or (type(item.type) == "number" and item.type) or ENT_TYPE.ITEM_CHEST
+                display = item.display
                 item_handler(item.type)
                 msgTitle = (player == "you" and "You found an item!") or f"Item received from {player}"
                 msgDesc = (player == "you" and f"{item.name}") or f"Received {item.name}"
@@ -382,24 +381,16 @@ function set_ap_callbacks()
                 write_save()
             elseif IsType(send_item_queue, "table") and #send_item_queue >0 then
                 item = (type(send_item_queue[1].item) == "string" and send_item_queue[1].item) or "<Error>"
-                if #item > 32 then
-                    item = item:sub(1, 30) .. "..."
+                if #item > 31 then
+                    item = item:sub(1, 29) .. "..."
                 end
                 local target = send_item_queue[1].target or "<Unknown>"
                 local classification = send_item_queue[1].classification
-                if classification == 0 then
-                    display = generalItem
-                    isTexture = true
-                elseif classification == 1 then
+                if classification == 1 then
                     display = trapItem
-                    isTexture = true
                 elseif classification == 2 then
                     display = progressionItem
-                    isTexture = true
-                else
-                    display = ENT_TYPE.ITEM_PRESENT
                 end
-                prinspect(display)
                 msgTitle = f"Found {target}'s Item from another world!"
                 if #msgTitle > 39 then
                     msgTitle = f"Found {target}'s Item!"
@@ -420,12 +411,7 @@ function set_ap_callbacks()
                 return false
             end, popupFrames)
 
-            if item.TileX ~= nil and item.TileY ~= nil then
-                ShowFeatBox(isTexture, display, msgTitle, msgDesc, popupFrames, item.TileX, item.TileY)
-            else
-                ShowFeatBox(isTexture, display, msgTitle, msgDesc, popupFrames)
-            end
-
+            ShowFeatBox(display, msgTitle, msgDesc, popupFrames, item.TileX, item.TileY)
         end
     end, ON.GAMEFRAME)
 
