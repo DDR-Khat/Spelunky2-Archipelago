@@ -43,7 +43,7 @@ meta = {
     name = "Spelunky 2 Archipelago",
     description = "Adds Archipelago Multiworld Randomizer support!",
     author = "DDRKhat\nOriginal: Eszenn",
-    version = "0.2.4",
+    version = "0.2.5",
     unsafe = true
 }
 
@@ -69,6 +69,7 @@ progressionItem = makeTexture("assets/progression.png", 128, 128)
 register_option_float('popup_time', 'Popup Timer', 'How long the "You received" or "You sent"! popup lingers.\n(Note: Higher values makes receiving items take longer)\nTime in seconds', 3.5, 0.5, 10)
 
 debugging = false
+givingItem = false
 
 set_callback(function()
     debug_print("LOADING")
@@ -257,63 +258,43 @@ end, SPAWN_TYPE.ANY, MASK.ITEM, ENT_TYPE.ITEM_PICKUP_UDJATEYE, ENT_TYPE.ITEM_PIC
 function give_item(type)
     local player = get_player(1, false)
     if player ~= nil then
+        givingItem = true
+        local journalEntry = -1
         if type == ENT_TYPE.ITEM_PICKUP_ROPEPILE then
-            if savegame[journal.chapters[4]][1] then
-                give_entity(player, type)
-            else
-                if player.inventory.ropes + 3 > 99 then
-                    player.inventory.ropes = 99
-                else
-                    player.inventory.ropes = player.inventory.ropes + 3
-                end
-            end
-
+            journalEntry = 1
         elseif type == ENT_TYPE.ITEM_PICKUP_BOMBBAG then
-            if savegame[journal.chapters[4]][2] then
-                give_entity(player, type)
-            else
-                if player.inventory.bombs + 3 > 99 then
-                    player.inventory.bombs = 99
-                else
-                    player.inventory.bombs = player.inventory.bombs + 3
-                end
-            end
-
+            journalEntry = 2
         elseif type == ENT_TYPE.ITEM_PICKUP_BOMBBOX then
-            if savegame[journal.chapters[4]][3] then
-                give_entity(player, type)
-            else
-                if player.inventory.bombs + 12 > 99 then
-                    player.inventory.bombs = 99
-                else
-                    player.inventory.bombs = player.inventory.bombs + 12
-                end
-            end
-
-        elseif type == ENT_TYPE.ITEM_PICKUP_COOKEDTURKEY and not player:is_cursed() then
-            if savegame[journal.chapters[4]][52] then
-                give_entity(player, type)
-            else
-                player.health = player.health + 1
-            end
-
-        elseif type == ENT_TYPE.ITEM_PICKUP_ROYALJELLY and not player:is_cursed() then
-            if savegame[journal.chapters[4]][22] then
-                give_entity(player, type)
-            else
-                player.health = player.health + 6
-            end
-
-        elseif type == ENT_TYPE.ITEM_GOLDBAR then
-            give_entity(player, type)
+            journalEntry = 3
+        elseif type == ENT_TYPE.ITEM_PICKUP_COOKEDTURKEY then
+            journalEntry = 52
+        elseif type == ENT_TYPE.ITEM_PICKUP_ROYALJELLY then
+            journalEntry = 22
+        end
+        if type ~= -1 then
+            give_entity(player, type, journalEntry)
         end
     end
 end
 
-function give_entity(player, ent)
+function give_entity(player, ent, journalEntry)
+    local hideJournal = journalEntry ~= -1 and savegame.items[journalEntry] == false
     local playerX, playerY, playerLayer = get_position(player.uid)
     local newItem = get_entity(spawn_entity(ent, playerX, playerY, playerLayer, 0, 0))
     newItem.stand_counter = 25
+    local firstRun = false
+    set_callback(function()
+        if firstRun then
+            if hideJournal then
+                game_manager.save_related.journal_popup_ui.timer = 0
+                savegame.items[journalEntry] = false
+            end
+            givingItem = false
+            clear_callback()
+        else
+            firstRun = true
+        end
+    end, ON.PRE_UPDATE)
 end
 
 

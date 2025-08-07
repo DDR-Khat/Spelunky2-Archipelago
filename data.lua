@@ -698,7 +698,7 @@ item_ids = {
         type = ENT_TYPE.ITEM_PICKUP_BOMBBOX,
         name = "Bomb Box",
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
-        TileX = 1,
+        TileX = 2,
         TileY = 0
     },
     [4] = {
