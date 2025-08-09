@@ -1,6 +1,9 @@
-from Options import Toggle, DefaultOnToggle, Range, Choice, PerGameCommonOptions, DeathLink
+from Options import Toggle, DefaultOnToggle, Range, Choice, PerGameCommonOptions, DeathLink, Set
 from dataclasses import dataclass
 
+# Item Master List
+item_options = frozenset({"Cape", "Climbing Gloves", "Clover", "Crown", "Hedjet", "Hoverpack", "Jetpack", "Kapala", "Paste", "Pitchers Mitt", "Powerpack", "Skeleton Key", "Spectacles", "Spike Shoes", "Spring Shoes", "Telepack", "Teleporter", "VladCape"})
+sorted_item_options = ", ".join(sorted(item_options))
 
 class Goal(Choice):
     """When is your world considered finished.
@@ -42,6 +45,12 @@ class StartingHealth(Range):
     range_end = 8
     default = 4
 
+class ProgressiveHealth(Range):
+    """How many Starting Health upgrades are added to the multi-world"""
+    display_name = "Progressive Health"
+    range_start = 0
+    range_end = 20
+    default = 0
 
 class StartingBombs(Range):
     """How many Bombs should you initially start with."""
@@ -50,6 +59,13 @@ class StartingBombs(Range):
     range_end = 10
     default = 4
 
+class ProgressiveBombs(Range):
+    """If you set this above 0 then all bomb bags in the multi-world become Starting Bomb upgrades
+	Which will instead increase how many bombs you will start a run with"""
+    display_name = "Progressive Bombs"
+    range_start = 0
+    range_end = 20
+    default = 0
 
 class StartingRopes(Range):
     """How many Ropes should you initially start with."""
@@ -57,6 +73,37 @@ class StartingRopes(Range):
     range_start = 0
     range_end = 10
     default = 4
+
+class ProgressiveRopes(Range):
+    """If you set this above 0 then all rope piles in the multi-world become Starting rope pile upgrades
+	Which will instead increase how many ropes you will start a run with"""
+    display_name = "Progressive Ropes"
+    range_start = 0
+    range_end = 20
+    default = 0
+
+class LockedItems(Set):
+    """A list of items that must be received from the multi-world before being obtainable in the game
+    Valid options: {sorted_item_options}"""
+    display_name = "Locked Items"
+    default = item_options
+
+class ProgressiveItems(Set):
+    """Add the following items as progressive in the multi-world item pool which are kept on death
+    Valid options: {sorted_item_options}"""
+    display_name = "Progressive Items"
+    default = set()
+
+class ProgressiveWaddler(Set):
+    """Add the following items as progressive in the multi-world item pool which are added to Waddler's storage between runs
+    Options set here override Progressive Items
+    Valid options: {sorted_item_options}"""
+    display_name = "Progressive Waddler"
+    default = item_options
+
+class DeathLinkBypassesAnkh(Toggle):
+    """Sets whether deaths sent through Death Link will trigger the Ankh, or ignore it."""
+    display_name = "Death Link Ankh Handling"
 
 
 class EnableTraps(Toggle):
@@ -135,21 +182,22 @@ class PunishBallTrapChance(Range):
     range_end = 100
     default = 10
 
-
-class DeathLinkBypassesAnkh(Toggle):
-    """Sets whether deaths sent through Death Link will trigger the Ankh, or ignore it."""
-    display_name = "Death Link Ankh Handling"
-
 @dataclass
 class Spelunky2Options(PerGameCommonOptions):
     goal: Goal
     goal_level: GoalLevel
     progressive_worlds: ProgressiveWorlds
-    # progressive_shortcuts: ProgressiveShortcuts - Not implemented yet
     starting_health: StartingHealth
+    progressive_health: ProgressiveHealth
     starting_bombs: StartingBombs
+    progressive_bombs: ProgressiveBombs
     starting_ropes: StartingRopes
-    traps_enabled: EnableTraps
+    progressive_ropes: ProgressiveRopes
+    locked_items: LockedItems
+    progressive_items: ProgressiveItems
+    progressive_waddler: ProgressiveWaddler
+    # progressive_shortcuts: ProgressiveShortcuts - Not implemented yet
+    enable_traps: EnableTraps
     trap_weight: TrapWeight
     poison_weight: PoisonTrapChance
     curse_weight: CurseTrapChance

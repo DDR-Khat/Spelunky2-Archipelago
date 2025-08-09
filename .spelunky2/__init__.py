@@ -19,13 +19,18 @@ class Spelunky2WebWorld(WebWorld):
         language="English",
         file_name="setup_en.md",
         link="setup/en",
-        authors=["Eszenn"]
+        authors=["Eszenn", "DDRKhat"]
     )
     tutorials = [setup_en]
 
 
 class Spelunky2World(World):
-    """Spelunky 2 is an extremely difficult roguelike 2D platformer. BETTER SUMMARY GOES HERE"""
+    """Spelunky 2 is an extremely difficult roguelike platformer where your progression is gated by multiworld unlocks.
+    Your ultimate goal is to complete one of the game's various paths. Your primary objective is to complete 'checks' by
+    discovering new journal entries, which sends an item from the multiworld into the item pool. The rewards you receive
+    can range from simple 'filler' items to world unlocks that allow you to progress, as well as key quest-chain items
+    like the Udjat Eye and Hou Yi's Bow. These critical items must be received from the multiworld before you can obtain
+    them in-game."""
 
     game = "Spelunky 2"
     web = Spelunky2WebWorld()
@@ -140,7 +145,7 @@ class Spelunky2World(World):
                     spelunky2_item_pool.append(item)
                     self.filler_count -= 1
 
-        if self.options.traps_enabled:
+        if self.options.enable_traps:
             self.trap_count = int(self.filler_count * (self.options.trap_weight / 100))
             self.filler_count -= self.trap_count
 
