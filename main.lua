@@ -258,7 +258,6 @@ end, SPAWN_TYPE.ANY, MASK.ITEM, ENT_TYPE.ITEM_PICKUP_UDJATEYE, ENT_TYPE.ITEM_PIC
 function give_item(type)
     local player = get_player(1, false)
     if player ~= nil then
-        givingItem = true
         local journalEntry = -1
         if type == ENT_TYPE.ITEM_PICKUP_ROPEPILE then
             journalEntry = 1
@@ -281,6 +280,7 @@ function give_entity(player, ent, journalEntry)
     local hideJournal = journalEntry ~= -1 and savegame.items[journalEntry] == false
     local playerX, playerY, playerLayer = get_position(player.uid)
     local newItem = get_entity(spawn_entity(ent, playerX, playerY, playerLayer, 0, 0))
+    givingItem = true
     newItem.stand_counter = 25
     local firstRun = false
     set_callback(function()
