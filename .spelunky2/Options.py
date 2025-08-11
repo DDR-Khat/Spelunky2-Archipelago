@@ -2,24 +2,37 @@ from Options import Toggle, DefaultOnToggle, Range, Choice, PerGameCommonOptions
 from dataclasses import dataclass
 
 # Item Master List
-item_options = frozenset({"Cape", "Climbing Gloves", "Clover", "Crown", "Hedjet", "Hoverpack", "Jetpack", "Kapala", "Paste", "Pitchers Mitt", "Powerpack", "Skeleton Key", "Spectacles", "Spike Shoes", "Spring Shoes", "Telepack", "Teleporter", "VladCape"})
+item_options = frozenset({"Climbing Gloves", "Camera", "Cape", "Clone Gun", "Compass",
+                          "Eggplant", "Eggplant Crown", "Elixir", "Four-Leaf Clover", "Freeze Ray", "Hoverpack",
+                          "Jetpack", "Kapala", "Machete", "Mattock", "Paste", "Pitcher's Mitt", "Plasma Cannon",
+                          "Powerpack", "Royal Jelly", "Shield", "Skeleton Key", "Spectacles", "Spike Shoes",
+                          "Spring Shoes", "Telepack", "Teleporter", "True Crown", "Vlad's cape",
+                          "Webgun"})
+
+quest_items = frozenset({"Alien Compass", "Ankh", "Crown", "Excalibur", "Hedjet", "Hou Yi's Bow", "Sceptor",
+                         "Tablet of Destiny", "Udjat Eye", "Ushabti"})
+
 sorted_item_options = ", ".join(sorted(item_options))
+
 
 class Goal(Choice):
     """When is your world considered finished.
-    Tiamat: Requires completing the "normal" ending by reaching 6-4 and defeating Tiamat
-    Hundun: Requires completing the "hard" ending by reaching 7-4 and defeating Hundun
-    Cosmic Ocean: Requires reaching a specified level in Cosmic Ocean"""
+    Tiamat / Easy: Requires completing the "normal" ending by reaching 6-4 and defeating Tiamat
+    Hundun / Hard: Requires completing the "hard" ending by reaching 7-4 and defeating Hundun
+    Cosmic Ocean / CO: Requires reaching a specified level in Cosmic Ocean"""
     display_name = "Goal"
     option_tiamat = 0
+    alias_easy = 0
     option_hundun = 1
+    alias_hard = 1
     option_cosmic_ocean = 2
-    default = 0
+    alias_co = 2
+    default = "easy"
 
 
 class GoalLevel(Range):
     """Which level in Cosmic Ocean are you required to clear to consider your game as beaten.
-    This option can be ignored if your goal is not set to \"Cosmic Ocean\""""
+    This option can be ignored if your goal is not set to \"Cosmic Ocean or CO\""""
     display_name = "Cosmic Ocean Goal Level"
     range_start = 10
     range_end = 99
@@ -38,72 +51,182 @@ class ProgressiveShortcuts(DefaultOnToggle):
     display_name = "Progressive Shortcuts"
 """
 
+
 class StartingHealth(Range):
-    """How much Health should you initially start with."""
+    """How much Health should you initially start with.
+    Valid options: {range_start}(\"{sorted_item_options}\") to {range_end}(\"max\") or \"normal\" for the default Spelunky 2 amount"""
     display_name = "Starting Health"
     range_start = 1
-    range_end = 8
-    default = 4
+    range_end = 10
+    default = "normal"
+    special_range_names = {"min": range_start, "normal": 4, "max": range_end}
 
-class ProgressiveHealth(Range):
-    """How many Starting Health upgrades are added to the multi-world"""
+
+class HealthUpgrades(Range):
+    """Increases how much health you will begin with after death
+    Valid options: {range_start}(\"none\") to {range_end}(\"max\")"""
     display_name = "Progressive Health"
     range_start = 0
-    range_end = 20
-    default = 0
+    range_end = 30
+    default = 10
+    special_range_names = {"none": range_start, "max": range_end}
+
 
 class StartingBombs(Range):
-    """How many Bombs should you initially start with."""
+    """How many Bombs should you initially start with.
+    Valid options: {range_start}(\"min\") to {range_end}(\"max\") or \"normal\" for the default Spelunky 2 amount"""
     display_name = "Starting Bombs"
     range_start = 0
     range_end = 10
-    default = 4
+    default = "normal"
+    special_range_names = {"min": range_start, "normal": 4, "max": range_end}
 
-class ProgressiveBombs(Range):
-    """If you set this above 0 then all bomb bags in the multi-world become Starting Bomb upgrades
-	Which will instead increase how many bombs you will start a run with"""
-    display_name = "Progressive Bombs"
+
+class BombUpgrades(Range):
+    """Increases how many bombs you will begin with after death
+    Valid options: {range_start}(\"none\") to {range_end}(\"max\")"""
+    display_name = "Starting Bombs Upgrades"
     range_start = 0
-    range_end = 20
-    default = 0
+    range_end = 30
+    default = 5
+    special_range_names = {"none": range_start, "max": range_end}
+
 
 class StartingRopes(Range):
-    """How many Ropes should you initially start with."""
+    """How many Ropes should you initially start with.
+    Valid options: {range_start}(\"min\") to {range_end}(\"max\") or \"normal\" for the default Spelunky 2 amount"""
     display_name = "Starting Ropes"
     range_start = 0
     range_end = 10
-    default = 4
+    default = "normal"
+    special_range_names = {"min": range_start, "normal": 4, "max": range_end}
 
-class ProgressiveRopes(Range):
-    """If you set this above 0 then all rope piles in the multi-world become Starting rope pile upgrades
-	Which will instead increase how many ropes you will start a run with"""
-    display_name = "Progressive Ropes"
+
+class RopeUpgrades(Range):
+    """Increases how many ropes you will begin with after death
+    Valid options: {range_start}(\"none\") to {range_end}(\"max\")"""
+    display_name = "Starting Rope Upgrades"
     range_start = 0
     range_end = 20
     default = 0
+    special_range_names = {"none": 0, "max": 20}
 
-class LockedItems(Set):
-    """A list of items that must be received from the multi-world before being obtainable in the game
+
+class RestrictedItems(Set):
+    """Items that must be found in the multi-world before they can be found in the game
     Valid options: {sorted_item_options}"""
-    display_name = "Locked Items"
+    display_name = "Restricted Items"
     default = item_options
 
-class ProgressiveItems(Set):
+
+class ItemUpgrades(Set):
     """Add the following items as progressive in the multi-world item pool which are kept on death
     Valid options: {sorted_item_options}"""
-    display_name = "Progressive Items"
+    display_name = "Item Upgrades"
     default = set()
 
-class ProgressiveWaddler(Set):
+
+class WaddlerUpgrades(Set):
     """Add the following items as progressive in the multi-world item pool which are added to Waddler's storage between runs
     Options set here override Progressive Items
     Valid options: {sorted_item_options}"""
-    display_name = "Progressive Waddler"
+    display_name = "Waddler Items"
     default = item_options
+
 
 class DeathLinkBypassesAnkh(Toggle):
     """Sets whether deaths sent through Death Link will trigger the Ankh, or ignore it."""
     display_name = "Death Link Ankh Handling"
+
+
+class RopePileWeight(Range):
+    """Sets the likelihood of a filler item being a Rope Pile relative to others.
+    Valid options: {range_start} to {range_end}"""
+    display_name = "Rope Pile Weight"
+    range_start = 0
+    range_end = 100
+    default = 13
+
+
+class BombBagWeight(Range):
+    """Sets the likelihood of a filler item being a Bomb Bag relative to others.
+    Valid options: {range_start} to {range_end}"""
+    display_name = "Bomb Bag Weight"
+    range_start = 0
+    range_end = 100
+    default = 13
+
+
+class BombBoxWeight(Range):
+    """Sets the likelihood of a filler item being a Bomb Box relative to others.
+    Valid options: {range_start} to {range_end}"""
+    display_name = "Bomb Box Weight"
+    range_start = 0
+    range_end = 100
+    default = 5
+
+
+class CookedTurkeyWeight(Range):
+    """Sets the likelihood of a filler item being a Cooked Turkey relative to others.
+    Valid options: {range_start} to {range_end}"""
+    display_name = "Cooked Turkey Weight"
+    range_start = 0
+    range_end = 100
+    default = 18
+
+
+class RoyalJellyWeight(Range):
+    """Sets the likelihood of a filler item being a Royal Jelly relative to others.
+    Valid options: {range_start} to {range_end}"""
+    display_name = "Royal Jelly Weight"
+    range_start = 0
+    range_end = 100
+    default = 5
+
+
+class GoldBarWeight(Range):
+    """Sets the likelihood of a filler item being a Gold Bar relative to others.
+    Valid options: {range_start} to {range_end}"""
+    display_name = "Gold Bar Weight"
+    range_start = 0
+    range_end = 100
+    default = 20
+
+
+class EmeraldGemWeight(Range):
+    """Sets the likelihood of a filler item being a Emerald relative to others.
+    Valid options: {range_start} to {range_end}"""
+    display_name = "Emerald Gem Weight"
+    range_start = 0
+    range_end = 100
+    default = 10
+
+
+class SapphireGemWeight(Range):
+    """Sets the likelihood of a filler item being a Sapphire relative to others.
+    Valid options: {range_start} to {range_end}"""
+    display_name = "Sapphire Gem Weight"
+    range_start = 0
+    range_end = 100
+    default = 8
+
+
+class RubyGemWeight(Range):
+    """Sets the likelihood of a filler item being a Ruby relative to others.
+    Valid options: {range_start} to {range_end}"""
+    display_name = "Ruby Gem Weight"
+    range_start = 0
+    range_end = 100
+    default = 6
+
+
+class DiamondGemWeight(Range):
+    """Sets the likelihood of a filler item being a Diamond relative to others.
+    Valid options: {range_start} to {range_end}"""
+    display_name = "Diamond Gem Weight"
+    range_start = 0
+    range_end = 100
+    default = 2
 
 
 class EnableTraps(Toggle):
@@ -182,21 +305,32 @@ class PunishBallTrapChance(Range):
     range_end = 100
     default = 10
 
+
 @dataclass
 class Spelunky2Options(PerGameCommonOptions):
     goal: Goal
     goal_level: GoalLevel
     progressive_worlds: ProgressiveWorlds
     starting_health: StartingHealth
-    progressive_health: ProgressiveHealth
+    health_upgrades: HealthUpgrades
     starting_bombs: StartingBombs
-    progressive_bombs: ProgressiveBombs
+    bomb_upgrades: BombUpgrades
     starting_ropes: StartingRopes
-    progressive_ropes: ProgressiveRopes
-    locked_items: LockedItems
-    progressive_items: ProgressiveItems
-    progressive_waddler: ProgressiveWaddler
+    rope_upgrades: RopeUpgrades
+    restricted_items: RestrictedItems
+    item_upgrades: ItemUpgrades
+    waddler_upgrades: WaddlerUpgrades
     # progressive_shortcuts: ProgressiveShortcuts - Not implemented yet
+    rope_pile_weight: RopePileWeight
+    bomb_bag_weight: BombBagWeight
+    bomb_box_weight: BombBoxWeight
+    cooked_turkey_weight: CookedTurkeyWeight
+    royal_jelly_weight: RoyalJellyWeight
+    gold_bar_weight: GoldBarWeight
+    emerald_gem_weight: EmeraldGemWeight
+    sapphire_gem_weight: SapphireGemWeight
+    ruby_gem_weight: RubyGemWeight
+    diamond_gem_weight: DiamondGemWeight
     enable_traps: EnableTraps
     trap_weight: TrapWeight
     poison_weight: PoisonTrapChance

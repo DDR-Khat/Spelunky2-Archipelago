@@ -1,4 +1,5 @@
 from typing import TYPE_CHECKING
+from .Items import starter_items, locked_items, quest_items
 
 from BaseClasses import CollectionState
 from worlds.generic.Rules import set_rule
@@ -124,3 +125,29 @@ def can_access_sunken_city(state: CollectionState, player: int) -> bool:
     return ((has_royalty(state, player) and has_weapon(state, player) and state.has_all(["Tablet of Destiny", "Ushabti"], player))
             and (state.can_reach("Neo Babylon", "Region", player) and state.has("Sunken City", player))
             or state.has("Progressive World Unlock", player, 6))
+
+
+def set_starter_upgrade_rules(world: "Spelunky2World", player: int):
+    """Ensure starter upgrades require their locked/quest counterpart first."""
+
+    # Locked Items → Starter Items
+    for locked_name, locked_data in locked_items.items():
+        target_code = locked_data.code + 100
+        starter_name = next((n for n, d in starter_items.items() if d.code == target_code), None)
+        if starter_name:
+            try:
+                loc = world.get_location(starter_name)
+                set_rule(loc, lambda state, item_name=locked_name: state.has(item_name, player))
+            except KeyError:
+                pass
+
+    # Quest Items → Starter Items
+    for quest_name, quest_data in quest_items.items():
+        target_code = quest_data.code - 70
+        starter_name = next((n for n, d in starter_items.items() if d.code == target_code), None)
+        if starter_name:
+            try:
+                loc = world.get_location(starter_name)
+                set_rule(loc, lambda state, item_name=quest_name: state.has(item_name, player))
+            except KeyError:
+                pass

@@ -3,11 +3,12 @@ from typing import List, Mapping, Any, Dict
 from worlds.AutoWorld import World, WebWorld
 from BaseClasses import MultiWorld, Tutorial, ItemClassification, Region
 
-from .Items import Spelunky2Item, item_data_table, filler_items, traps, filler_weights, trap_weights
+from .Items import (Spelunky2Item, filler_items, traps, filler_weights, trap_weights,
+                    characters, locked_items, starter_items, quest_items, permanent_upgrades, world_unlocks)
 from .Locations import Spelunky2Location, location_data_table
 from .Options import Spelunky2Options
 from .Regions import region_data_table
-from .Rules import set_common_rules, set_sunken_city_rules, set_cosmic_ocean_rules
+from .Rules import set_common_rules, set_sunken_city_rules, set_cosmic_ocean_rules, set_starter_upgrade_rules
 
 
 class Spelunky2WebWorld(WebWorld):
@@ -38,14 +39,25 @@ class Spelunky2World(World):
     options_dataclass = Spelunky2Options
     filler_count = 0
     trap_count = 0
-    filler_weights = filler_weights
+
+    item_data_table = {
+        **filler_items,
+        **characters,
+        **locked_items,
+        **starter_items,
+        **quest_items,
+        **permanent_upgrades,
+        **world_unlocks,
+        **traps
+    }
 
     item_name_to_id = {name: data.code for name, data in item_data_table.items()}
     location_name_to_id = {name: data.address for name, data in location_data_table.items()}
 
     def __init__(self, multiworld: MultiWorld, player: int):
         super().__init__(multiworld, player)
-        self.trap_weights = trap_weights
+        self.filler_weights = filler_weights.copy()
+        self.trap_weights = trap_weights.copy()
 
     def generate_early(self) -> None:
         pass
@@ -94,84 +106,111 @@ class Spelunky2World(World):
         self.multiworld.completion_condition[self.player] = lambda state: state.has("Victory", self.player)
         goal_region.locations.append(goal_location)
 
-        self.filler_count = len(self.multiworld.get_unfilled_locations(self.player))
-
     def create_item(self, name: str) -> "Spelunky2Item":
-        classification = item_data_table[name].classification
-        return Spelunky2Item(name, classification, self.item_name_to_id[name], self.player)
+        data = self.item_data_table[name]
+        return Spelunky2Item(name, data.classification, data.code, self.player)
 
     def create_items(self) -> None:
-        exclude_items = ["Cosmic Ocean Checkpoint"]
-
-        for key, _ in filler_items.items():
-            exclude_items.append(key)
-
-        for key, _ in traps.items():
-            exclude_items.append(key)
-
         spelunky2_item_pool = []
 
-        if self.options.goal == 0:
-            exclude_items.append("Arrow of Light")
-
-        if self.options.goal == 2:
-            for i in range(int(self.options.goal_level / 10)):
-                item = self.create_item("Cosmic Ocean Checkpoint")
-                spelunky2_item_pool.append(item)
-        else:
-            if not self.options.progressive_worlds:
-                exclude_items.append("Cosmic Ocean")
-
         if self.options.progressive_worlds:
-            exclude_items.extend(["Jungle", "Volcana", "Olmec's Lair",
-                                  "Tide Pool", "Temple", "Ice Caves",
-                                  "Neo Babylon", "Sunken City", "Cosmic Ocean"])
+            unlock_count = 5
+            if self.options.goal > 0:
+                unlock_count += 1
+            if self.options.goal > 1:
+                unlock_count += 1
+            for _ in range(unlock_count):
+                spelunky2_item_pool.append(self.create_item("Progressive World Unlock"))
         else:
-            exclude_items.append("Progressive World Unlock")
+            individual_worlds = ["Jungle", "Volcana", "Olmec's Lair", "Tide Pool", "Temple", "Ice Caves", "Neo Babylon"]
+            if self.options.goal > 0:
+                individual_worlds.append("Sunken City")
+            if self.options.goal > 1:
+                individual_worlds.append("Cosmic Ocean")
+            spelunky2_item_pool.extend([self.create_item(world) for world in individual_worlds])
 
-        """
-        # Shortcuts not implemented yet
-        if self.options.progressive_shortcuts:
-            exclude_items.extend(["Dwelling Shortcut", "Olmec's Lair Shortcut", "Ice Caves Shortcut"])
+        quest_item_names = list(quest_items.keys())
 
+        if self.options.goal.value == 0:
+            item_count = 1
         else:
-            exclude_items.append("Progressive Shortcut")
-        """
+            item_count = len(quest_item_names) - (0 if self.options.goal.value == 2 else 2)
 
-        for name, data in item_data_table.items():
-            if name not in exclude_items:
-                for i in range(data.amount):
-                    item = self.create_item(name)
-                    spelunky2_item_pool.append(item)
-                    self.filler_count -= 1
+        for i in range(item_count):
+            item_name = quest_item_names[i]
+            spelunky2_item_pool.append(self.create_item(item_name))
+
+        for item_name in self.options.restricted_items.value:
+            spelunky2_item_pool.append(self.create_item(item_name))
+
+        waddler_set = set(self.options.waddler_upgrades.value)
+
+        for base_item_name in waddler_set:
+            upgrade_name = base_item_name + " Upgrade"
+            if upgrade_name in starter_items:
+                spelunky2_item_pool.append(self.create_item(upgrade_name))
+
+        for base_item_name in self.options.item_upgrades.value:
+            if base_item_name not in waddler_set:
+                upgrade_name = base_item_name + " Upgrade"
+                if upgrade_name in starter_items:
+                    spelunky2_item_pool.append(self.create_item(upgrade_name))
+
+        for _ in range(self.options.health_upgrades.value):
+            spelunky2_item_pool.append(self.create_item("Health Upgrade"))
+        for _ in range(self.options.bomb_upgrades.value):
+            spelunky2_item_pool.append(self.create_item("Bomb Upgrade"))
+        for _ in range(self.options.rope_upgrades.value):
+            spelunky2_item_pool.append(self.create_item("Rope Upgrade"))
+
+        if self.options.goal.value == 2:
+            for _ in range(int(self.options.goal_level.value / 10)):
+                spelunky2_item_pool.append(self.create_item("Cosmic Ocean Checkpoint"))
+
+        for char_name in characters:
+            spelunky2_item_pool.append(self.create_item(char_name))
+
+        locations_count = len(self.multiworld.get_unfilled_locations(self.player))
+        self.filler_count = locations_count - len(spelunky2_item_pool)
+
+        self.filler_weights["Rope Pile"] = self.options.rope_pile_weight.value
+        self.filler_weights["Bomb Bag"] = self.options.bomb_bag_weight.value
+        self.filler_weights["Bomb Box"] = self.options.bomb_box_weight.value
+        self.filler_weights["Cooked Turkey"] = self.options.cooked_turkey_weight.value
+        self.filler_weights["Royal Jelly"] = self.options.royal_jelly_weight.value
+        self.filler_weights["Gold Bar"] = self.options.gold_bar_weight.value
+        self.filler_weights["Emerald Gem"] = self.options.emerald_gem_weight.value
+        self.filler_weights["Sapphire Gem"] = self.options.sapphire_gem_weight.value
+        self.filler_weights["Ruby Gem"] = self.options.ruby_gem_weight.value
+        self.filler_weights["Diamond Gem"] = self.options.diamond_gem_weight.value
 
         if self.options.enable_traps:
-            self.trap_count = int(self.filler_count * (self.options.trap_weight / 100))
+            self.trap_count = int(self.filler_count * (self.options.trap_weight.value / 100))
             self.filler_count -= self.trap_count
 
-            self.trap_weights["Poison Trap"] = self.options.poison_weight
-            self.trap_weights["Curse Trap"] = self.options.curse_weight
-            self.trap_weights["Ghost Trap"] = self.options.ghost_weight
-            self.trap_weights["Stun Trap"] = self.options.stun_weight
-            self.trap_weights["Loose Bombs Trap"] = self.options.bomb_weight
-            self.trap_weights["Blindness Trap"] = self.options.blind_weight
-            self.trap_weights["Punish Ball Trap"] = self.options.punish_weight
+            self.trap_weights["Poison Trap"] = self.options.poison_weight.value
+            self.trap_weights["Curse Trap"] = self.options.curse_weight.value
+            self.trap_weights["Ghost Trap"] = self.options.ghost_weight.value
+            self.trap_weights["Stun Trap"] = self.options.stun_weight.value
+            self.trap_weights["Loose Bombs Trap"] = self.options.bomb_weight.value
+            self.trap_weights["Blindness Trap"] = self.options.blind_weight.value
+            self.trap_weights["Punish Ball Trap"] = self.options.punish_weight.value
 
-            for i in range(self.trap_count):
-                trap = self.create_trap()
-                spelunky2_item_pool.append(trap)
+            for _ in range(self.trap_count):
+                spelunky2_item_pool.append(self.create_trap())
 
-        for i in range(self.filler_count):
-            filler = self.create_filler()
-            spelunky2_item_pool.append(filler)
+        for _ in range(self.filler_count):
+            spelunky2_item_pool.append(self.create_filler())
 
         self.multiworld.itempool.extend(spelunky2_item_pool)
 
     def create_filler(self) -> "Spelunky2Item":
-        return self.create_item(self.random.choices(list(filler_items.keys()), list(filler_weights.values()))[0])
+        return self.create_item(
+            self.random.choices(list(self.filler_weights.keys()), list(self.filler_weights.values()))[0])
 
     def create_trap(self) -> "Spelunky2Item":
-        return self.create_item(self.random.choices(list(traps.keys()), list(trap_weights.values()))[0])
+        return self.create_item(
+            self.random.choices(list(self.trap_weights.keys()), list(self.trap_weights.values()))[0])
 
     def set_rules(self) -> None:
         set_common_rules(self, self.player)
@@ -182,20 +221,29 @@ class Spelunky2World(World):
         if self.options.goal == 2:
             set_cosmic_ocean_rules(self, self.player)
 
+        # Add the rule-setter for starter item upgrades
+        set_starter_upgrade_rules(self, self.player)
+
     def fill_slot_data(self) -> Mapping[str, Any]:
         slot_data = {
             "goal": self.options.goal.value,
             "progressive_worlds": bool(self.options.progressive_worlds.value),
             "starting_health": self.options.starting_health.value,
             "starting_bombs": self.options.starting_bombs.value,
-            "starting_ropes": self.options.starting_ropes.value
+            "starting_ropes": self.options.starting_ropes.value,
+            "health_upgrades": self.options.health_upgrades.value,
+            "bomb_upgrades": self.options.bomb_upgrades.value,
+            "rope_upgrades": self.options.rope_upgrades.value,
+            "restricted_items": list(self.options.restricted_items.value),
+            "item_upgrades": list(self.options.item_upgrades.value),
+            "waddler_upgrades": list(self.options.waddler_upgrades.value),
+            "death_link": self.options.death_link.value > 0,
         }
 
-        if self.options.goal == 2:
+        if self.options.goal.value == 2:
             slot_data["goal_level"] = self.options.goal_level.value
 
-        if self.options.death_link:
-            slot_data["death_link"] = True
+        if slot_data["death_link"]:
             slot_data["bypass_ankh"] = bool(self.options.bypass_ankh.value)
 
         return slot_data
