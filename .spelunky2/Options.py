@@ -1,4 +1,4 @@
-from Options import Toggle, DefaultOnToggle, Range, Choice, PerGameCommonOptions, DeathLink, Set
+from Options import Toggle, DefaultOnToggle, Range, Choice, PerGameCommonOptions, DeathLink, ItemSet
 from dataclasses import dataclass
 
 # Item Master List
@@ -17,22 +17,19 @@ sorted_item_options = ", ".join(sorted(item_options))
 
 class Goal(Choice):
     """When is your world considered finished.
-    Tiamat / Easy: Requires completing the "normal" ending by reaching 6-4 and defeating Tiamat
-    Hundun / Hard: Requires completing the "hard" ending by reaching 7-4 and defeating Hundun
-    Cosmic Ocean / CO: Requires reaching a specified level in Cosmic Ocean"""
+    Easy: Requires completing the "normal" ending by reaching 6-4 and defeating Tiamat
+    Hard: Requires completing the "hard" ending by reaching 7-4 and defeating Hundun
+    CO: Requires reaching a specified level in Cosmic Ocean"""
     display_name = "Goal"
-    option_tiamat = 0
-    alias_easy = 0
-    option_hundun = 1
-    alias_hard = 1
-    option_cosmic_ocean = 2
-    alias_co = 2
-    default = "easy"
+    option_easy = 0
+    option_hard = 1
+    option_co = 2
+    default = 0
 
 
 class GoalLevel(Range):
     """Which level in Cosmic Ocean are you required to clear to consider your game as beaten.
-    This option can be ignored if your goal is not set to \"Cosmic Ocean or CO\""""
+    This option can be ignored if your goal is not set to \"CO\""""
     display_name = "Cosmic Ocean Goal Level"
     range_start = 10
     range_end = 99
@@ -53,83 +50,69 @@ class ProgressiveShortcuts(DefaultOnToggle):
 
 
 class StartingHealth(Range):
-    """How much Health should you initially start with.
-    Valid options: {range_start}(\"{sorted_item_options}\") to {range_end}(\"max\") or \"normal\" for the default Spelunky 2 amount"""
+    """How much Health should you initially start with."""
     display_name = "Starting Health"
     range_start = 1
     range_end = 10
-    default = "normal"
-    special_range_names = {"min": range_start, "normal": 4, "max": range_end}
+    default = 4
 
 
 class HealthUpgrades(Range):
-    """Increases how much health you will begin with after death
-    Valid options: {range_start}(\"none\") to {range_end}(\"max\")"""
+    """Increases how much health you will begin with after death."""
     display_name = "Progressive Health"
     range_start = 0
     range_end = 30
     default = 10
-    special_range_names = {"none": range_start, "max": range_end}
 
 
 class StartingBombs(Range):
-    """How many Bombs should you initially start with.
-    Valid options: {range_start}(\"min\") to {range_end}(\"max\") or \"normal\" for the default Spelunky 2 amount"""
+    """How many Bombs should you initially start with."""
     display_name = "Starting Bombs"
     range_start = 0
     range_end = 10
-    default = "normal"
-    special_range_names = {"min": range_start, "normal": 4, "max": range_end}
+    default = 4
 
 
 class BombUpgrades(Range):
-    """Increases how many bombs you will begin with after death
-    Valid options: {range_start}(\"none\") to {range_end}(\"max\")"""
+    """Increases how many bombs you will begin with after death."""
     display_name = "Starting Bombs Upgrades"
     range_start = 0
     range_end = 30
     default = 5
-    special_range_names = {"none": range_start, "max": range_end}
 
 
 class StartingRopes(Range):
-    """How many Ropes should you initially start with.
-    Valid options: {range_start}(\"min\") to {range_end}(\"max\") or \"normal\" for the default Spelunky 2 amount"""
+    """How many Ropes should you initially start with."""
     display_name = "Starting Ropes"
     range_start = 0
     range_end = 10
-    default = "normal"
-    special_range_names = {"min": range_start, "normal": 4, "max": range_end}
+    default = 4
 
 
 class RopeUpgrades(Range):
-    """Increases how many ropes you will begin with after death
-    Valid options: {range_start}(\"none\") to {range_end}(\"max\")"""
+    """Increases how many ropes you will begin with after death."""
     display_name = "Starting Rope Upgrades"
     range_start = 0
     range_end = 20
     default = 0
-    special_range_names = {"none": 0, "max": 20}
 
 
-class RestrictedItems(Set):
-    """Items that must be found in the multi-world before they can be found in the game
-    Valid options: {sorted_item_options}"""
+class RestrictedItems(ItemSet):
+    """Items that are added to the multi-world as progressive and must be found in the multi-world before they can be
+    obtained in the game"""
     display_name = "Restricted Items"
     default = item_options
 
 
-class ItemUpgrades(Set):
-    """Add the following items as progressive in the multi-world item pool which are kept on death
-    Valid options: {sorted_item_options}"""
+class ItemUpgrades(ItemSet):
+    """Add the following useful items in the multi-world item pool which are kept on death."""
     display_name = "Item Upgrades"
     default = set()
 
 
-class WaddlerUpgrades(Set):
-    """Add the following items as progressive in the multi-world item pool which are added to Waddler's storage between runs
-    Options set here override Progressive Items
-    Valid options: {sorted_item_options}"""
+class WaddlerUpgrades(ItemSet):
+    """Add the following useful items in the multi-world item pool which are added to Waddler's storage between
+    runs, options set here override Item Upgrades"""
     display_name = "Waddler Items"
     default = item_options
 
@@ -140,8 +123,7 @@ class DeathLinkBypassesAnkh(Toggle):
 
 
 class RopePileWeight(Range):
-    """Sets the likelihood of a filler item being a Rope Pile relative to others.
-    Valid options: {range_start} to {range_end}"""
+    """Sets the likelihood of a filler item being a Rope Pile relative to others."""
     display_name = "Rope Pile Weight"
     range_start = 0
     range_end = 100
@@ -149,8 +131,7 @@ class RopePileWeight(Range):
 
 
 class BombBagWeight(Range):
-    """Sets the likelihood of a filler item being a Bomb Bag relative to others.
-    Valid options: {range_start} to {range_end}"""
+    """Sets the likelihood of a filler item being a Bomb Bag relative to others."""
     display_name = "Bomb Bag Weight"
     range_start = 0
     range_end = 100
@@ -158,8 +139,7 @@ class BombBagWeight(Range):
 
 
 class BombBoxWeight(Range):
-    """Sets the likelihood of a filler item being a Bomb Box relative to others.
-    Valid options: {range_start} to {range_end}"""
+    """Sets the likelihood of a filler item being a Bomb Box relative to others."""
     display_name = "Bomb Box Weight"
     range_start = 0
     range_end = 100
@@ -167,8 +147,7 @@ class BombBoxWeight(Range):
 
 
 class CookedTurkeyWeight(Range):
-    """Sets the likelihood of a filler item being a Cooked Turkey relative to others.
-    Valid options: {range_start} to {range_end}"""
+    """Sets the likelihood of a filler item being a Cooked Turkey relative to others."""
     display_name = "Cooked Turkey Weight"
     range_start = 0
     range_end = 100
@@ -176,8 +155,7 @@ class CookedTurkeyWeight(Range):
 
 
 class RoyalJellyWeight(Range):
-    """Sets the likelihood of a filler item being a Royal Jelly relative to others.
-    Valid options: {range_start} to {range_end}"""
+    """Sets the likelihood of a filler item being a Royal Jelly relative to others."""
     display_name = "Royal Jelly Weight"
     range_start = 0
     range_end = 100
@@ -185,8 +163,7 @@ class RoyalJellyWeight(Range):
 
 
 class GoldBarWeight(Range):
-    """Sets the likelihood of a filler item being a Gold Bar relative to others.
-    Valid options: {range_start} to {range_end}"""
+    """Sets the likelihood of a filler item being a Gold Bar relative to others."""
     display_name = "Gold Bar Weight"
     range_start = 0
     range_end = 100
@@ -194,8 +171,7 @@ class GoldBarWeight(Range):
 
 
 class EmeraldGemWeight(Range):
-    """Sets the likelihood of a filler item being a Emerald relative to others.
-    Valid options: {range_start} to {range_end}"""
+    """Sets the likelihood of a filler item being an Emerald relative to others."""
     display_name = "Emerald Gem Weight"
     range_start = 0
     range_end = 100
@@ -203,8 +179,7 @@ class EmeraldGemWeight(Range):
 
 
 class SapphireGemWeight(Range):
-    """Sets the likelihood of a filler item being a Sapphire relative to others.
-    Valid options: {range_start} to {range_end}"""
+    """Sets the likelihood of a filler item being a Sapphire relative to others."""
     display_name = "Sapphire Gem Weight"
     range_start = 0
     range_end = 100
@@ -212,8 +187,7 @@ class SapphireGemWeight(Range):
 
 
 class RubyGemWeight(Range):
-    """Sets the likelihood of a filler item being a Ruby relative to others.
-    Valid options: {range_start} to {range_end}"""
+    """Sets the likelihood of a filler item being a Ruby relative to others."""
     display_name = "Ruby Gem Weight"
     range_start = 0
     range_end = 100
@@ -221,8 +195,7 @@ class RubyGemWeight(Range):
 
 
 class DiamondGemWeight(Range):
-    """Sets the likelihood of a filler item being a Diamond relative to others.
-    Valid options: {range_start} to {range_end}"""
+    """Sets the likelihood of a filler item being a Diamond relative to others."""
     display_name = "Diamond Gem Weight"
     range_start = 0
     range_end = 100
