@@ -1,18 +1,38 @@
 from Options import Toggle, DefaultOnToggle, Range, Choice, PerGameCommonOptions, DeathLink, ItemSet
 from dataclasses import dataclass
 
+
 # Item Master List
-item_options = frozenset({"Climbing Gloves", "Camera", "Cape", "Clone Gun", "Compass",
-                          "Eggplant", "Eggplant Crown", "Elixir", "Four-Leaf Clover", "Freeze Ray", "Hoverpack",
-                          "Jetpack", "Kapala", "Machete", "Mattock", "Paste", "Pitcher's Mitt", "Plasma Cannon",
-                          "Powerpack", "Royal Jelly", "Shield", "Skeleton Key", "Spectacles", "Spike Shoes",
-                          "Spring Shoes", "Telepack", "Teleporter", "True Crown", "Vlad's cape",
-                          "Webgun"})
+
+
+def format_options(options, row_length=10):
+    """Formats a list of options into a multi-line string, with each line
+    containing 'row_length' options separated by '|'.
+    """
+    lines = []
+    # Convert the options to a list to ensure order
+    options_list = list(options)
+    for i in range(0, len(options_list), row_length):
+        row = " | ".join(options_list[i:i + row_length])
+        lines.append(f"- {row}")
+    return "\n".join(lines)
+
+
+powerup_options = frozenset({"Climbing Gloves", "Compass", "Eggplant Crown", "Elixir", "Four-Leaf Clover", "Kapala",
+                             "Paste", "Pitcher's Mitt", "Skeleton Key", "Spectacles", "Spike Shoes", "Spring Shoes",
+                             "True Crown"})
+
+equip_options = frozenset({"Camera", "Cape", "Clone Gun", "Eggplant", "Freeze Ray", "Hoverpack", "Jetpack", "Machete",
+                           "Mattock", "Paste", "Plasma Cannon", "Powerpack", "Shield", "Telepack", "Teleporter",
+                           "Vlad's cape", "Webgun"})
 
 quest_items = frozenset({"Alien Compass", "Ankh", "Crown", "Excalibur", "Hedjet", "Hou Yi's Bow", "Sceptor",
                          "Tablet of Destiny", "Udjat Eye", "Ushabti"})
 
-sorted_item_options = ", ".join(sorted(item_options))
+item_options = sorted(powerup_options | equip_options)
+locked_items = sorted(powerup_options | equip_options | quest_items)
+item_options_text = format_options(sorted(item_options))
+locked_items_text = format_options(sorted(locked_items))
 
 
 class Goal(Choice):
@@ -98,23 +118,30 @@ class RopeUpgrades(Range):
 
 
 class RestrictedItems(ItemSet):
-    """Items that are added to the multi-world as progressive and must be found in the multi-world before they can be
-    obtained in the game"""
+    __doc__ = f"""Items that are added to the multi-world as progressive and must be found in the multi-world before they can be obtained in the game
+Options: 
+{locked_items_text}"""
     display_name = "Restricted Items"
-    default = item_options
+    valid_keys = locked_items
+    default = locked_items
 
 
 class ItemUpgrades(ItemSet):
-    """Add the following useful items in the multi-world item pool which are kept on death."""
+    __doc__ = f"""Add the following useful items in the multi-world item pool which are kept on death, AFTER obtaining it's journal entry.
+Options: 
+{item_options_text}"""
     display_name = "Item Upgrades"
-    default = set()
+    valid_keys = item_options
+    default = powerup_options
 
 
 class WaddlerUpgrades(ItemSet):
-    """Add the following useful items in the multi-world item pool which are added to Waddler's storage between
-    runs, options set here override Item Upgrades"""
+    __doc__ = f"""Add the following useful items in the multi-world item pool which are added to Waddler's storage between runs, AFTER obtaining it's journal entry.
+Options (any selected here override options in item_upgrades):
+{locked_items_text}"""
     display_name = "Waddler Items"
-    default = item_options
+    valid_keys = item_options
+    default = equip_options
 
 
 class DeathLinkBypassesAnkh(Toggle):
