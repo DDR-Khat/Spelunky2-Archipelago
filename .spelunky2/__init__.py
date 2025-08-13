@@ -1,7 +1,7 @@
 from typing import List, Mapping, Any, Dict
 from worlds.AutoWorld import World, WebWorld
 from BaseClasses import MultiWorld, Tutorial, ItemClassification, Region
-from enum import IntEnum
+from .enums import Spelunky2Goal
 
 # Master Item List
 powerup_options = frozenset({"Ankh", "Climbing Gloves", "Compass", "Eggplant Crown", "Elixir", "Four-Leaf Clover", "Kapala",
@@ -27,11 +27,6 @@ from .Locations import Spelunky2Location, location_data_table
 from .Options import Spelunky2Options
 from .Regions import region_data_table
 from .Rules import set_common_rules, set_sunken_city_rules, set_cosmic_ocean_rules, set_starter_upgrade_rules
-
-class Spelunky2Goal(IntEnum):
-    EASY = 0
-    HARD = 1
-    CO   = 2
 
 class Spelunky2WebWorld(WebWorld):
     theme = "stone"

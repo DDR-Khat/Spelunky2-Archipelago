@@ -1,6 +1,6 @@
 from typing import NamedTuple, Optional
 from BaseClasses import Location
-from . import Spelunky2Goal
+from .enums import Spelunky2Goal
 
 #####
 # HUGE thanks to Cloiss for a lot of the logic changes in here to make more sense
