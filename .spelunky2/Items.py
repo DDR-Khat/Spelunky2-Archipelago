@@ -1,6 +1,6 @@
 from typing import Optional, NamedTuple
 from BaseClasses import Item, ItemClassification
-from . import powerup_options, equip_options, quest_items, locked_items, item_options
+from . import locked_items, item_options
 
 class Spelunky2Item(Item):
     game = "Spelunky 2"

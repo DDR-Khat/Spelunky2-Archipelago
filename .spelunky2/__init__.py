@@ -1,6 +1,7 @@
 from typing import List, Mapping, Any, Dict
 from worlds.AutoWorld import World, WebWorld
 from BaseClasses import MultiWorld, Tutorial, ItemClassification, Region
+from enum import IntEnum
 
 # Master Item List
 powerup_options = frozenset({"Ankh", "Climbing Gloves", "Compass", "Eggplant Crown", "Elixir", "Four-Leaf Clover", "Kapala",
@@ -26,6 +27,11 @@ from .Locations import Spelunky2Location, location_data_table
 from .Options import Spelunky2Options
 from .Regions import region_data_table
 from .Rules import set_common_rules, set_sunken_city_rules, set_cosmic_ocean_rules, set_starter_upgrade_rules
+
+class Spelunky2Goal(IntEnum):
+    EASY = 0
+    HARD = 1
+    CO   = 2
 
 class Spelunky2WebWorld(WebWorld):
     theme = "stone"
@@ -79,10 +85,10 @@ class Spelunky2World(World):
     def create_regions(self) -> None:
         exclude_regions = []
 
-        if self.options.goal == 0:
+        if self.options.goal == Spelunky2Goal.EASY:
             exclude_regions.append("Sunken City")
 
-        if self.options.goal != 2:
+        if self.options.goal != Spelunky2Goal.CO:
             exclude_regions.append("Cosmic Ocean")
 
         for region_name in region_data_table.keys():
@@ -104,13 +110,15 @@ class Spelunky2World(World):
                     connecting_region = self.get_region(region_exit)
                     region.connect(connecting_region)
 
-            region.add_locations({location_name: self.location_name_to_id[location_name]
-                                  for location_name, location_data in location_data_table.items()
-                                  if location_data.region == region_name}, Spelunky2Location)
+            region.add_locations({
+                location_name: self.location_name_to_id[location_name]
+                for location_name, location_data in location_data_table.items()
+                if location_data.region == region_name and location_data.goal <= self.options.goal
+            }, Spelunky2Location)
 
-        if self.options.goal == 1:
+        if self.options.goal == Spelunky2Goal.HARD:
             goal_region = self.get_region("Sunken City")
-        elif self.options.goal == 2:
+        elif self.options.goal == Spelunky2Goal.CO:
             goal_region = self.get_region("Cosmic Ocean")
         else:
             goal_region = self.get_region("Neo Babylon")
@@ -130,9 +138,9 @@ class Spelunky2World(World):
         # Handle Progressive Worlds and Goals
         if self.options.progressive_worlds.value:
             unlock_count = 5
-            if self.options.goal.value > 0:
+            if self.options.goal.value > Spelunky2Goal.EASY:
                 unlock_count += 1
-            if self.options.goal.value > 1:
+            if self.options.goal.value > Spelunky2Goal.HARD:
                 unlock_count += 1
             for _ in range(unlock_count):
                 spelunky2_item_pool.append(self.create_item("Progressive World Unlock"))
@@ -146,10 +154,10 @@ class Spelunky2World(World):
 
         # Add all quest items that are not explicitly restricted
         quest_item_names = sorted(quest_items)
-        if self.options.goal.value == 0:
+        if self.options.goal.value == Spelunky2Goal.EASY:
             item_count = 1
         else:
-            item_count = len(quest_item_names) - (0 if self.options.goal.value == 2 else 2)
+            item_count = len(quest_item_names) - (0 if self.options.goal.value == Spelunky2Goal.CO else 2)
 
         for i in range(item_count):
             item_name = quest_item_names[i]
@@ -185,7 +193,7 @@ class Spelunky2World(World):
             spelunky2_item_pool.append(self.create_item("Rope Upgrade"))
 
         # Cosmic Ocean checkpoints
-        if self.options.goal.value == 2:
+        if self.options.goal.value == Spelunky2Goal.CO:
             for _ in range(int(self.options.goal_level.value / 10)):
                 spelunky2_item_pool.append(self.create_item("Cosmic Ocean Checkpoint"))
 
@@ -264,7 +272,7 @@ class Spelunky2World(World):
             "death_link": self.options.death_link.value > 0,
         }
 
-        if self.options.goal.value == 2:
+        if self.options.goal.value == Spelunky2Goal.CO:
             slot_data["goal_level"] = self.options.goal_level.value
 
         if slot_data["death_link"]:

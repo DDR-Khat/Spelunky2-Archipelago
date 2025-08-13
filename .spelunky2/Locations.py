@@ -1,5 +1,6 @@
 from typing import NamedTuple, Optional
 from BaseClasses import Location
+from . import Spelunky2Goal
 
 #####
 # HUGE thanks to Cloiss for a lot of the logic changes in here to make more sense
@@ -12,6 +13,7 @@ class Spelunky2Location(Location):
 class Spelunky2LocationData(NamedTuple):
     address: int
     region: str
+    goal: Optional[int] = Spelunky2Goal.EASY
 
 
 place_entries = {
@@ -27,10 +29,10 @@ place_entries = {
     "Ice Caves Journal Entry": Spelunky2LocationData(10, "Ice Caves"),
     "Neo Babylon Journal Entry": Spelunky2LocationData(11, "Neo Babylon"),
     "Tiamat's Throne Journal Entry": Spelunky2LocationData(12, "Neo Babylon"),
-    "Sunken City Journal Entry": Spelunky2LocationData(13, "Sunken City"),
-    "Eggplant World Journal Entry": Spelunky2LocationData(14, "Eggplant World"),
-    "Hundun's Hideaway Journal Entry": Spelunky2LocationData(15, "Sunken City"),
-    "Cosmic Ocean Journal Entry": Spelunky2LocationData(16, "Cosmic Ocean")
+    "Sunken City Journal Entry": Spelunky2LocationData(13, "Sunken City", Spelunky2Goal.HARD),
+    "Eggplant World Journal Entry": Spelunky2LocationData(14, "Eggplant World", Spelunky2Goal.HARD),
+    "Hundun's Hideaway Journal Entry": Spelunky2LocationData(15, "Sunken City", Spelunky2Goal.HARD),
+    "Cosmic Ocean Journal Entry": Spelunky2LocationData(16, "Cosmic Ocean", Spelunky2Goal.CO)
 }
 
 people_entries = {
@@ -52,9 +54,9 @@ people_entries = {
     "Demi Von Diamonds Journal Entry": Spelunky2LocationData(31, "Ice Caves"),
     "Pilot Journal Entry": Spelunky2LocationData(32, "Mothership"),
     "Princess Airyn Journal Entry": Spelunky2LocationData(33, "Neo Babylon"),  # Reduced spawn rate until a Tiamat win without shortcuts
-    "Dirk Yamaoka Journal Entry": Spelunky2LocationData(34, "Sunken City"),
+    "Dirk Yamaoka Journal Entry": Spelunky2LocationData(34, "Sunken City", Spelunky2Goal.HARD),
     "Guy Spelunky Journal Entry": Spelunky2LocationData(35, "Neo Babylon"),
-    "Classic Guy Journal Entry": Spelunky2LocationData(36, "Sunken City"),
+    "Classic Guy Journal Entry": Spelunky2LocationData(36, "Sunken City", Spelunky2Goal.HARD),
     "Terra Tunnel Journal Entry": Spelunky2LocationData(37, "Any World 2"),  # Can be in either Jungle or Volcana
     "Hired Hand Journal Entry": Spelunky2LocationData(38, "Dwelling"),  # From Alto's coffin or a shop
     "Eggplant Child Journal Entry": Spelunky2LocationData(39, "Ice Caves"),
@@ -72,7 +74,7 @@ people_entries = {
     "Parmesan Journal Entry": Spelunky2LocationData(51, "Jungle"),
     "Sparrow Journal Entry": Spelunky2LocationData(52, "Any World 2"),  # Can be in either Jungle or Volcana
     "Beg Journal Entry": Spelunky2LocationData(53, "Any World 2"),  # Depends on how many altars you encounter - Logic assumes you find 2 altars within the first 2 worlds
-    "Eggplant King Journal Entry": Spelunky2LocationData(54, "Eggplant World"),
+    "Eggplant King Journal Entry": Spelunky2LocationData(54, "Eggplant World", Spelunky2Goal.HARD),
 }
 
 bestiary_entries = {
@@ -145,18 +147,18 @@ bestiary_entries = {
     "Tiamat Journal Entry": Spelunky2LocationData(106, "Neo Babylon"),
 
     # Sunken City
-    "Tadpole Journal Entry": Spelunky2LocationData(107, "Sunken City"),
-    "Frog Journal Entry": Spelunky2LocationData(108, "Sunken City"),
-    "Fire Frog Journal Entry": Spelunky2LocationData(109, "Sunken City"),
-    "Goliath Frog Journal Entry": Spelunky2LocationData(110, "Sunken City"),
-    "Grub Journal Entry": Spelunky2LocationData(111, "Sunken City"),
-    "Giant Fly Journal Entry": Spelunky2LocationData(112, "Sunken City"),
-    "Hundun Journal Entry": Spelunky2LocationData(113, "Sunken City"),
-    "Eggplant Minister Journal Entry": Spelunky2LocationData(114, "Eggplant World"),
-    "Eggplup Journal Entry": Spelunky2LocationData(115, "Eggplant World"),
+    "Tadpole Journal Entry": Spelunky2LocationData(107, "Sunken City", Spelunky2Goal.HARD),
+    "Frog Journal Entry": Spelunky2LocationData(108, "Sunken City", Spelunky2Goal.HARD),
+    "Fire Frog Journal Entry": Spelunky2LocationData(109, "Sunken City", Spelunky2Goal.HARD),
+    "Goliath Frog Journal Entry": Spelunky2LocationData(110, "Sunken City", Spelunky2Goal.HARD),
+    "Grub Journal Entry": Spelunky2LocationData(111, "Sunken City", Spelunky2Goal.HARD),
+    "Giant Fly Journal Entry": Spelunky2LocationData(112, "Sunken City", Spelunky2Goal.HARD),
+    "Hundun Journal Entry": Spelunky2LocationData(113, "Sunken City", Spelunky2Goal.HARD),
+    "Eggplant Minister Journal Entry": Spelunky2LocationData(114, "Eggplant World", Spelunky2Goal.HARD),
+    "Eggplup Journal Entry": Spelunky2LocationData(115, "Eggplant World", Spelunky2Goal.HARD),
 
     # Cosmic Ocean
-    "Celestial Jelly Journal Entry": Spelunky2LocationData(116, "Cosmic Ocean"),
+    "Celestial Jelly Journal Entry": Spelunky2LocationData(116, "Cosmic Ocean", Spelunky2Goal.CO),
 
     # Miscellaneous
     "Scorpion Journal Entry": Spelunky2LocationData(117, "Any World 2"),  # Moon Challenge. Typically farmed from Tiamat in All Journal Entires speedruns
@@ -197,7 +199,7 @@ item_entries = {
     "Kapala Journal Entry": Spelunky2LocationData(146, "Neo Babylon"),  # Guaranteed altar with enough sacrifices on 6-3 (also found at 75% of 1-4 Ghist shops)
     "Hedjet Journal Entry": Spelunky2LocationData(147, "Black Market"),
     "Crown Journal Entry": Spelunky2LocationData(148, "Vlad's Castle"),
-    "Eggplant Crown Journal Entry": Spelunky2LocationData(149, "Eggplant World"),
+    "Eggplant Crown Journal Entry": Spelunky2LocationData(149, "Eggplant World", Spelunky2Goal.HARD),
     "True Crown Journal Entry": Spelunky2LocationData(150, "Ice Caves"),  # Likely to find enough altars by this point. Note Beg cannot enter Tusk's Palace.
     "Ankh Journal Entry": Spelunky2LocationData(151, "Olmec's Lair"),
     "Tablet of Destiny Journal Entry": Spelunky2LocationData(152, "Menu"),  # Can be dropped from either Kingu or Osiris, so can't tie it to either Tide Pool or Temple
@@ -224,7 +226,7 @@ item_entries = {
     "Plasma Cannon Journal Entry": Spelunky2LocationData(173, "Mothership"),  # also in 18.75% of Ghist Shops and very rarely in Presents or Crates
     "Scepter Journal Entry": Spelunky2LocationData(174, "Temple"),
     "Hou Yi's Bow Journal Entry": Spelunky2LocationData(175, "Any World 2"),  # Same deal as the Tablet, but with Jungle and Volcana
-    "Arrow of Light Journal Entry": Spelunky2LocationData(176, "Sunken City"),
+    "Arrow of Light Journal Entry": Spelunky2LocationData(176, "Sunken City", Spelunky2Goal.HARD),
     "Wooden Shield Journal Entry": Spelunky2LocationData(177, "Jungle"),  # From Tiki Men
     "Metal Shield Journal Entry": Spelunky2LocationData(178, "Tide Pool"),  # Uncommon drop from Pangxie
     "Idol Journal Entry": Spelunky2LocationData(179, "Dwelling"),
@@ -258,10 +260,10 @@ trap_entries = {
     "Landmine Journal Entry": Spelunky2LocationData(204, "Ice Caves"),
     "Laser Trap Journal Entry": Spelunky2LocationData(205, "Neo Babylon"),
     "Spark Trap Journal Entry": Spelunky2LocationData(206, "Neo Babylon"),
-    "Frog Trap Journal Entry": Spelunky2LocationData(207, "Sunken City"),
-    "Sticky Trap Journal Entry": Spelunky2LocationData(208, "Sunken City"),
-    "Bone Drop Journal Entry": Spelunky2LocationData(209, "Sunken City"),
-    "Egg Sac Journal Entry": Spelunky2LocationData(210, "Sunken City"),
+    "Frog Trap Journal Entry": Spelunky2LocationData(207, "Sunken City", Spelunky2Goal.HARD),
+    "Sticky Trap Journal Entry": Spelunky2LocationData(208, "Sunken City", Spelunky2Goal.HARD),
+    "Bone Drop Journal Entry": Spelunky2LocationData(209, "Sunken City", Spelunky2Goal.HARD),
+    "Egg Sac Journal Entry": Spelunky2LocationData(210, "Sunken City", Spelunky2Goal.HARD),
 }
 
 location_data_table = {
