@@ -1,8 +1,6 @@
+from . import item_options, locked_items, powerup_options, equip_options, quest_items
 from Options import Toggle, DefaultOnToggle, Range, Choice, PerGameCommonOptions, DeathLink, ItemSet
 from dataclasses import dataclass
-
-
-# Item Master List
 
 
 def format_options(options, row_length=10):
@@ -18,19 +16,6 @@ def format_options(options, row_length=10):
     return "\n".join(lines)
 
 
-powerup_options = frozenset({"Climbing Gloves", "Compass", "Eggplant Crown", "Elixir", "Four-Leaf Clover", "Kapala",
-                             "Paste", "Pitcher's Mitt", "Skeleton Key", "Spectacles", "Spike Shoes", "Spring Shoes",
-                             "True Crown"})
-
-equip_options = frozenset({"Camera", "Cape", "Clone Gun", "Eggplant", "Freeze Ray", "Hoverpack", "Jetpack", "Machete",
-                           "Mattock", "Paste", "Plasma Cannon", "Powerpack", "Shield", "Telepack", "Teleporter",
-                           "Vlad's cape", "Webgun"})
-
-quest_items = frozenset({"Alien Compass", "Ankh", "Crown", "Excalibur", "Hedjet", "Hou Yi's Bow", "Sceptor",
-                         "Tablet of Destiny", "Udjat Eye", "Ushabti"})
-
-item_options = sorted(powerup_options | equip_options)
-locked_items = sorted(powerup_options | equip_options | quest_items)
 item_options_text = format_options(sorted(item_options))
 locked_items_text = format_options(sorted(locked_items))
 
@@ -140,7 +125,7 @@ class WaddlerUpgrades(ItemSet):
 Options (any selected here override options in item_upgrades):
 {locked_items_text}"""
     display_name = "Waddler Items"
-    valid_keys = item_options
+    valid_keys = locked_items
     default = equip_options
 
 

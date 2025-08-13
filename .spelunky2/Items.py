@@ -1,6 +1,6 @@
 from typing import Optional, NamedTuple
 from BaseClasses import Item, ItemClassification
-
+from . import powerup_options, equip_options, quest_items, locked_items, item_options
 
 class Spelunky2Item(Item):
     game = "Spelunky 2"
@@ -48,93 +48,23 @@ characters = {  # 4 Characters randomly chosen, Ana/Margaret/Colin/Roffy will be
     "Classic Guy":                  Spelunky2ItemData(119)
 }
 
-locked_items = {
-    "Alien Compass":                Spelunky2ItemData(201, ItemClassification.progression),
-    "Climbing Gloves":              Spelunky2ItemData(202, ItemClassification.progression),
-    "Camera":                       Spelunky2ItemData(203, ItemClassification.progression),
-    "Cape":                         Spelunky2ItemData(204, ItemClassification.progression),
-    "Clone Gun":                    Spelunky2ItemData(205, ItemClassification.progression),
-    "Compass":                      Spelunky2ItemData(206, ItemClassification.progression),
-    "Eggplant":                     Spelunky2ItemData(207, ItemClassification.progression),
-    "Eggplant Crown":               Spelunky2ItemData(208, ItemClassification.progression),
-    "Elixir":                       Spelunky2ItemData(209, ItemClassification.progression),
-    "Four-Leaf Clover":             Spelunky2ItemData(210, ItemClassification.progression),
-    "Freeze Ray":                   Spelunky2ItemData(211, ItemClassification.progression),
-    "Hoverpack":                    Spelunky2ItemData(212, ItemClassification.progression),
-    "Jetpack":                      Spelunky2ItemData(213, ItemClassification.progression),
-    "Kapala":                       Spelunky2ItemData(214, ItemClassification.progression),
-    "Machete":                      Spelunky2ItemData(215, ItemClassification.progression),
-    "Mattock":                      Spelunky2ItemData(216, ItemClassification.progression),
-    "Paste":                        Spelunky2ItemData(217, ItemClassification.progression),
-    "Pitcher's Mitt":               Spelunky2ItemData(218, ItemClassification.progression),
-    "Plasma Cannon":                Spelunky2ItemData(219, ItemClassification.progression),
-    "Powerpack":                    Spelunky2ItemData(220, ItemClassification.progression),
-    "Royal Jelly":                  Spelunky2ItemData(221, ItemClassification.progression),
-    "Shield":                       Spelunky2ItemData(222, ItemClassification.progression),
-    "Skeleton Key":                 Spelunky2ItemData(223, ItemClassification.progression),
-    "Spectacles":                   Spelunky2ItemData(224, ItemClassification.progression),
-    "Spike Shoes":                  Spelunky2ItemData(225, ItemClassification.progression),
-    "Spring Shoes":                 Spelunky2ItemData(226, ItemClassification.progression),
-    "Telepack":                     Spelunky2ItemData(227, ItemClassification.progression),
-    "True Crown":                   Spelunky2ItemData(228, ItemClassification.progression),
-    "Vlad's Cape":                  Spelunky2ItemData(229, ItemClassification.progression),
-    "Webgun":                       Spelunky2ItemData(230, ItemClassification.progression),
-}
+locked_items_dict = {}
+item_code = 200
+for item_name in locked_items:
+    item_code += 1
+    locked_items_dict[item_name] = Spelunky2ItemData(item_code, ItemClassification.progression)
 
-starter_items = {  # These items must be unlocked first from locked_items or quest_items
-    "Alien Compass Upgrade":        Spelunky2ItemData(301, ItemClassification.useful),
-    "Climbing Gloves Upgrade":      Spelunky2ItemData(302, ItemClassification.useful),
-    "Camera Upgrade":               Spelunky2ItemData(303, ItemClassification.useful),
-    "Cape Upgrade":                 Spelunky2ItemData(304, ItemClassification.useful),
-    "Clone Gun Upgrade":            Spelunky2ItemData(305, ItemClassification.useful),
-    "Compass Upgrade":              Spelunky2ItemData(306, ItemClassification.useful),
-    "Eggplant Upgrade":             Spelunky2ItemData(307, ItemClassification.useful),
-    "Eggplant Crown Upgrade":       Spelunky2ItemData(308, ItemClassification.useful),
-    "Elixir Upgrade":               Spelunky2ItemData(309, ItemClassification.useful),
-    "Four-Leaf Clover Upgrade":     Spelunky2ItemData(310, ItemClassification.useful),
-    "Freeze Ray Upgrade":           Spelunky2ItemData(311, ItemClassification.useful),
-    "Hoverpack Upgrade":            Spelunky2ItemData(312, ItemClassification.useful),
-    "Jetpack Upgrade":              Spelunky2ItemData(313, ItemClassification.useful),
-    "Kapala Upgrade":               Spelunky2ItemData(314, ItemClassification.useful),
-    "Machete Upgrade":              Spelunky2ItemData(315, ItemClassification.useful),
-    "Mattock Upgrade":              Spelunky2ItemData(316, ItemClassification.useful),
-    "Paste Upgrade":                Spelunky2ItemData(317, ItemClassification.useful),
-    "Pitcher's Mitt Upgrade":       Spelunky2ItemData(318, ItemClassification.useful),
-    "Plasma Cannon Upgrade":        Spelunky2ItemData(319, ItemClassification.useful),
-    "Powerpack Upgrade":            Spelunky2ItemData(320, ItemClassification.useful),
-    "Royal Jelly Upgrade":          Spelunky2ItemData(321, ItemClassification.useful),
-    "Shield Upgrade":               Spelunky2ItemData(322, ItemClassification.useful),
-    "Skeleton Key Upgrade":         Spelunky2ItemData(323, ItemClassification.useful),
-    "Spectacles Upgrade":           Spelunky2ItemData(324, ItemClassification.useful),
-    "Spike Shoes Upgrade":          Spelunky2ItemData(325, ItemClassification.useful),
-    "Spring Shoes Upgrade":         Spelunky2ItemData(326, ItemClassification.useful),
-    "Telepack Upgrade":             Spelunky2ItemData(327, ItemClassification.useful),
-    "True Crown Upgrade":           Spelunky2ItemData(328, ItemClassification.useful),
-    "Vlad's Cape Upgrade":          Spelunky2ItemData(329, ItemClassification.useful),
-    "Webgun Upgrade":               Spelunky2ItemData(330, ItemClassification.useful),
-    "Udjat Eye Upgrade":            Spelunky2ItemData(331, ItemClassification.useful),
-    "Crown Upgrade":                Spelunky2ItemData(332, ItemClassification.useful),
-    "Hedjet Upgrade":               Spelunky2ItemData(333, ItemClassification.useful),
-    "Ankh Upgrade":                 Spelunky2ItemData(334, ItemClassification.useful),
-    "Excalibur Upgrade":            Spelunky2ItemData(335, ItemClassification.useful),
-    "Sceptor Upgrade":              Spelunky2ItemData(336, ItemClassification.useful),
-    "Ushabti Upgrade":              Spelunky2ItemData(347, ItemClassification.useful),
-    "Hou Yi's Bow Upgrade":         Spelunky2ItemData(338, ItemClassification.useful),
-    "Tablet of Destiny Upgrade":    Spelunky2ItemData(339, ItemClassification.useful),
-}
+upgrade_items_dict = {}
+item_code = 300
+for item_name in item_options:
+    item_code += 1
+    upgrade_items_dict[f"{item_name} Upgrade"] = Spelunky2ItemData(item_code, ItemClassification.useful)
 
-quest_items = {
-    "Udjat Eye":                    Spelunky2ItemData(401, ItemClassification.progression),
-    "Crown":                        Spelunky2ItemData(402, ItemClassification.progression),
-    "Hedjet":                       Spelunky2ItemData(403, ItemClassification.progression),
-    "Ankh":                         Spelunky2ItemData(404, ItemClassification.progression),
-    "Excalibur":                    Spelunky2ItemData(405, ItemClassification.progression),
-    "Sceptor":                      Spelunky2ItemData(406, ItemClassification.progression),
-    "Tablet of Destiny":            Spelunky2ItemData(407, ItemClassification.progression),
-    "Ushabti":                      Spelunky2ItemData(408, ItemClassification.progression),
-    "Hou Yi's Bow":                 Spelunky2ItemData(409, ItemClassification.progression),
-    "Arrow of Light":               Spelunky2ItemData(410, ItemClassification.progression),
-}
+waddler_items_dict = {}
+item_code = 400
+for item_name in locked_items:
+    item_code += 1
+    waddler_items_dict[f"{item_name} Waddler Upgrade"] = Spelunky2ItemData(item_code, ItemClassification.useful)
 
 permanent_upgrades = {
     "Health Upgrade":               Spelunky2ItemData(501, ItemClassification.useful, 0),
@@ -185,6 +115,11 @@ traps = {
 item_data_table = {
     **filler_items,
     **characters,
+    **locked_items_dict,
+    **upgrade_items_dict,
+    **waddler_items_dict,
+    **permanent_upgrades,
+    **world_unlocks,
     # **shortcuts,
     **traps
 }

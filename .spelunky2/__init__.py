@@ -1,15 +1,31 @@
 from typing import List, Mapping, Any, Dict
-
 from worlds.AutoWorld import World, WebWorld
 from BaseClasses import MultiWorld, Tutorial, ItemClassification, Region
 
-from .Items import (Spelunky2Item, filler_items, traps, filler_weights, trap_weights,
-                    characters, locked_items, starter_items, quest_items, permanent_upgrades, world_unlocks)
+# Master Item List
+powerup_options = frozenset({"Ankh", "Climbing Gloves", "Compass", "Eggplant Crown", "Elixir", "Four-Leaf Clover", "Kapala",
+                             "Paste", "Pitcher's Mitt", "Skeleton Key", "Spectacles", "Spike Shoes", "Spring Shoes",
+                             "True Crown"})
+
+equip_options = frozenset({"Camera", "Cape", "Clone Gun", "Eggplant", "Freeze Ray", "Hoverpack", "Jetpack", "Machete",
+                           "Mattock", "Paste", "Plasma Cannon", "Powerpack", "Shield", "Telepack", "Teleporter",
+                           "Vlad's Cape", "Webgun"})
+
+quest_items = frozenset({"Alien Compass", "Crown", "Excalibur", "Hedjet", "Hou Yi's Bow", "Sceptor",
+                         "Tablet of Destiny", "Udjat Eye", "Ushabti"})
+
+item_options = sorted(powerup_options | equip_options)
+locked_items = sorted(powerup_options | equip_options | quest_items)
+# End of Master Item List
+
+from .Items import (Spelunky2Item, item_data_table, filler_items, traps, filler_weights, trap_weights,
+                    characters, upgrade_items_dict, waddler_items_dict, locked_items_dict,
+                    permanent_upgrades, world_unlocks)
+
 from .Locations import Spelunky2Location, location_data_table
 from .Options import Spelunky2Options
 from .Regions import region_data_table
 from .Rules import set_common_rules, set_sunken_city_rules, set_cosmic_ocean_rules, set_starter_upgrade_rules
-
 
 class Spelunky2WebWorld(WebWorld):
     theme = "stone"
@@ -40,18 +56,16 @@ class Spelunky2World(World):
     filler_count = 0
     trap_count = 0
 
-    item_data_table = {
-        **filler_items,
-        **characters,
-        **locked_items,
-        **starter_items,
-        **quest_items,
-        **permanent_upgrades,
-        **world_unlocks,
-        **traps
-    }
+    item_data_table = item_data_table
 
-    item_name_to_id = {name: data.code for name, data in item_data_table.items()}
+    item_name_to_id = {name: data.code for name, data in locked_items_dict.items()}
+    item_name_to_id.update({name: data.code for name, data in upgrade_items_dict.items()})
+    item_name_to_id.update({name: data.code for name, data in waddler_items_dict.items()})
+    item_name_to_id.update({name: data.code for name, data in filler_items.items()})
+    item_name_to_id.update({name: data.code for name, data in traps.items()})
+    item_name_to_id.update({name: data.code for name, data in characters.items()})
+    item_name_to_id.update({name: data.code for name, data in world_unlocks.items()})
+    item_name_to_id.update({name: data.code for name, data in permanent_upgrades.items()})
     location_name_to_id = {name: data.address for name, data in location_data_table.items()}
 
     def __init__(self, multiworld: MultiWorld, player: int):
@@ -113,24 +127,25 @@ class Spelunky2World(World):
     def create_items(self) -> None:
         spelunky2_item_pool = []
 
-        if self.options.progressive_worlds:
+        # Handle Progressive Worlds and Goals
+        if self.options.progressive_worlds.value:
             unlock_count = 5
-            if self.options.goal > 0:
+            if self.options.goal.value > 0:
                 unlock_count += 1
-            if self.options.goal > 1:
+            if self.options.goal.value > 1:
                 unlock_count += 1
             for _ in range(unlock_count):
                 spelunky2_item_pool.append(self.create_item("Progressive World Unlock"))
         else:
             individual_worlds = ["Jungle", "Volcana", "Olmec's Lair", "Tide Pool", "Temple", "Ice Caves", "Neo Babylon"]
-            if self.options.goal > 0:
+            if self.options.goal.value > 0:
                 individual_worlds.append("Sunken City")
-            if self.options.goal > 1:
+            if self.options.goal.value > 1:
                 individual_worlds.append("Cosmic Ocean")
             spelunky2_item_pool.extend([self.create_item(world) for world in individual_worlds])
 
-        quest_item_names = list(quest_items.keys())
-
+        # Add all quest items that are not explicitly restricted
+        quest_item_names = sorted(quest_items)
         if self.options.goal.value == 0:
             item_count = 1
         else:
@@ -138,24 +153,30 @@ class Spelunky2World(World):
 
         for i in range(item_count):
             item_name = quest_item_names[i]
-            spelunky2_item_pool.append(self.create_item(item_name))
+            if item_name not in self.options.restricted_items.value:
+                spelunky2_item_pool.append(self.create_item(item_name))
 
+        # Add all explicitly restricted items
         for item_name in self.options.restricted_items.value:
             spelunky2_item_pool.append(self.create_item(item_name))
 
-        waddler_set = set(self.options.waddler_upgrades.value)
+        # Get user's Waddler upgrade choices
+        waddler_upgrade_choices = set(self.options.waddler_upgrades.value)
 
-        for base_item_name in waddler_set:
-            upgrade_name = base_item_name + " Upgrade"
-            if upgrade_name in starter_items:
+        # Add Waddler Upgrades for the items the user selected.
+        for item_name in waddler_upgrade_choices:
+            upgrade_name = f"{item_name} Waddler Upgrade"
+            spelunky2_item_pool.append(self.create_item(upgrade_name))
+
+        # Add regular Item Upgrades for items the user selected,
+        # but only if they were NOT also selected as a Waddler upgrade.
+        item_upgrade_choices = set(self.options.item_upgrades.value)
+        for item_name in item_upgrade_choices:
+            if item_name not in waddler_upgrade_choices:
+                upgrade_name = f"{item_name} Upgrade"
                 spelunky2_item_pool.append(self.create_item(upgrade_name))
 
-        for base_item_name in self.options.item_upgrades.value:
-            if base_item_name not in waddler_set:
-                upgrade_name = base_item_name + " Upgrade"
-                if upgrade_name in starter_items:
-                    spelunky2_item_pool.append(self.create_item(upgrade_name))
-
+        # Permanent upgrades
         for _ in range(self.options.health_upgrades.value):
             spelunky2_item_pool.append(self.create_item("Health Upgrade"))
         for _ in range(self.options.bomb_upgrades.value):
@@ -163,13 +184,16 @@ class Spelunky2World(World):
         for _ in range(self.options.rope_upgrades.value):
             spelunky2_item_pool.append(self.create_item("Rope Upgrade"))
 
+        # Cosmic Ocean checkpoints
         if self.options.goal.value == 2:
             for _ in range(int(self.options.goal_level.value / 10)):
                 spelunky2_item_pool.append(self.create_item("Cosmic Ocean Checkpoint"))
 
+        # Characters are always in pool
         for char_name in characters:
             spelunky2_item_pool.append(self.create_item(char_name))
 
+        # Filler & traps
         locations_count = len(self.multiworld.get_unfilled_locations(self.player))
         self.filler_count = locations_count - len(spelunky2_item_pool)
 
@@ -184,7 +208,7 @@ class Spelunky2World(World):
         self.filler_weights["Ruby Gem"] = self.options.ruby_gem_weight.value
         self.filler_weights["Diamond Gem"] = self.options.diamond_gem_weight.value
 
-        if self.options.enable_traps:
+        if self.options.enable_traps.value:
             self.trap_count = int(self.filler_count * (self.options.trap_weight.value / 100))
             self.filler_count -= self.trap_count
 
