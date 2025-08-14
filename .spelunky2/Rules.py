@@ -13,7 +13,7 @@ def set_common_rules(world: "Spelunky2World", player: int):
     # Primary Regions -- note starting from shortcuts is not currently in logic. When this is added, it might break certain entries (e.g. The Tusk Idol and chain requirements)
     set_rule(world.get_entrance("Menu -> Dwelling"), lambda state: True)
     # set_rule(world.get_entrance("Menu -> Olmec's Lair"), lambda state: state.has("Olmec's Lair Shortcut", player) or state.has("Progressive Shortcut", player, 2)) - Not implemented yet
-    # set_rule(world.get_entrance("Menu -> Ice Caves"), lambda state: state.has("Ice Caves Shortcut", player) or state.has("Progressive Shortcut", player, 3)) - Not implemeneted yet
+    # set_rule(world.get_entrance("Menu -> Ice Caves"), lambda state: state.has("Ice Caves Shortcut", player) or state.has("Progressive Shortcut", player, 3)) - Not implemented yet
     set_rule(world.get_entrance("Dwelling -> Jungle"), lambda state: state.has("Jungle", player) or state.has("Progressive World Unlock", player))
     set_rule(world.get_entrance("Dwelling -> Volcana"), lambda state: state.has("Volcana", player) or state.has("Progressive World Unlock", player))
     set_rule(world.get_entrance("Jungle -> Olmec's Lair"), lambda state: state.has("Olmec's Lair", player) or state.has("Progressive World Unlock", player, 2))
@@ -26,9 +26,9 @@ def set_common_rules(world: "Spelunky2World", player: int):
 
     # Secondary Regions
     set_rule(world.get_entrance("Dwelling -> Any World 2"), lambda state: has_world_2(state, player))
-    set_rule(world.get_entrance("Jungle -> Black Market"), lambda state: state.has("Udjat Eye",player)) # TODO Udjat Skip setting
-    set_rule(world.get_entrance("Volcana -> Vlad's Castle"), lambda state: state.has("Udjat Eye",player)) # TODO Udjat Skip setting
-    set_rule(world.get_entrance("Tide Pool -> Abzu"), lambda state: state.has("Ankh", player)) # TODO Deathskip setting
+    set_rule(world.get_entrance("Jungle -> Black Market"), lambda state: state.has("Udjat Eye", player))  # TODO Udjat Skip setting
+    set_rule(world.get_entrance("Volcana -> Vlad's Castle"), lambda state: state.has("Udjat Eye", player))  # TODO Udjat Skip setting
+    set_rule(world.get_entrance("Tide Pool -> Abzu"), lambda state: state.has("Ankh", player))  # TODO Deathskip setting
     set_rule(world.get_entrance("Temple -> City of Gold"), lambda state: has_royalty(state, player) and state.has("Scepter", player))
     set_rule(world.get_entrance("City of Gold -> Duat"), lambda state: state.has("Ankh", player))
     set_rule(world.get_entrance("Ice Caves -> Mothership"), lambda state: can_access_mothership(state, player))
@@ -37,7 +37,7 @@ def set_common_rules(world: "Spelunky2World", player: int):
     set_rule(world.get_location("Eggplant Child Journal Entry"), lambda state: state.has("Eggplant", player))
 
     # Bestiary Entries
-    set_rule(world.get_location("Qilin Journal Entry"), lambda state: can_obtain_qilin(state,player))
+    set_rule(world.get_location("Qilin Journal Entry"), lambda state: can_obtain_qilin(state, player))
 
     # Item Entries
     set_rule(world.get_location("Alien Compass Journal Entry"), lambda state: can_obtain_alien_compass(state, player))
@@ -45,7 +45,7 @@ def set_common_rules(world: "Spelunky2World", player: int):
     set_rule(world.get_location("Hedjet Journal Entry"), lambda state: state.has("Hedjet", player))
     set_rule(world.get_location("Crown Journal Entry"), lambda state: state.has("Crown", player))
     set_rule(world.get_location("Ankh Journal Entry"), lambda state: state.has("Ankh", player))
-    set_rule(world.get_location("Tablet of Destiny Journal Entry"), lambda state: can_obtain_tablet(state,player))
+    set_rule(world.get_location("Tablet of Destiny Journal Entry"), lambda state: can_obtain_tablet(state, player))
     set_rule(world.get_location("Excalibur Journal Entry"), lambda state: has_royalty(state, player) and state.has("Excalibur", player))
     set_rule(world.get_location("Scepter Journal Entry"), lambda state: state.has("Scepter", player))
     set_rule(world.get_location("Hou Yi's Bow Journal Entry"), lambda state: state.has("Hou Yi's Bow", player))
@@ -92,21 +92,21 @@ def can_obtain_alien_compass(state: CollectionState, player: int) -> bool:
 
 # TODO Alien Compass Skip settings (Mothership can be found with various mobility items or even with nothing but bombs/landmines), currently identical to can_obtain_alien_compass
 def can_access_mothership(state: CollectionState, player: int) -> bool:
-    return can_obtain_alien_compass(state,player) #or state.has("Progressive Compass", player, 2) -- not valid, as Alien Compass is only given at start if you already have the journal entry
+    return can_obtain_alien_compass(state, player)  # or state.has("Progressive Compass", player, 2) -- not valid, as Alien Compass is only given at start if you already have the journal entry
 
 # TODO Excalibur Skip settings
 def can_obtain_tablet(state: CollectionState, player: int) -> bool:
-    return (state.has("Tablet of Destiny",player) and
+    return (state.has("Tablet of Destiny", player) and
             (state.can_reach("Duat", "Region", player) or
              (state.can_reach("Abzu", "Region", player) and state.can_reach("Excalibur Journal Entry", "Location", player))))
 
 
 def can_obtain_qilin(state: CollectionState, player: int) -> bool:
-    return (can_obtain_tablet(state, player) and state.has("Ushabti", player))
+    return can_obtain_tablet(state, player) and state.has("Ushabti", player)
 
 # TODO Qilin Skip settings
 def can_access_sunken_city(state: CollectionState, player: int) -> bool:
-    return can_obtain_qilin(state,player) and (state.has("Sunken City", player) or state.has("Progressive World Unlock", player, 6))
+    return can_obtain_qilin(state, player) and (state.has("Sunken City", player) or state.has("Progressive World Unlock", player, 6))
 
 
 def can_access_cosmic_ocean(state: CollectionState, player: int) -> bool:
@@ -117,8 +117,10 @@ def can_access_cosmic_ocean(state: CollectionState, player: int) -> bool:
 def get_upgrade_item_name(item_name: str) -> str:
     return f"{item_name} Upgrade"
 
+
 def get_waddler_item_name(item_name: str) -> str:
     return f"{item_name} Waddler Upgrade"
+
 
 def set_starter_upgrade_rules(world: "Spelunky2World", player: int):
     """Ensure starter upgrades require their locked/quest counterpart first."""
