@@ -182,22 +182,22 @@ bestiary_entries = {
 item_entries = {
     # For the most part, regions will be where the earliest guaranteed drop is, i.e. Jetpack is in Temple because Anubis II always drops one
     # The exception for this are things that are very common, like bomb bags
-    # For items with no guaranteed drop, they are in the Black Market logical region.
+    # Items that can appear in shops or crates must be guesstimated to Dwelling, due to lock-out rules.
     "Rope Pile Journal Entry": Spelunky2LocationData(133, "Dwelling"),
     "Bomb Bag Journal Entry": Spelunky2LocationData(134, "Dwelling"),
     "Bomb Box Journal Entry": Spelunky2LocationData(135, "Dwelling"),
     "Paste Journal Entry": Spelunky2LocationData(136, "Jungle"),  # From Giant Spiders
-    "Spectacles Journal Entry": Spelunky2LocationData(137, "Black Market"),
-    "Climbing Gloves Journal Entry": Spelunky2LocationData(138, "Black Market"),
-    "Pitcher's Mitt Journal Entry": Spelunky2LocationData(139, "Black Market"),
-    "Spring Shoes Journal Entry": Spelunky2LocationData(140, "Black Market"),
+    "Spectacles Journal Entry": Spelunky2LocationData(137, "Dwelling"),
+    "Climbing Gloves Journal Entry": Spelunky2LocationData(138, "Dwelling"),
+    "Pitcher's Mitt Journal Entry": Spelunky2LocationData(139, "Dwelling"),
+    "Spring Shoes Journal Entry": Spelunky2LocationData(140, "Dwelling"),
     "Spike Shoes Journal Entry": Spelunky2LocationData(141, "Ice Caves"),  # Guaranteed drop from Yeti Queen
     "Compass Journal Entry": Spelunky2LocationData(142, "Ice Caves"),  # Guaranteed drop from Yeti King
     "Alien Compass Journal Entry": Spelunky2LocationData(143, "Vlad's Castle"),  # See 'can_obtain_alien_compass' for handling the rest of this quest
     "Parachute Journal Entry": Spelunky2LocationData(144, "Olmec's Lair"),  # Guaranteed in the Olmec's back layer
-    "Udjat Eye Journal Entry": Spelunky2LocationData(145, "Dwelling"),
+    "Udjat Eye Journal Entry": Spelunky2LocationData(145, "Black Market"),
     "Kapala Journal Entry": Spelunky2LocationData(146, "Neo Babylon"),  # Guaranteed altar with enough sacrifices on 6-3 (also found at 75% of 1-4 Ghist shops)
-    "Hedjet Journal Entry": Spelunky2LocationData(147, "Black Market"),
+    "Hedjet Journal Entry": Spelunky2LocationData(147, "Dwelling"),
     "Crown Journal Entry": Spelunky2LocationData(148, "Vlad's Castle"),
     "Eggplant Crown Journal Entry": Spelunky2LocationData(149, "Eggplant World", Spelunky2Goal.HARD),
     "True Crown Journal Entry": Spelunky2LocationData(150, "Ice Caves"),  # Likely to find enough altars by this point. Note Beg cannot enter Tusk's Palace.
@@ -208,19 +208,19 @@ item_entries = {
     "Cape Journal Entry": Spelunky2LocationData(155, "Vlad's Castle"),  # From Vampires (which are also from altars)
     "Vlad's Cape Journal Entry": Spelunky2LocationData(156, "Vlad's Castle"),
     "Jetpack Journal Entry": Spelunky2LocationData(157, "Duat"),  # Guaranteed drop from Anubis II, also in 18.75% of Ghist Shops
-    "Telepack Journal Entry": Spelunky2LocationData(158, "Black Market"),  # Also from Beg, also in 18.75% of Ghist Shops
-    "Hoverpack Journal Entry": Spelunky2LocationData(159, "Black Market"),  # also in 18.75% of Ghist Shops
-    "Powerpack Journal Entry": Spelunky2LocationData(160, "Black Market"),  # also in 18.75% of Ghist Shops
-    "Webgun Journal Entry": Spelunky2LocationData(161, "Black Market"),  # also in 18.75% of Ghist Shops
+    "Telepack Journal Entry": Spelunky2LocationData(158, "Dwelling"),  # Also from Beg, also in 18.75% of Ghist Shops
+    "Hoverpack Journal Entry": Spelunky2LocationData(159, "Dwelling"),  # also in 18.75% of Ghist Shops
+    "Powerpack Journal Entry": Spelunky2LocationData(160, "Dwelling"),  # also in 18.75% of Ghist Shops
+    "Webgun Journal Entry": Spelunky2LocationData(161, "Dwelling"),  # also in 18.75% of Ghist Shops
     "Shotgun Journal Entry": Spelunky2LocationData(162, "Dwelling"),  # Drops from Shopkeeper, also in 18.75% of Ghist Shops
-    "Freeze Ray Journal Entry": Spelunky2LocationData(163, "Black Market"),  # also in 18.75% of Ghist Shops
+    "Freeze Ray Journal Entry": Spelunky2LocationData(163, "Dwelling"),  # also in 18.75% of Ghist Shops
     "Clone Gun Journal Entry": Spelunky2LocationData(164, "Tide Pool"),  # also in 75% of Eggplant World Ghist Shops
     "Crossbow Journal Entry": Spelunky2LocationData(165, "Dwelling"),  # Drops from Yang
     "Camera Journal Entry": Spelunky2LocationData(166, "Tide Pool"),  # Guaranteed drop from Giant Humphead
-    "Teleporter Journal Entry": Spelunky2LocationData(167, "Black Market"),
+    "Teleporter Journal Entry": Spelunky2LocationData(167, "Dwelling"),
     "Mattock Journal Entry": Spelunky2LocationData(168, "Any World 2"),  # From Moon Challenge
     "Boomerang Journal Entry": Spelunky2LocationData(169, "Jungle"),  # From Tiki Men
-    "Machete Journal Entry": Spelunky2LocationData(170, "Black Market"),
+    "Machete Journal Entry": Spelunky2LocationData(170, "Dwelling"),
     "Excalibur Journal Entry": Spelunky2LocationData(171, "Tide Pool"),
     "Broken Sword Journal Entry": Spelunky2LocationData(172, "Tide Pool"),  # Clone Gun always available on the same level
     "Plasma Cannon Journal Entry": Spelunky2LocationData(173, "Mothership"),  # also in 18.75% of Ghist Shops and very rarely in Presents or Crates

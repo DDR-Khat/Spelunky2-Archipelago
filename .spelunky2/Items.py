@@ -26,10 +26,10 @@ filler_items = {
 }
 
 characters = {  # 4 Characters randomly chosen, Ana/Margaret/Colin/Roffy will be found where non-starters exist
-    "Ana Spelunky":                 Spelunky2ItemData(101),
-    "Margaret Tunnel":              Spelunky2ItemData(102),
-    "Colin Northward":              Spelunky2ItemData(103),
-    "Roffy D. Sloth":               Spelunky2ItemData(103),
+    # "Ana Spelunky":                 Spelunky2ItemData(101),
+    # "Margaret Tunnel":              Spelunky2ItemData(102),
+    # "Colin Northward":              Spelunky2ItemData(103),
+    # "Roffy D. Sloth":               Spelunky2ItemData(103),
     "Alto Singh":                   Spelunky2ItemData(104),
     "Liz Mutton":                   Spelunky2ItemData(105),
     "Nekka the Eagle":              Spelunky2ItemData(106),

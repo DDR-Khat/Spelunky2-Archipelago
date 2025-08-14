@@ -242,10 +242,10 @@ class Spelunky2World(World):
     def set_rules(self) -> None:
         set_common_rules(self, self.player)
 
-        if self.options.goal != 0:
+        if self.options.goal != Spelunky2Goal.EASY:
             set_sunken_city_rules(self, self.player)
 
-        if self.options.goal == 2:
+        if self.options.goal == Spelunky2Goal.CO:
             set_cosmic_ocean_rules(self, self.player)
 
         # Add the rule-setter for starter item upgrades
