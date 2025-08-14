@@ -149,16 +149,15 @@ class Spelunky2World(World):
             spelunky2_item_pool.extend([self.create_item(world) for world in individual_worlds])
 
         # Add all quest items that are not explicitly restricted
-        quest_item_names = sorted(quest_items)
         if self.options.goal.value == Spelunky2Goal.EASY:
-            item_count = 1
+            quest_item_names = {"Alien Compass"}
+        elif self.options.goal.value == Spelunky2Goal.HARD:
+            quest_item_names = sorted(quest_items - {"Arrow of Light", "Hou Yi's Bow"})
         else:
-            item_count = len(quest_item_names) - (0 if self.options.goal.value == Spelunky2Goal.CO else 2)
+            quest_item_names = sorted(quest_items)
 
-        for i in range(item_count):
-            item_name = quest_item_names[i]
-            if item_name not in self.options.restricted_items.value:
-                spelunky2_item_pool.append(self.create_item(item_name))
+        for item_name in quest_item_names:
+            spelunky2_item_pool.append(self.create_item(item_name))
 
         # Add all explicitly restricted items
         for item_name in self.options.restricted_items.value:
