@@ -12,7 +12,7 @@ equip_options = frozenset({"Camera", "Cape", "Clone Gun", "Eggplant", "Freeze Ra
                            "Mattock", "Paste", "Plasma Cannon", "Powerpack", "Shield", "Telepack", "Teleporter",
                            "Vlad's Cape", "Webgun"})
 
-quest_items = frozenset({"Alien Compass", "Crown", "Excalibur", "Hedjet", "Hou Yi's Bow", "Sceptor",
+quest_items = frozenset({"Alien Compass", "Arrow of Light", "Crown", "Excalibur", "Hedjet", "Hou Yi's Bow", "Scepter",
                          "Tablet of Destiny", "Udjat Eye", "Ushabti"})
 
 item_options = sorted(powerup_options | equip_options)
@@ -82,6 +82,7 @@ class Spelunky2World(World):
 
         if self.options.goal == Spelunky2Goal.EASY:
             exclude_regions.append("Sunken City")
+            exclude_regions.append("Eggplant World")
 
         if self.options.goal != Spelunky2Goal.CO:
             exclude_regions.append("Cosmic Ocean")
