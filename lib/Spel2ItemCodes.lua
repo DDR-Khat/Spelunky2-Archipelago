@@ -24,6 +24,22 @@ Spel2AP.characters = {
     Margaret_Tunnel = 102,
     Colin_Northward = 103,
     Roffy_D_Sloth = 104,
+    Alto_Singh = 104,
+    Liz_Mutton = 105,
+    Nekka_the_Eagle = 106,
+    LISE_Project = 107,
+    Coco_Von_Diamonds = 108,
+    Manfred_Tunnel = 109,
+    Little_Jay = 110,
+    Tina_Flan = 111,
+    Valerie_Crump = 112,
+    Au = 113,
+    Demi_Von_Diamonds = 114,
+    Pilot = 115,
+    Princess_Airyn = 116,
+    Dirk_Yamaoka = 117,
+    Guy_Spelunky = 118,
+    Classic_Guy = 119,
 }
 
 Spel2AP.locked_items = {
