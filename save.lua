@@ -6,84 +6,34 @@ ap_save = {
     last_character = 1,
     last_index = -1, -- Stores AP item data sent from the server
     checked_locations = {},
-    
-    --[[ This is all breaking
-    default_character_queue = {
-        [1] = 194,
-        [2] = 195,
-        [3] = 196,
-        [4] = 197
-    },]]
 
     max_world = 1,
     shortcut_progress = 0,
 
-    unlocked_key_items = {
-        [1] = false, -- Udjat Eye
-        [2] = false, -- Hedjet
-        [3] = false, -- Crown
-        [4] = false, -- Ankh
-        [5] = false, -- Tablet of Destiny
-        [6] = false, -- Scepter
-        [7] = false, -- Excalibur
-        [8] = false, -- Hou Yi Bow
-        [9] = false, -- Arrow of Light
-        [10] = false -- Ushabti
+    character_unlocks =
+    {
+        [Spel2AP.characters.Ana_Spelunky] = true,
+        [Spel2AP.characters.Margaret_Tunnel] = true,
+        [Spel2AP.characters.Colin_Northward] = true,
+        [Spel2AP.characters.Roffy_D_Sloth] = true,
     },
 
-    unlocked_characters = {
-        [1] = true,   -- Ana Spelunky
-        [2] = true,   -- Margaret Tunnel
-        [3] = true,   -- Colin Northward
-        [4] = true,   -- Roffy D. Sloth
-        [5] = false,  -- Alto Singh
-        [6] = false,  -- Liz Mutton
-        [7] = false,  -- Nekka the Eagle
-        [8] = false,  -- LISE Project
-        [9] = false,  -- Coco Von Diamonds
-        [10] = false, -- Manfred Tunnel
-        [11] = false, -- Little Jay
-        [12] = false, -- Tina Flan
-        [13] = false, -- Valerie Crump
-        [14] = false, -- Au
-        [15] = false, -- Demi Von Diamonds
-        [16] = false, -- Pilot
-        [17] = false, -- Princess Airyn
-        [18] = false, -- Dirk Yamaoka
-        [19] = false, -- Guy Spelunky
-        [20] = false  -- Classic Guy
+    item_unlocks = {},
+
+    permanent_item_upgrades = {},
+
+    waddler_item_unlocks = {},
+
+    stat_upgrades = {
+        [Spel2AP.permanent_upgrades.Health] = 0,
+        [Spel2AP.permanent_upgrades.Bomb] = 0,
+        [Spel2AP.permanent_upgrades.Rope] = 0,
+        [Spel2AP.permanent_upgrades.Cosmic_Ocean_Checkpoint] = 0,
     },
 
-    unlocked_worlds = {
-        dwelling = true,
-        jungle = false,
-        volcana = false,
-        olmec = false,
-        tide_pool = false,
-        temple = false,
-        ice_caves = false,
-        neo_babylon = false,
-        sunken_city = false,
-        cosmic_ocean = false
-    },
+    world_unlocks = {},
 
-    unlocked_shortcuts = {
-        progressive_shortcut = 0,
-        dwelling_shortcut = 0,
-        olmec_shortcut = 0,
-        ice_caves_shortcut = 0
-    },
-
-    permanent_upgrades = {
-        health = 0,
-        bombs = 0,
-        ropes = 0,
-        paste = 0,
-        clover = 0,
-        compass = 0, -- 0 = no compass, 1 = compass, 2 = alien compass
-        eggplant = 0, -- Places an eggplant in Waddler's shop if true
-        checkpoints = 0
-    },
+    shortcut_unlocks = {},
 
     places = {
         [1] = false,  -- Dwelling
@@ -350,10 +300,13 @@ end
 
 function update_characters()
     local character_sum = 0
-    for index, is_unlocked in ipairs(ap_save.unlocked_characters) do
+    -- Iterate through the character_unlocks table using pairs(), as the keys are not sequential.
+    for item_code, is_unlocked in pairs(ap_save.character_unlocks) do
         if is_unlocked then
-            character_sum = character_sum + character_data.binary_values[index]
-            --savegame.people[index] = true
+            -- Use the item_code to look up the character's binary value from character_data
+            if character_data[item_code] then
+                character_sum = character_sum + character_data[item_code].binary
+            end
         end
     end
 
@@ -364,9 +317,14 @@ end
 function lock_characters()
     local character_sum = 0
     for index, is_unlocked in ipairs(ap_save.people) do
-        -- index is within this range to not check the characters that don't show up in coffins since there's no way to get their entries without owning the character
-        if is_unlocked and index > 4 and index <= 18 then 
-            character_sum = character_sum + character_data.binary_values[index]
+        -- index is within this range to not check the characters that don't show up in coffins
+        if is_unlocked and index > 4 and index <= 18 then
+            local entry = character_data[index]
+            if entry ~= nil and entry.binary ~= nil then
+                character_sum = character_sum + entry.binary
+            else
+                debug_print(f"lock_characters: failed to find binary for {tostring(index)}")
+            end
         end
     end
 
@@ -401,30 +359,59 @@ function clear_journal(array)
     end
 end
 
+local function stringify_keys(tbl)
+    if type(tbl) ~= "table" then return tbl end
+    local out = {}
+    for k, v in pairs(tbl) do
+        local sk = type(k) == "string" and k or tostring(k)
+        out[sk] = stringify_keys(v)
+    end
+    return out
+end
 
 function write_save()
-    local file = io.open_data(f"{path}AP_{game_info.username}_{player_options.seed}.json", "w+")
-
-    if file ~= nil then
-        file:write(json.encode(ap_save))
+    local filename = f"{path}AP_{game_info.username}_{player_options.seed}.json"
+    local safe_save = stringify_keys(ap_save)
+    local ok, json_str = pcall(json.encode, safe_save)
+    if not ok then
+        debug_print("write_save: JSON encode failed: " .. tostring(json_str))
+        return
+    end
+    local file = io.open_data(filename, "w+")
+    if file then
+        file:write(json_str)
         file:close()
-
-        debug_print(f"Saved data to {path}AP_{game_info.username}_{player_options.seed}.json")
+        debug_print(f"Saved data to {filename}")
     end
 end
 
-
 function read_save()
-    local file = io.open_data(f"{path}AP_{game_info.username}_{player_options.seed}.json", "r")
-
-    if file ~= nil then
-        ap_save = json.decode(file:read("a"))
-        file:close()
-        update_game_save()
-
-        debug_print(f"Loaded data from {path}AP_{game_info.username}_{player_options.seed}.json")
-        
+    local filename = f"{path}AP_{game_info.username}_{player_options.seed}.json"
+    local file = io.open_data(filename, "r")
+    if not file then return end
+    local contents = file:read("a")
+    file:close()
+    local ok, data = pcall(json.decode, contents)
+    if not ok then
+        debug_print("read_save: JSON decode failed: " .. tostring(data))
+        return
     end
+    -- Keep numeric keys *in memory* for code that expects them
+    local function restore_number_keys(tbl)
+        if type(tbl) ~= "table" then return tbl end
+        local out = {}
+        for k, v in pairs(tbl) do
+            local nk = tonumber(k) or k
+            out[nk] = restore_number_keys(v)
+        end
+        return out
+    end
+    ap_save = restore_number_keys(data)
+    ap_save.item_unlocks = ap_save.item_unlocks or {}
+    ap_save.permanent_item_upgrades = ap_save.permanent_item_upgrades or {}
+    ap_save.waddler_item_unlocks = ap_save.waddler_item_unlocks or {}
+    update_game_save()
+    debug_print(f"Loaded data from {filename}")
 end
 
 

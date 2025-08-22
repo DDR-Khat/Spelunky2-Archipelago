@@ -35,17 +35,10 @@ _G.debug_print = function(msg)
     end
 end
 
-local Data = safe_require("data")
-local APSave = safe_require("save")
-local APClient = safe_require("client")
-
-meta = {
-    name = "Spelunky 2 Archipelago",
-    description = "Adds Archipelago Multiworld Randomizer support!",
-    author = "DDRKhat\nOriginal: Eszenn",
-    version = "0.2.5",
-    unsafe = true
-}
+safe_require("data")
+safe_require("save")
+safe_require("client")
+safe_require("lib/Spel2ItemCodes")
 
 function makeTexture(path, width, height)
     local definition = TextureDefinition.new()
@@ -61,15 +54,24 @@ function makeTexture(path, width, height)
         return define
     end
 end
-
+ENT_MORE_FLAG.FINISHED_SPAWNING = 7
 generalItem = makeTexture("assets/item.png", 128, 128)
 trapItem = makeTexture("assets/trap.png", 128, 128)
 progressionItem = makeTexture("assets/progression.png", 128, 128)
+
+meta = {
+    name = "Spelunky 2 Archipelago",
+    description = "Adds Archipelago Multiworld Randomizer support!",
+    author = "DDRKhat\nOriginal: Eszenn",
+    version = "0.3.0",
+    unsafe = true
+}
 
 register_option_float('popup_time', 'Popup Timer', 'How long the "You received" or "You sent"! popup lingers.\n(Note: Higher values makes receiving items take longer)\nTime in seconds', 3.5, 0.5, 10)
 
 debugging = false
 givingItem = false
+local bombOrRope = false
 
 set_callback(function()
     debug_print("LOADING")
@@ -97,11 +99,11 @@ set_callback(function()
                 set_shortcut_progress(0)
             end
         else
-            if ap_save.unlocked_worlds[THEME.ICE_CAVES] then
+            if ap_save.shortcut_unlocks[Spel2AP.shortcuts.Ice_Caves] then
                 set_shortcut_progress(3)
-            elseif ap_save.unlocked_worlds[THEME.OLMEC] then
+            elseif ap_save.shortcut_unlocks[Spel2AP.shortcuts.Olmecs_Lair] then
                 set_shortcut_progress(2)
-            elseif ap_save.unlocked_worlds[THEME.JUNGLE] or ap_save.unlocked_worlds[THEME.VOLCANA] then
+            elseif ap_save.shortcut_unlocks[Spel2AP.shortcuts.Jungle] or ap_save.shortcut_unlocks[Spel2AP.shortcuts.Volcana] then
                 set_shortcut_progress(1)
             else
                 set_shortcut_progress(0)
@@ -120,6 +122,7 @@ function set_shortcut_progress(shortcut_number)
     else
         savegame.shortcuts = 10
     end
+
 end
 
 -- This handles all of the permanent upgrades to give the player at the start of every run
@@ -129,30 +132,47 @@ set_callback(function()
     savegame.shortcuts = ap_save.shortcut_progress
 
     local player = get_player(1, false)
-    player.health = player_options.starting_health + ap_save.permanent_upgrades.health
-    player.inventory.bombs = player_options.starting_bombs + ap_save.permanent_upgrades.bombs
-    player.inventory.ropes = player_options.starting_ropes + ap_save.permanent_upgrades.ropes
+    player.health = player_options.starting_health + ap_save.stat_upgrades[Spel2AP.permanent_upgrades.Health]
+    player.inventory.bombs = player_options.starting_bombs + ap_save.stat_upgrades[Spel2AP.permanent_upgrades.Bomb]
+    player.inventory.ropes = player_options.starting_ropes + ap_save.stat_upgrades[Spel2AP.permanent_upgrades.Rope]
+    savegame.wins_normal = math.max(savegame.wins_normal, 1)
+    savegame.wins_hard = math.max(savegame.wins_hard, 1)
+    savegame.wins_special = math.max(savegame.wins_special, 1)
+    savegame.deaths = math.max(savegame.deaths, 100)
 
-    if ap_save.permanent_upgrades.paste ~= 0 and savegame[journal.chapters[4]][4] then
-        player:give_powerup(ENT_TYPE.ITEM_POWERUP_PASTE)
-    end
-
-    if ap_save.permanent_upgrades.compass == 1 and savegame[journal.chapters[4]][10] then
-        player:give_powerup(ENT_TYPE.ITEM_POWERUP_COMPASS)
-    elseif ap_save.permanent_upgrades.compass == 2 and savegame[journal.chapters[4]][11] then
-        player:give_powerup(ENT_TYPE.ITEM_POWERUP_SPECIALCOMPASS)
+    for item_code, is_unlocked in pairs(ap_save.permanent_item_upgrades) do
+        if is_unlocked ~= true then
+            goto continue
+        end
+        local journal_index = ItemCode_to_Index[item_code]
+        if journal_index and savegame.items[journal_index] ~= true then
+            goto continue
+        end
+        local ent, isPowerup = SpawnJournalIndex(journal_index, true)
+        if isPowerup then
+            player:give_powerup(ent)
+        else
+            local playerX, playerY, playerLayer = get_position(player.uid)
+            spawn_entity_snapped_to_floor(ent, playerX, playerY, playerLayer)
+        end
+        ::continue::
     end
 end, ON.START)
 
 set_callback(function()
     set_callback(function()
         clear_callback()
-        if ap_save.unlocked_key_items[8] and savegame[journal.chapters[4]][43] then
-            waddler_store_entity(ENT_TYPE.ITEM_HOUYIBOW)
-        end
-
-        if ap_save.permanent_upgrades.eggplant ~= 0 and savegame[journal.chapters[4]][51] then
-            waddler_store_entity(ENT_TYPE.ITEM_EGGPLANT)
+        for item_code, is_unlocked in pairs(ap_save.waddler_item_unlocks) do
+            if is_unlocked ~= true then
+                goto continue
+            end
+            local journal_index = ItemCode_to_Index[item_code]
+            if journal_index and savegame.items[journal_index] ~= true then
+                goto continue
+            end
+            local ent, _ = SpawnJournalIndex(journal_index, false)
+            waddler_store_entity(ent)
+            ::continue::
         end
     end, ON.PRE_LEVEL_GENERATION)
 end, ON.RESET)
@@ -160,43 +180,63 @@ end, ON.RESET)
 
 set_callback(function()
     debug_print("LEVEL")
-
-    if state.level >= 10 and state.level <= ap_save.permanent_upgrades.checkpoints * 10 then
+    if state.level >= 10 and state.level <= ap_save.stat_upgrades[Spel2AP.permanent_upgrades.Cosmic_Ocean_Checkpoint] * 10 then
         state.world_start = 7
         state.theme_start = THEME.COSMIC_OCEAN
         state.level_start = math.floor(state.level / 10) * 10
     end
 
-
-    
     if savegame.shortcuts > ap_save.shortcut_progress then
         ap_save.shortcut_progress = savegame.shortcuts
     end
 end, ON.LEVEL)
 
-
+local shop_item_uids = {}
 set_callback(function()
     debug_print("POST_LEVEL_GENERATION")
 
     local coffin_uids = get_entities_by(ENT_TYPE.ITEM_COFFIN, MASK.ITEM, LAYER.BOTH)
     for _, uid in ipairs(coffin_uids) do
         local coffin = get_entity(uid)
-        --[[
-        if coffin.inside == ENT_TYPE.CHAR_HIREDHAND and #ap_save.default_character_queue ~= 0 then
-            set_contents(coffin.uid, ap_save.default_character_queue[1])
-            table.remove(ap_save.default_character_queue, 1)
-            break
-        end]]
 
-        for character, is_unlocked in ipairs(ap_save.people) do
-            if coffin.inside == character_data.types[character] and is_unlocked then
+        for _, data in pairs(character_data) do
+            local is_unlocked = ap_save.people[data.index]
+            if is_unlocked and coffin.inside == data.ent then
                 set_contents(coffin.uid, ENT_TYPE.CHAR_HIREDHAND)
                 break
             end
         end
     end
+    shop_item_uids = {}
+    set_callback(function()
+        clear_callback()
+        local owned_items = state.room_owners and state.room_owners.owned_items
+        if owned_items then
+            for uid, owner in pairs(state.room_owners.owned_items) do
+                table.insert(shop_item_uids, {itemID = uid, ownerID = owner.owner_uid, shop_pool = owner, itemPool = owned_items})
+            end
+        end
+    end, ON.PRE_UPDATE)
 end, ON.POST_LEVEL_GENERATION)
 
+set_post_entity_spawn(function(crate)
+    if get_local_state().screen ~= SCREEN.LEVEL then
+        return
+    end
+    for itemName, is_unlocked in pairs(ap_save.item_unlocks) do
+        if is_unlocked and crate.inside == Spel2AP.locked_items[itemName] then
+            return
+        end
+    end
+    local replaceItem = ENT_TYPE.ITEM_PICKUP_BOMBBAG
+    if bombOrRope then
+        replaceItem = ENT_TYPE.ITEM_PICKUP_ROPEPILE
+        bombOrRope = false
+    else
+        bombOrRope = true
+    end
+    crate.inside = replaceItem
+end, SPAWN_TYPE.ANY, 0, {ENT_TYPE.ITEM_CRATE, ENT_TYPE.ITEM_PRESENT, ENT_TYPE.ITEM_GHIST_PRESENT})
 
 set_callback(function()
     -- Iterates over all 5 Journal chapters
@@ -217,62 +257,117 @@ end, ON.GAMEFRAME)
 set_callback(function()
     debug_print("TRANSITION")
 
+    local shouldReset = false
     if player_options.progressive_worlds then
-        if state.world_next > ap_save.max_world then
-            toast("This world is not unlocked yet!")
-            state.world_next = state.world_start
-            state.level_next = state.level_start
-            state.theme_next = state.theme_start
-
-            for _, quest in ipairs(state.quests) do
-                state.quests[quest] = 0
-            end
-
-            state.quest_flags = QUEST_FLAG.RESET
-        end
+        shouldReset = (state.world_next > ap_save.max_world)
     else
-        if not ap_save.unlocked_worlds[theme_to_index[state.theme_next]] then
-            toast("This world is not unlocked yet!")
-            state.world_next = state.world_start
-            state.level_next = state.level_start
-            state.theme_next = state.theme_start
-
-            for _, quest in ipairs(state.quests) do
-                state.quests[quest] = 0
-            end
-
-            state.quest_flags = QUEST_FLAG.RESET
+        local required_unlock_id = theme_to_world_unlock_id[state.theme_next]
+        if required_unlock_id and not ap_save.world_unlocks[required_unlock_id] then
+            shouldReset = true
         end
+    end
+
+    if shouldReset then
+        toast("This world is not unlocked yet!")
+        state.world_next = state.world_start
+        state.level_next = state.level_start
+        state.theme_next = state.theme_start
+
+        state.quests.yang_state = 0
+        state.quests.jungle_sisters_flags = 0
+        state.quests.van_horsing_state = 0
+        state.quests.sparrow_state = 0
+        state.quests.madame_tusk_state = 0
+        state.quests.beg_state = 0
+
+        state.quest_flags = QUEST_FLAG.RESET
     end
 end, ON.TRANSITION)
 
+for _, data in pairs(Journal_to_ItemEnt) do
+    set_post_entity_spawn(function(entity, _)
+        entity:set_pre_update_state_machine(function (_)
+            if not test_flag(entity.more_flags, ENT_MORE_FLAG.FINISHED_SPAWNING) then
+                return
+            end
+            if not ap_save.item_unlocks[data.lock] then
+                for _, shop_entry in ipairs(shop_item_uids) do
+                    if shop_entry.itemID  == entity.uid then
+                        debug_print(("Entity UID %d (%s) is in owned_items. Replacing."):format(entity.uid,enum_get_name(ENT_TYPE,entity.type.id)))
+                        local spawnItem = ENT_TYPE.ITEM_PICKUP_BOMBBAG
+                        if bombOrRope then
+                            spawnItem = ENT_TYPE.ITEM_PICKUP_ROPEPILE
+                            bombOrRope = false
+                        else
+                            bombOrRope = true
+                        end
+                        local newItem = spawn_entity_snapped_to_floor(spawnItem, entity.x, entity.y, entity.layer)
+                        if shop_entry.ownerID and shop_entry.ownerID ~= -1 and newItem ~= nil then
+                            add_item_to_shop(newItem, shop_entry.ownerID)
+                        end
+                        shop_entry.itemPool[entity.uid] = nil
+                    end
+                    local heldEnt = entity:get_held_entity()
+                    if heldEnt ~= nil then
+                        heldEnt:destroy()
+                    end
+                    entity:destroy()
+                    clear_callback()
+                end
+            else
+                clear_callback()
+            end
+        end)
+    end, SPAWN_TYPE.ANY, MASK.ITEM, data.type)
+end
 
-set_post_entity_spawn(function(entity, spawn_flags)
-    local entity_type = get_entity_type(entity.uid)
-    if not ap_save.unlocked_key_items[key_item_to_index[entity_type]] then
-        entity:destroy_recursive(MASK.ITEM, {ENT_TYPE.ITEM_METAL_ARROW}, RECURSIVE_MODE.INCLUSIVE)
+function SpawnJournalIndex(journalIndex, asPowerup)
+    if asPowerup then
+        local ent = Journal_to_PowerupEnt[journalIndex]
+        if ent ~= nil then
+            return ent, true
+        end
     end
-end, SPAWN_TYPE.ANY, MASK.ITEM, ENT_TYPE.ITEM_PICKUP_UDJATEYE, ENT_TYPE.ITEM_PICKUP_HEDJET, ENT_TYPE.ITEM_PICKUP_CROWN, ENT_TYPE.ITEM_PICKUP_ANKH, ENT_TYPE.ITEM_EXCALIBUR, ENT_TYPE.ITEM_SCEPTER, ENT_TYPE.ITEM_PICKUP_TABLETOFDESTINY, ENT_TYPE.ITEM_USHABTI, ENT_TYPE.ITEM_LIGHT_ARROW, ENT_TYPE.ITEM_HOUYIBOW)
 
+    local ent = Journal_to_ItemEnt[journalIndex].type
+    if ent ~= nil then
+        return ent, false
+    end
 
-function give_item(type)
+    debug_print("No entry found for: " .. tostring(journalIndex))
+    return nil, false
+end
+
+function give_item(itemID)
     local player = get_player(1, false)
     if player ~= nil then
         local journalEntry = -1
-        if type == ENT_TYPE.ITEM_PICKUP_ROPEPILE then
+        local entID = -1
+        if itemID == Spel2AP.filler_items.Rope_Pile then
             journalEntry = 1
-        elseif type == ENT_TYPE.ITEM_PICKUP_BOMBBAG then
+            entID = ENT_TYPE.ITEM_PICKUP_ROPEPILE
+        elseif itemID == Spel2AP.filler_items.Bomb_Bag then
             journalEntry = 2
-        elseif type == ENT_TYPE.ITEM_PICKUP_BOMBBOX then
+            entID = ENT_TYPE.ITEM_PICKUP_BOMBBAG
+        elseif itemID == Spel2AP.filler_items.Bomb_Box then
             journalEntry = 3
-        elseif type == ENT_TYPE.ITEM_PICKUP_COOKEDTURKEY then
+            entID = ENT_TYPE.ITEM_PICKUP_BOMBBOX
+        elseif itemID == Spel2AP.filler_items.Cooked_Turkey then
             journalEntry = 52
-        elseif type == ENT_TYPE.ITEM_PICKUP_ROYALJELLY then
+            entID = ENT_TYPE.ITEM_PICKUP_COOKEDTURKEY
+        elseif itemID == Spel2AP.filler_items.Royal_Jelly then
             journalEntry = 22
+            entID = ENT_TYPE.ITEM_PICKUP_ROYALJELLY
+        elseif itemID == Spel2AP.filler_items.Emerald_Gem then
+            entID = ENT_TYPE.ITEM_EMERALD
+        elseif itemID == Spel2AP.filler_items.Sapphire_Gem then
+            entID = ENT_TYPE.ITEM_SAPPHIRE
+        elseif itemID == Spel2AP.filler_items.Ruby_Gem then
+            entID = ENT_TYPE.ITEM_RUBY
+        else
+            entID = ENT_TYPE.ITEM_DIAMOND
         end
-        if type ~= -1 then
-            give_entity(player, type, journalEntry)
-        end
+        give_entity(player, entID, journalEntry)
     end
 end
 
@@ -280,7 +375,6 @@ function give_entity(player, ent, journalEntry)
     local hideJournal = journalEntry ~= -1 and savegame.items[journalEntry] == false
     local playerX, playerY, playerLayer = get_position(player.uid)
     local newItem = get_entity(spawn_entity(ent, playerX, playerY, playerLayer, 0, 0))
-    givingItem = true
     newItem.stand_counter = 25
     local firstRun = false
     set_callback(function()
@@ -288,11 +382,13 @@ function give_entity(player, ent, journalEntry)
             if hideJournal then
                 game_manager.save_related.journal_popup_ui.timer = 0
                 savegame.items[journalEntry] = false
+                ap_save.items[journalEntry] = false
             end
             givingItem = false
             clear_callback()
         else
             firstRun = true
+            givingItem = true
         end
     end, ON.PRE_UPDATE)
 end
@@ -301,7 +397,7 @@ end
 function give_trap(type)
     local player = get_player(1, false)
     if player ~= nil then
-        if type == "ghost" then
+        if type == Spel2AP.traps.Ghost then
             set_ghost_spawn_times(0, 0)
             
             set_interval(function()
@@ -309,13 +405,13 @@ function give_trap(type)
                 clear_callback()
             end, 1)
 
-        elseif type == "poison" then
+        elseif type == Spel2AP.traps.Poison then
             poison_entity(player.uid)
 
-        elseif type == "curse" then
+        elseif type == Spel2AP.traps.Curse then
             player:set_cursed(true, true)
 
-        elseif type == "stun" then
+        elseif type == Spel2AP.traps.Stun then
             for _, uid in ipairs(get_entities_by(0, MASK.MOUNT, LAYER.PLAYER)) do
                 local mount = get_entity(uid)
                 if mount.rider_uid == player.uid then
@@ -335,7 +431,7 @@ function give_trap(type)
                 player:stun(60)
             end
 
-        elseif type == "loose bombs" then
+        elseif type == Spel2AP.traps.Loose_Bombs then
             local count = 0
             set_interval(function()
                 count = count + 1
@@ -349,7 +445,7 @@ function give_trap(type)
                 
             end, 60)
 
-        elseif type == "blind" then
+        elseif type == Spel2AP.traps.Blindness then
             if state.illumination ~= nil then
                 set_interval(function()
                     player.emitted_light.enabled = true
@@ -361,17 +457,17 @@ function give_trap(type)
                 end, ON.POST_ROOM_GENERATION)
             end
 
-        elseif type == "amnesia" then
+        elseif type == Spel2AP.traps.Amnesia then
             player:set_position(state.level_gen.spawn_x, state.level_gen.spawn_y)
 
-        elseif type == "angry" then
+        elseif type == Spel2AP.traps.Angry_Shopkeepers then
             for _, door in ipairs(state.level_gen.exit_doors) do
                 local shoppie = get_entity(spawn(ENT_TYPE.MONS_SHOPKEEPER, door.x, door.y, LAYER.FRONT, 0, 0))
                 shoppie.aggro_trigger = true
             end
             state.shoppie_aggro = 3
 
-        elseif type == "punish" then
+        elseif type == Spel2AP.traps.Punish_Ball then
             local altars_destroyed_backup = state.kali_altars_destroyed
             attach_ball_and_chain(player.uid, 0, 0)
             local count = 0

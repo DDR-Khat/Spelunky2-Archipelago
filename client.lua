@@ -18,7 +18,7 @@ local send_item_queue = {}
 local ready_for_item = true
 local caused_by_death_link = false
 local goal_completed = false
-local id = nil
+local id
 ourSlot = nil
 ourTeam = nil
 apSlots = {}
@@ -143,6 +143,10 @@ function connect(server, slot, password)
     function on_socket_error(msg)
         if string.match(msg, "TLS handshake failed") then
             tls_failed = true
+        elseif string.match(msg, "Invalid HTTP status") then
+            print("Fatal connection failure. Please reboot Spelunky 2")
+            clear_callback(id)
+            return
         else
             print("Socket error: " .. msg)
         end
@@ -372,8 +376,12 @@ function set_ap_callbacks()
             if IsType(item_queue,"table") and #item_queue > 0 then
                 local player = item_queue[1].player
                 item = item_ids[item_queue[1].item]
+                if item == nil or item.display == nil then
+                    debug_print(f"{item_queue[1].item} does not have a display?!")
+                    return
+                end
                 display = item.display
-                item_handler(item.type)
+                item_handler(item_queue[1].item)
                 msgTitle = (player == "you" and "You found an item!") or f"Item received from {player}"
                 msgDesc = (player == "you" and f"{item.name}") or f"Received {item.name}"
                 table.remove(item_queue, 1)
@@ -465,67 +473,58 @@ function complete_goal()
     end
 end
 
-function item_handler(type)
-    local was_item_processed = false
-
-    if not goal_completed then
-        for _, item_type in ipairs(item_categories.filler_items) do
-            if type == item_type then
-                give_item(type)
-                was_item_processed = true
+function item_handler(itemID)
+    local item_info = item_ids[itemID]
+    if not item_info then
+        return false
+    elseif goal_completed then
+        return true
+    end
+    local category = item_info.type
+    if category == Spel2AP.filler_items then
+        give_item(itemID)
+        return true
+    elseif category == Spel2AP.characters then
+        ap_save.character_unlocks[itemID] = true
+        update_characters()
+        write_save()
+        return true
+    elseif category == Spel2AP.locked_items then
+        ap_save.item_unlocks[itemID] = true
+        write_save()
+        return true
+    elseif category == Spel2AP.upgrades then
+        ap_save.permanent_item_upgrades[itemID] = true
+        write_save()
+        return true
+    elseif category == Spel2AP.waddler_upgrades then
+        ap_save.waddler_item_unlocks[itemID] = true
+        write_save()
+        return true
+    elseif category == Spel2AP.permanent_upgrades then
+        ap_save.stat_upgrades[itemID] = (ap_save.stat_upgrades[itemID] or 0) + 1
+        write_save()
+        return true
+    elseif category == Spel2AP.world_unlocks then
+        if player_options.progressive_worlds then
+            if itemID == Spel2AP.world_unlocks.Progressive_World then
+                ap_save.max_world = ap_save.max_world + 1
             end
+        else
+            ap_save.world_unlocks[itemID] = true
         end
-
-
-        for _, trap in ipairs(item_categories.traps) do
-            if type == trap then
-                give_trap(type)
-                was_item_processed = true
-            end
-        end
+        write_save()
+        return true
+    elseif category == Spel2AP.shortcuts then
+        ap_save.shortcut_unlocks[itemID] = true
+        write_save()
+        return true
+    elseif category == Spel2AP.traps then
+        give_trap(itemID)
+        return true
+    else
+        return false
     end
-
-    for index, character_type in ipairs(character_data.types) do
-        if type == character_type and not ap_save.unlocked_characters[index] then
-            ap_save.unlocked_characters[index] = true
-            was_item_processed = true
-        end
-    end
-
-    for index, key_item_type in ipairs(item_categories.key_items) do
-        if type == key_item_type then
-            ap_save.unlocked_key_items[index] = true
-            was_item_processed = true
-        end
-    end
-
-    for _, upgrade in ipairs(item_categories.permanent_upgrades) do
-        if type == upgrade then
-            ap_save.permanent_upgrades[upgrade] = ap_save.permanent_upgrades[upgrade] + 1
-            was_item_processed = true
-        end
-    end
-
-    if type == "max_world" then
-        ap_save.max_world = ap_save.max_world + 1
-        was_item_processed = true
-    end
-
-    for _, world in ipairs(item_categories.worlds) do
-        if type == world then
-            ap_save.unlocked_worlds[world] = true
-            was_item_processed = true
-        end
-    end
-
-    for _, shortcut in ipairs(item_categories.shortcuts) do
-        if type == shortcut then
-            ap_save.unlocked_shortcuts[shortcut] = ap_save.unlocked_shortcuts[shortcut] + 1
-            was_item_processed = true
-        end
-    end
-
-    return was_item_processed
 end
 
 function queue_death_link()
