@@ -1110,7 +1110,7 @@ item_ids = {
         name = "True Crown Unlocked",
         lock_name = "True Crown",
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
-        TileY = 5,
+        TileY = 4,
         TileX = 3,
     },
     [Spel2AP.locked_items.Udjat_Eye] = {
@@ -1338,7 +1338,7 @@ item_ids = {
         type = Spel2AP.upgrades,
         name = "Permanent True Crown",
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
-        TileY = 5,
+        TileY = 4,
         TileX = 3,
     },
     [Spel2AP.upgrades.Vlads_Cape] = {
@@ -1604,7 +1604,7 @@ item_ids = {
         type = Spel2AP.waddler_upgrades,
         name = "Waddler True Crown",
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
-        TileY = 5,
+        TileY = 4,
         TileX = 3,
     },
     [Spel2AP.waddler_upgrades.Udjat_Eye] = {

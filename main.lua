@@ -72,7 +72,7 @@ register_option_float('popup_time', 'Popup Timer', 'How long the "You received" 
 
 debugging = false
 givingItem = false
-waddlerGlover = false
+waddlerClover = false
 local bombOrRope = false
 
 set_callback(function()
@@ -160,7 +160,7 @@ end, ON.START)
 set_callback(function()
     set_callback(function()
         clear_callback()
-        waddlerGlover = false
+        waddlerClover = false
         for item_code, is_unlocked in pairs(ap_save.waddler_item_unlocks) do
             if is_unlocked ~= true then
                 goto continue
@@ -170,7 +170,10 @@ set_callback(function()
                 goto continue
             end
             local ent, _ = SpawnJournalIndex(journal_index, false)
-            waddler_store_entity(ent)
+            local itemSlot = waddler_store_entity(ent)
+            if item_code == Spel2AP.waddler_upgrades.Four_Leaf_Clover then
+                waddler_set_entity_meta(itemSlot, Spel2AP.waddler_upgrades.Four_Leaf_Clover)
+            end
             ::continue::
         end
     end, ON.PRE_LEVEL_GENERATION)
@@ -191,7 +194,7 @@ set_callback(function()
 
     set_callback(function()
         clear_callback()
-        if ap_save.permanent_item_upgrades[Spel2AP.upgrades.Four_Leaf_Clover] then
+        if ap_save.permanent_item_upgrades[Spel2AP.upgrades.Four_Leaf_Clover] or waddlerClover then
             local level_flags = get_level_flags()
             level_flags = set_flag(level_flags, ENT_FLAG.CLOVER_FLAG)
             set_level_flags(level_flags)
@@ -258,7 +261,21 @@ set_post_entity_spawn(function(crate)
         end
         crate.inside = replaceItem
     end)
-end, SPAWN_TYPE.ANY, 0, {ENT_TYPE.ITEM_CRATE, ENT_TYPE.ITEM_PRESENT, ENT_TYPE.ITEM_GHIST_PRESENT})
+end, SPAWN_TYPE.ANY, MASK.ANY, {ENT_TYPE.ITEM_CRATE, ENT_TYPE.ITEM_PRESENT, ENT_TYPE.ITEM_GHIST_PRESENT})
+
+set_post_entity_spawn(function(clover)
+    if ap_save.waddler_item_unlocks[Spel2AP.waddler_upgrades.Four_Leaf_Clover] ~= true or waddlerClover then
+        return
+    end
+    clover:set_pre_apply_metadata(function(_, meta)
+        if meta ~= Spel2AP.waddler_upgrades.Four_Leaf_Clover then
+            return
+        end
+        clover:set_pre_virtual(94, function()
+            waddlerClover = true
+        end)
+    end)
+end, SPAWN_TYPE.ANY, MASK.ITEM, ENT_TYPE.ITEM_PICKUP_CLOVER)
 
 set_callback(function()
     -- Iterates over all 5 Journal chapters
