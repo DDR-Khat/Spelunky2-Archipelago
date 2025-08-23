@@ -55,6 +55,7 @@ function makeTexture(path, width, height)
     end
 end
 ENT_MORE_FLAG.FINISHED_SPAWNING = 7
+ENT_FLAG.CLOVER_FLAG = 23
 generalItem = makeTexture("assets/item.png", 128, 128)
 trapItem = makeTexture("assets/trap.png", 128, 128)
 progressionItem = makeTexture("assets/progression.png", 128, 128)
@@ -71,6 +72,7 @@ register_option_float('popup_time', 'Popup Timer', 'How long the "You received" 
 
 debugging = false
 givingItem = false
+waddlerGlover = false
 local bombOrRope = false
 
 set_callback(function()
@@ -137,7 +139,7 @@ set_callback(function()
     player.inventory.ropes = player_options.starting_ropes + ap_save.stat_upgrades[Spel2AP.permanent_upgrades.Rope]
 
     for item_code, is_unlocked in pairs(ap_save.permanent_item_upgrades) do
-        if is_unlocked ~= true then
+        if is_unlocked ~= true or item_code == Spel2AP.upgrades.Four_Leaf_Clover then
             goto continue
         end
         local journal_index = ItemCode_to_Index[item_code]
@@ -158,6 +160,7 @@ end, ON.START)
 set_callback(function()
     set_callback(function()
         clear_callback()
+        waddlerGlover = false
         for item_code, is_unlocked in pairs(ap_save.waddler_item_unlocks) do
             if is_unlocked ~= true then
                 goto continue
@@ -185,6 +188,15 @@ set_callback(function()
     if savegame.shortcuts > ap_save.shortcut_progress then
         ap_save.shortcut_progress = savegame.shortcuts
     end
+
+    set_callback(function()
+        clear_callback()
+        if ap_save.permanent_item_upgrades[Spel2AP.upgrades.Four_Leaf_Clover] then
+            local level_flags = get_level_flags()
+            level_flags = set_flag(level_flags, ENT_FLAG.CLOVER_FLAG)
+            set_level_flags(level_flags)
+        end
+    end, ON.PRE_UPDATE)
 end, ON.LEVEL)
 
 local shop_item_uids = {}
@@ -219,19 +231,33 @@ set_post_entity_spawn(function(crate)
     if get_local_state().screen ~= SCREEN.LEVEL then
         return
     end
-    for itemCode, is_unlocked in pairs(ap_save.item_unlocks) do
-        if is_unlocked and crate.inside == itemCode then
+    crate:set_pre_update_state_machine(function()
+        if not test_flag(crate.more_flags, ENT_MORE_FLAG.FINISHED_SPAWNING) then
             return
         end
-    end
-    local replaceItem = ENT_TYPE.ITEM_PICKUP_BOMBBAG
-    if bombOrRope then
-        replaceItem = ENT_TYPE.ITEM_PICKUP_ROPEPILE
-        bombOrRope = false
-    else
-        bombOrRope = true
-    end
-    crate.inside = replaceItem
+        clear_callback()
+        local storedItem = crate.inside
+        if storedItem == ENT_TYPE.ITEM_PICKUP_BOMBBAG or storedItem == ENT_TYPE.ITEM_PICKUP_ROPEPILE then
+            return
+        end
+        for _, entry in pairs(Journal_to_ItemEnt) do
+            if entry.type == storedItem then
+                if ap_save.item_unlocks[entry.lock] then
+                    return
+                else
+                    break
+                end
+            end
+        end
+        local replaceItem = ENT_TYPE.ITEM_PICKUP_BOMBBAG
+        if bombOrRope then
+            replaceItem = ENT_TYPE.ITEM_PICKUP_ROPEPILE
+            bombOrRope = false
+        else
+            bombOrRope = true
+        end
+        crate.inside = replaceItem
+    end)
 end, SPAWN_TYPE.ANY, 0, {ENT_TYPE.ITEM_CRATE, ENT_TYPE.ITEM_PRESENT, ENT_TYPE.ITEM_GHIST_PRESENT})
 
 set_callback(function()
