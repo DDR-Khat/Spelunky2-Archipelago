@@ -265,6 +265,10 @@ function initialize_save()
     -- Clearing game save
     savegame.tutorial_state = 4
     savegame.shortcuts = 0
+    savegame.wins_normal = math.max(savegame.wins_normal, 1)
+    savegame.wins_hard = math.max(savegame.wins_hard, 1)
+    savegame.wins_special = math.max(savegame.wins_special, 1)
+    savegame.deaths = math.max(savegame.deaths, 100)
 
     for _, chapter in ipairs(journal.chapters) do
         clear_journal(savegame[chapter])

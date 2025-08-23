@@ -135,10 +135,6 @@ set_callback(function()
     player.health = player_options.starting_health + ap_save.stat_upgrades[Spel2AP.permanent_upgrades.Health]
     player.inventory.bombs = player_options.starting_bombs + ap_save.stat_upgrades[Spel2AP.permanent_upgrades.Bomb]
     player.inventory.ropes = player_options.starting_ropes + ap_save.stat_upgrades[Spel2AP.permanent_upgrades.Rope]
-    savegame.wins_normal = math.max(savegame.wins_normal, 1)
-    savegame.wins_hard = math.max(savegame.wins_hard, 1)
-    savegame.wins_special = math.max(savegame.wins_special, 1)
-    savegame.deaths = math.max(savegame.deaths, 100)
 
     for item_code, is_unlocked in pairs(ap_save.permanent_item_upgrades) do
         if is_unlocked ~= true then
@@ -223,8 +219,8 @@ set_post_entity_spawn(function(crate)
     if get_local_state().screen ~= SCREEN.LEVEL then
         return
     end
-    for itemName, is_unlocked in pairs(ap_save.item_unlocks) do
-        if is_unlocked and crate.inside == Spel2AP.locked_items[itemName] then
+    for itemCode, is_unlocked in pairs(ap_save.item_unlocks) do
+        if is_unlocked and crate.inside == itemCode then
             return
         end
     end
@@ -358,6 +354,8 @@ function give_item(itemID)
         elseif itemID == Spel2AP.filler_items.Royal_Jelly then
             journalEntry = 22
             entID = ENT_TYPE.ITEM_PICKUP_ROYALJELLY
+        elseif itemID == Spel2AP.filler_items.Gold_Bar then
+            entID = ENT_TYPE.ITEM_GOLDBAR
         elseif itemID == Spel2AP.filler_items.Emerald_Gem then
             entID = ENT_TYPE.ITEM_EMERALD
         elseif itemID == Spel2AP.filler_items.Sapphire_Gem then
@@ -420,9 +418,9 @@ function give_trap(type)
                 end
             end
 
-            if player:get_behavior() == 19 or player:get_behavior() == 21 then
+            if player:get_behavior() == CHAR_STATE.ENTERING or player:get_behavior() == CHAR_STATE.EXITING then
                 set_callback(function()
-                    if player:get_behavior() ~= 19 and player:get_behavior() ~= 21 then
+                    if player:get_behavior() ~= CHAR_STATE.ENTERING and player:get_behavior() ~= CHAR_STATE.EXITING then
                         player:stun(60)
                         clear_callback()
                     end

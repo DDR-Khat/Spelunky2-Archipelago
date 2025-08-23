@@ -211,7 +211,22 @@ function connect(server, slot, password)
         show_login_data = false
         set_ap_callbacks()
         initialize_save()
+        local restricted_lookup = {}
+        for _, name in pairs(slot_data.restricted_items or {}) do
+            restricted_lookup[name] = true
+        end
+
+        for code, entry in pairs(item_ids) do
+            if entry.type == Spel2AP.locked_items then
+                if restricted_lookup[entry.lock_name] then
+                    ap_save.item_unlocks[code] = false
+                else
+                    ap_save.item_unlocks[code] = true
+                end
+            end
+        end
         read_save()
+        savegame.players[1] = ap_save.last_character
     end
 
     function on_slot_refused(reasons)
