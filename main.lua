@@ -244,7 +244,7 @@ set_callback(function()
         local owned_items = state.room_owners and state.room_owners.owned_items
         if owned_items then
             for uid, owner in pairs(state.room_owners.owned_items) do
-                table.insert(shop_item_uids, {itemID = uid, ownerID = owner.owner_uid, shop_pool = owner, itemPool = owned_items})
+                shop_item_uids[uid] = {ownerID = owner.owner_uid, shop_pool = owner, itemPool = owned_items}
             end
         end
     end, ON.PRE_UPDATE)
