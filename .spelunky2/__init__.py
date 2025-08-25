@@ -257,6 +257,7 @@ class Spelunky2World(World):
         slot_data = {
             "goal": self.options.goal.value,
             "progressive_worlds": bool(self.options.progressive_worlds.value),
+            "increase_starting_wallet": bool(self.options.starting_wallet),
             "starting_health": self.options.starting_health.value,
             "starting_bombs": self.options.starting_bombs.value,
             "starting_ropes": self.options.starting_ropes.value,

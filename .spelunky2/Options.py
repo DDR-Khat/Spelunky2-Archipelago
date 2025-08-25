@@ -300,6 +300,7 @@ class PunishBallTrapChance(Range):
 class Spelunky2Options(PerGameCommonOptions):
     goal: Goal
     goal_level: GoalLevel
+    starting_wallet: IncreaseStartingWallet
     progressive_worlds: ProgressiveWorlds
     starting_health: StartingHealth
     health_upgrades: HealthUpgrades
