@@ -223,6 +223,11 @@ set_callback(function()
 end, ON.LEVEL)
 
 local shop_item_uids = {}
+local level_done = false
+set_callback(function()
+    level_done = false
+end, ON.PRE_LEVEL_GENERATION)
+
 set_callback(function()
     debug_print("POST_LEVEL_GENERATION")
 
@@ -247,6 +252,7 @@ set_callback(function()
                 shop_item_uids[uid] = {ownerID = owner.owner_uid, shop_pool = owner, itemPool = owned_items}
             end
         end
+        level_done = true
     end, ON.PRE_UPDATE)
 end, ON.POST_LEVEL_GENERATION)
 
@@ -338,7 +344,7 @@ end, ON.TRANSITION)
 for _, data in pairs(Journal_to_ItemEnt) do
     set_post_entity_spawn(function(entity, _)
         entity:set_pre_update_state_machine(function (_)
-            if not test_flag(entity.more_flags, ENT_MORE_FLAG.FINISHED_SPAWNING) then
+            if not test_flag(entity.more_flags, ENT_MORE_FLAG.FINISHED_SPAWNING) or level_done ~= true then
                 return
             end
             if ap_save.item_unlocks[data.lock] then
