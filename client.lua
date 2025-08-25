@@ -511,7 +511,11 @@ function item_handler(itemID)
         write_save()
         return true
     elseif category == Spel2AP.upgrades then
-        ap_save.permanent_item_upgrades[itemID] = true
+        if itemID == Spel2AP.upgrades.Compass then
+            ap_save.permanent_item_upgrades[itemID] = (ap_save.permanent_item_upgrades[itemID] or 0) + 1
+        else
+            ap_save.permanent_item_upgrades[itemID] = true
+        end
         write_save()
         return true
     elseif category == Spel2AP.waddler_upgrades then

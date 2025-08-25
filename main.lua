@@ -141,11 +141,17 @@ set_callback(function()
         add_money_slot(ap_save.starting_wallet, 1, 0)
     end
 
-    for item_code, is_unlocked in pairs(ap_save.permanent_item_upgrades) do
-        if is_unlocked ~= true or item_code == Spel2AP.upgrades.Four_Leaf_Clover then
+    for item_code, value in pairs(ap_save.permanent_item_upgrades) do
+        if (type(value) == "boolean" and value ~= true)
+                or item_code == Spel2AP.upgrades.Four_Leaf_Clover then
             goto continue
         end
-        local journal_index = ItemCode_to_Index[item_code]
+        local journal_index = -1
+        if item_code == Spel2AP.upgrades.Compass then
+            journal_index = (value == 1) and 10 or 11
+        else
+            journal_index = ItemCode_to_Index[item_code]
+        end
         if journal_index and savegame.items[journal_index] ~= true then
             goto continue
         end
@@ -164,8 +170,14 @@ set_callback(function()
     set_callback(function()
         clear_callback()
         waddlerClover = false
+        local compassCount = 0
         for item_code, is_unlocked in pairs(ap_save.waddler_item_unlocks) do
             if is_unlocked ~= true then
+                goto continue
+            end
+            if item_code == Spel2AP.waddler_upgrades.Alien_Compass
+                    or item_code == Spel2AP.waddler_upgrades.Compass then
+                compassCount = compassCount + 1
                 goto continue
             end
             local journal_index = ItemCode_to_Index[item_code]
@@ -178,6 +190,11 @@ set_callback(function()
                 waddler_set_entity_meta(itemSlot, Spel2AP.waddler_upgrades.Four_Leaf_Clover)
             end
             ::continue::
+        end
+        if compassCount ~= 0 then
+            local journal_index = (compassCount == 1) and 10 or 11
+            local ent, _ = SpawnJournalIndex(journal_index, false)
+            waddler_store_entity(ent)
         end
     end, ON.PRE_LEVEL_GENERATION)
 end, ON.RESET)
