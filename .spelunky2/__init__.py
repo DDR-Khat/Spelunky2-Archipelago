@@ -156,11 +156,15 @@ class Spelunky2World(World):
         else:
             quest_item_names = sorted(quest_items)
 
+        excluded_quest_items = quest_items - quest_item_names
+
         for item_name in quest_item_names:
             spelunky2_item_pool.append(self.create_item(item_name))
 
         # Add all explicitly restricted items
         for item_name in self.options.restricted_items.value:
+            if item_name in excluded_quest_items:
+                continue
             spelunky2_item_pool.append(self.create_item(item_name))
 
         # Get user's Waddler upgrade choices
@@ -168,6 +172,8 @@ class Spelunky2World(World):
 
         # Add Waddler Upgrades for the items the user selected.
         for item_name in waddler_upgrade_choices:
+            if item_name in excluded_quest_items:
+                continue
             upgrade_name = f"{item_name} Waddler Upgrade"
             spelunky2_item_pool.append(self.create_item(upgrade_name))
 
@@ -175,6 +181,8 @@ class Spelunky2World(World):
         # but only if they were NOT also selected as a Waddler upgrade.
         item_upgrade_choices = set(self.options.item_upgrades.value)
         for item_name in item_upgrade_choices:
+            if item_name in excluded_quest_items:
+                continue
             if item_name not in waddler_upgrade_choices:
                 upgrade_name = f"{item_name} Upgrade"
                 spelunky2_item_pool.append(self.create_item(upgrade_name))

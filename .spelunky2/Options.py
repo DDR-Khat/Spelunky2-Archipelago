@@ -122,7 +122,7 @@ Options:
 {item_options_text}"""
     display_name = "Item Upgrades"
     valid_keys = item_options
-    default = powerup_options
+    default = powerup_options - {"True Crown", "Eggplant Crown"}
 
 
 class WaddlerUpgrades(ItemSet):
@@ -131,7 +131,7 @@ Options (any selected here override options in item_upgrades):
 {locked_items_text}"""
     display_name = "Waddler Items"
     valid_keys = locked_items
-    default = equip_options
+    default = equip_options - {"True Crown", "Eggplant Crown"}
 
 
 class DeathLinkBypassesAnkh(Toggle):
