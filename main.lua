@@ -338,6 +338,8 @@ set_callback(function()
         state.quests.sparrow_state = 0
         state.quests.madame_tusk_state = 0
         state.quests.beg_state = 0
+        state.kali_altars_destroyed = 0
+        state.kali_gifts = 0
 
         state.quest_flags = QUEST_FLAG.RESET
     end
@@ -350,29 +352,28 @@ for _, data in pairs(Journal_to_ItemEnt) do
                 return
             end
             if not ap_save.item_unlocks[data.lock] then
-                for _, shop_entry in ipairs(shop_item_uids) do
-                    if shop_entry.itemID  == entity.uid then
-                        debug_print(("Entity UID %d (%s) is in owned_items. Replacing."):format(entity.uid,enum_get_name(ENT_TYPE,entity.type.id)))
-                        local spawnItem = ENT_TYPE.ITEM_PICKUP_BOMBBAG
-                        if bombOrRope then
-                            spawnItem = ENT_TYPE.ITEM_PICKUP_ROPEPILE
-                            bombOrRope = false
-                        else
-                            bombOrRope = true
-                        end
-                        local newItem = spawn_entity_snapped_to_floor(spawnItem, entity.x, entity.y, entity.layer)
-                        if shop_entry.ownerID and shop_entry.ownerID ~= -1 and newItem ~= nil then
-                            add_item_to_shop(newItem, shop_entry.ownerID)
-                        end
-                        shop_entry.itemPool[entity.uid] = nil
+                local shop_entry = shop_item_uid_lookup[entity.uid]
+                if shop_entry then
+                    debug_print(("Entity UID %d (%s) is in owned_items. Replacing."):format(entity.uid,enum_get_name(ENT_TYPE,entity.type.id)))
+                    local spawnItem = ENT_TYPE.ITEM_PICKUP_BOMBBAG
+                    if bombOrRope then
+                        spawnItem = ENT_TYPE.ITEM_PICKUP_ROPEPILE
+                        bombOrRope = false
+                    else
+                        bombOrRope = true
                     end
-                    local heldEnt = entity:get_held_entity()
-                    if heldEnt ~= nil then
-                        heldEnt:destroy()
+                    local newItem = spawn_entity_snapped_to_floor(spawnItem, entity.x, entity.y, entity.layer)
+                    if shop_entry.ownerID and shop_entry.ownerID ~= -1 and newItem ~= nil then
+                        add_item_to_shop(newItem, shop_entry.ownerID)
                     end
-                    entity:destroy()
-                    clear_callback()
+                    shop_entry.itemPool[entity.uid] = nil
                 end
+                local heldEnt = entity:get_held_entity()
+                if heldEnt ~= nil then
+                    heldEnt:destroy()
+                end
+                entity:destroy()
+                clear_callback()
             else
                 clear_callback()
             end
