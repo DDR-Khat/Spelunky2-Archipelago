@@ -137,6 +137,9 @@ set_callback(function()
     player.health = player_options.starting_health + ap_save.stat_upgrades[Spel2AP.permanent_upgrades.Health]
     player.inventory.bombs = player_options.starting_bombs + ap_save.stat_upgrades[Spel2AP.permanent_upgrades.Bomb]
     player.inventory.ropes = player_options.starting_ropes + ap_save.stat_upgrades[Spel2AP.permanent_upgrades.Rope]
+    if player_options.increase_wallet then
+        add_money_slot(ap_save.starting_wallet, 1, 0)
+    end
 
     for item_code, is_unlocked in pairs(ap_save.permanent_item_upgrades) do
         if is_unlocked ~= true or item_code == Spel2AP.upgrades.Four_Leaf_Clover then
@@ -382,6 +385,7 @@ function give_item(itemID)
     if player ~= nil then
         local journalEntry = -1
         local entID = -1
+        local goldValue = -1
         if itemID == Spel2AP.filler_items.Rope_Pile then
             journalEntry = 1
             entID = ENT_TYPE.ITEM_PICKUP_ROPEPILE
@@ -399,23 +403,31 @@ function give_item(itemID)
             entID = ENT_TYPE.ITEM_PICKUP_ROYALJELLY
         elseif itemID == Spel2AP.filler_items.Gold_Bar then
             entID = ENT_TYPE.ITEM_GOLDBAR
+            goldValue = 500
         elseif itemID == Spel2AP.filler_items.Emerald_Gem then
             entID = ENT_TYPE.ITEM_EMERALD
+            goldValue = 800
         elseif itemID == Spel2AP.filler_items.Sapphire_Gem then
             entID = ENT_TYPE.ITEM_SAPPHIRE
+            goldValue = 1200
         elseif itemID == Spel2AP.filler_items.Ruby_Gem then
             entID = ENT_TYPE.ITEM_RUBY
+            goldValue = 1600
         else
             entID = ENT_TYPE.ITEM_DIAMOND
+            goldValue = 5000
         end
-        give_entity(player, entID, journalEntry)
+        give_entity(player, entID, journalEntry, goldValue)
     end
 end
 
-function give_entity(player, ent, journalEntry)
+function give_entity(player, ent, journalEntry, goldValue)
     local hideJournal = journalEntry ~= -1 and savegame.items[journalEntry] == false
     local playerX, playerY, playerLayer = get_position(player.uid)
     local newItem = get_entity(spawn_entity(ent, playerX, playerY, playerLayer, 0, 0))
+    if goldValue ~= -1 and player_options.increase_wallet then
+        ap_save.starting_wallet = ap_save.starting_wallet + goldValue
+    end
     newItem.stand_counter = 25
     local firstRun = false
     set_callback(function()

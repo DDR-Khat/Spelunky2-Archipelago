@@ -53,6 +53,11 @@ class ProgressiveShortcuts(DefaultOnToggle):
     display_name = "Progressive Shortcuts"
 """
 
+class IncreaseStartingWallet(Toggle):
+    """Should treasure (gold/emerald/sapphire/ruby/diamond) you receive from other players
+    increase the amount of gold you begin with after death."""
+    display_name = "Increase Starting Wallet"
+
 
 class StartingHealth(Range):
     """How much Health should you initially start with."""

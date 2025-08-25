@@ -178,6 +178,8 @@ class Spelunky2World(World):
             if item_name not in waddler_upgrade_choices:
                 upgrade_name = f"{item_name} Upgrade"
                 spelunky2_item_pool.append(self.create_item(upgrade_name))
+                if item_name == "Compass":
+                    spelunky2_item_pool.append(self.create_item(upgrade_name))
 
         # Permanent upgrades
         for _ in range(self.options.health_upgrades.value):

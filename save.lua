@@ -31,6 +31,8 @@ ap_save = {
         [Spel2AP.permanent_upgrades.Cosmic_Ocean_Checkpoint] = 0,
     },
 
+    starting_wallet = 0,
+
     world_unlocks = {},
 
     shortcut_unlocks = {},

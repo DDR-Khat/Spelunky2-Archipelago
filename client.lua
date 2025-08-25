@@ -57,6 +57,7 @@ player_options = {
     seed = "BACKUP",
     goal = 0,
     goal_level = 30,
+    increase_wallet = false,
     progressive_worlds = true,
     starting_characters = {"Ana Spelunky", "Margaret Tunnel", "Colin Northward", "Roffy D. Sloth"},
     starting_health = 4,
@@ -184,6 +185,7 @@ function connect(server, slot, password)
         player_options.goal = slot_data.goal
         player_options.goal_level = slot_data.goal_level
         -- player_options.starting_characters = slot_data.starting_characters
+        player_options.increase_wallet = slot_data.increase_starting_wallet
         player_options.progressive_worlds = slot_data.progressive_worlds
         player_options.starting_health = slot_data.starting_health
         player_options.starting_bombs = slot_data.starting_bombs
