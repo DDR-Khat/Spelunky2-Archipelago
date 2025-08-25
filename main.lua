@@ -345,7 +345,7 @@ for _, data in pairs(Journal_to_ItemEnt) do
                 clear_callback()
                 return
             end
-            local shop_entry = shop_item_uid_lookup[entity.uid]
+            local shop_entry = shop_item_uids[entity.uid]
             if shop_entry then
                 debug_print(("Entity UID %d (%s) is in owned_items. Replacing."):format(entity.uid,enum_get_name(ENT_TYPE,entity.type.id)))
                 local spawnItem = getBombOrRope()
