@@ -138,7 +138,7 @@ bestiary_entries = {
     "Yeti Journal Entry": Spelunky2LocationData(99, "Ice Caves"),
     "Yeti King Journal Entry": Spelunky2LocationData(100, "Ice Caves"),
     "Yeti Queen Journal Entry": Spelunky2LocationData(101, "Ice Caves"),
-    "Lamahu Journal Entry": Spelunky2LocationData(102, "Mothership"),
+    "Alien Queen Lamahu Journal Entry": Spelunky2LocationData(102, "Mothership"),
     "Proto Shopkeeper Journal Entry": Spelunky2LocationData(103, "Mothership"),
 
     # Neo Babylon
