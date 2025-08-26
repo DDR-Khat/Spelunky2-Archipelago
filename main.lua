@@ -236,7 +236,7 @@ set_callback(function()
         local coffin = get_entity(uid)
 
         for _, data in pairs(character_data) do
-            local is_unlocked = ap_save.people[data.index]
+            local is_unlocked = ap_save.people[data.index] and savegame.people[data.index]
             if is_unlocked and coffin.inside == data.ent then
                 set_contents(coffin.uid, ENT_TYPE.CHAR_HIREDHAND)
                 break
@@ -318,9 +318,13 @@ end, ON.GAMEFRAME)
 set_callback(function()
     debug_print("TRANSITION")
 
-    local unlock_id = theme_to_world_unlock_id[state.theme_next]
-    local shouldReset = player_options.progressive_worlds and (state.world_next > ap_save.max_world)
-            or (unlock_id and not ap_save.world_unlocks[unlock_id])
+    local shouldReset
+    if player_options.progressive_worlds then
+        shouldReset = state.world_next > ap_save.max_world
+    else
+        local unlock_id = theme_to_world_unlock_id[state.theme_next]
+        shouldReset = unlock_id and not ap_save.world_unlocks[unlock_id]
+    end
 
     if shouldReset then
         toast("This world is not unlocked yet!")
