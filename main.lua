@@ -93,7 +93,15 @@ local shortcut_save_values = {
 
 local function get_shortcut_level()
     if player_options.progressive_worlds then
-        return math.min(ap_save.max_world - 1, 3)
+        if ap_save.max_world > 4 then
+            return 3
+        elseif ap_save.max_world >= 3 then
+            return 2
+        elseif ap_save.max_world == 2 then
+            return 1
+        else
+            return 0
+        end
     else
         local unlocks = ap_save.shortcut_unlocks
         if unlocks[Spel2AP.shortcuts.Ice_Caves] then
