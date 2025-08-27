@@ -371,7 +371,7 @@ end, ON.TRANSITION)
 for _, data in pairs(Journal_to_ItemEnt) do
     set_post_entity_spawn(function(entity, _)
         entity:set_pre_update_state_machine(function (_)
-            if not test_flag(entity.more_flags, ENT_MORE_FLAG.FINISHED_SPAWNING) or level_done ~= true then
+            if not test_flag(entity.more_flags, ENT_MORE_FLAG.FINISHED_SPAWNING) then
                 return
             end
             if ap_save.item_unlocks[data.lock] then
