@@ -19,6 +19,8 @@ item_options = sorted(powerup_options | equip_options)
 locked_items = sorted(powerup_options | equip_options | quest_items)
 # End of Master Item List
 
+obnoxious_locations = frozenset({"Magmar Journal Entry", "Lavamander Journal Entry", "Mech Rider Journal Entry"})
+
 from .Items import (Spelunky2Item, item_data_table, filler_items, traps, filler_weights, trap_weights,
                     characters, upgrade_items_dict, waddler_items_dict, locked_items_dict,
                     permanent_upgrades, world_unlocks)
@@ -110,6 +112,7 @@ class Spelunky2World(World):
                 location_name: self.location_name_to_id[location_name]
                 for location_name, location_data in location_data_table.items()
                 if location_data.region == region_name and location_data.goal <= self.options.goal
+                and (location_name not in obnoxious_locations or not self.options.ignore_hard_locations)
             }, Spelunky2Location)
 
         if self.options.goal == Spelunky2Goal.HARD:

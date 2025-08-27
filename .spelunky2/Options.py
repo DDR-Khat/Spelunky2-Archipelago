@@ -1,5 +1,5 @@
 from . import item_options, locked_items, powerup_options, equip_options, quest_items
-from Options import Toggle, DefaultOnToggle, Range, Choice, PerGameCommonOptions, DeathLink, ItemSet
+from Options import ExcludeLocations, Toggle, DefaultOnToggle, Range, Choice, PerGameCommonOptions, DeathLink, ItemSet
 from dataclasses import dataclass
 
 
@@ -40,6 +40,10 @@ class GoalLevel(Range):
     range_end = 99
     default = 30
 
+class ExcludeHardLocations(DefaultOnToggle):
+    """Remove the more problematic Journal entries from being included in the AP world:
+    Magmar, Lavamander, MechSuit"""
+    display_name = "Exclude obnoxious journal entries"
 
 class ProgressiveWorlds(DefaultOnToggle):
     """Whether new worlds should be unlocked individually or progressively."""
@@ -295,7 +299,6 @@ class PunishBallTrapChance(Range):
     range_end = 100
     default = 10
 
-
 @dataclass
 class Spelunky2Options(PerGameCommonOptions):
     goal: Goal
@@ -333,3 +336,4 @@ class Spelunky2Options(PerGameCommonOptions):
     punish_weight: PunishBallTrapChance
     death_link: DeathLink
     bypass_ankh: DeathLinkBypassesAnkh
+    ignore_hard_locations: ExcludeHardLocations
