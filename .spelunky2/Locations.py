@@ -28,7 +28,7 @@ place_entries = {
     "Duat Journal Entry": Spelunky2LocationData(9, "Duat"),
     "Ice Caves Journal Entry": Spelunky2LocationData(10, "Ice Caves"),
     "Neo Babylon Journal Entry": Spelunky2LocationData(11, "Neo Babylon"),
-    "Tiamat's Throne Journal Entry": Spelunky2LocationData(12, "Neo Babylon"),
+    "Tiamat's Throne Journal Entry": Spelunky2LocationData(12, "Neo Babylon", Spelunky2Goal.HARD),
     "Sunken City Journal Entry": Spelunky2LocationData(13, "Sunken City", Spelunky2Goal.HARD),
     "Eggplant World Journal Entry": Spelunky2LocationData(14, "Eggplant World", Spelunky2Goal.HARD),
     "Hundun's Hideaway Journal Entry": Spelunky2LocationData(15, "Sunken City", Spelunky2Goal.HARD),
@@ -55,8 +55,8 @@ people_entries = {
     "Pilot Journal Entry": Spelunky2LocationData(32, "Mothership"),
     "Princess Airyn Journal Entry": Spelunky2LocationData(33, "Neo Babylon"),  # Reduced spawn rate until a Tiamat win without shortcuts
     "Dirk Yamaoka Journal Entry": Spelunky2LocationData(34, "Sunken City", Spelunky2Goal.HARD),
-    "Guy Spelunky Journal Entry": Spelunky2LocationData(35, "Neo Babylon"),
-    "Classic Guy Journal Entry": Spelunky2LocationData(36, "Sunken City", Spelunky2Goal.HARD),
+    "Guy Spelunky Journal Entry": Spelunky2LocationData(35, "Neo Babylon", Spelunky2Goal.HARD),
+    "Classic Guy Journal Entry": Spelunky2LocationData(36, "Sunken City", Spelunky2Goal.CO),
     "Terra Tunnel Journal Entry": Spelunky2LocationData(37, "Any World 2"),  # Can be in either Jungle or Volcana
     "Hired Hand Journal Entry": Spelunky2LocationData(38, "Dwelling"),  # From Alto's coffin or a shop
     "Eggplant Child Journal Entry": Spelunky2LocationData(39, "Ice Caves"),
