@@ -112,7 +112,7 @@ class Spelunky2World(World):
                 location_name: self.location_name_to_id[location_name]
                 for location_name, location_data in location_data_table.items()
                 if location_data.region == region_name and location_data.goal <= self.options.goal
-                and (location_name not in obnoxious_locations or not self.options.ignore_hard_locations)
+                and (location_name not in obnoxious_locations or self.options.include_hard_locations)
             }, Spelunky2Location)
 
         if self.options.goal == Spelunky2Goal.HARD:
