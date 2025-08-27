@@ -127,6 +127,44 @@ set_callback(function()
     end
 end, ON.LOADING)
 
+function get_filtered_dice_prizes()
+    local prizes = {}
+    for _, ent_type in ipairs(default_dice_prizes) do
+        local locked = false
+        for _, data in pairs(Journal_to_ItemEnt) do
+            if data.type == ent_type and ap_save.item_unlocks[data.lock] ~= true then
+                locked = true
+                break
+            end
+        end
+        if not locked then
+            table.insert(prizes, ent_type)
+        end
+    end
+    return prizes
+end
+
+function remove_from_shop(entity)
+    if not entity or not entity.uid then return end
+    if not state.room_owners or not state.room_owners.owned_items then return end
+
+    local owner_uid = entity.last_owner_uid
+    if not owner_uid or owner_uid == -1 then return end
+
+    for uid, entry in pairs(state.room_owners.owned_items) do
+        if uid == entity.uid and entry.owner_uid == owner_uid then
+            debug_print(f"Removed entity UID {uid} from shop owned by UID {owner_uid}")
+            state.room_owners.owned_items:erase(uid)
+            entity:liberate_from_shop()
+            entity.last_owner_uid = -1
+            return owner_uid
+        end
+    end
+
+    debug_print(f"Entity UID {entity.uid} not found in owned_items for owner UID {owner_uid}")
+    return -1
+end
+
 -- This handles all of the permanent upgrades to give the player at the start of every run
 set_callback(function()
     debug_print("START")
@@ -222,12 +260,6 @@ set_callback(function()
     end, ON.PRE_UPDATE)
 end, ON.LEVEL)
 
-local shop_item_uids = {}
-local level_done = false
-set_callback(function()
-    level_done = false
-end, ON.PRE_LEVEL_GENERATION)
-
 set_callback(function()
     debug_print("POST_LEVEL_GENERATION")
 
@@ -243,17 +275,6 @@ set_callback(function()
             end
         end
     end
-    shop_item_uids = {}
-    set_callback(function()
-        clear_callback()
-        local owned_items = state.room_owners and state.room_owners.owned_items
-        if owned_items then
-            for uid, owner in pairs(state.room_owners.owned_items) do
-                shop_item_uids[uid] = {ownerID = owner.owner_uid, shop_pool = owner, itemPool = owned_items}
-            end
-        end
-        level_done = true
-    end, ON.PRE_UPDATE)
 end, ON.POST_LEVEL_GENERATION)
 
 set_post_entity_spawn(function(crate)
@@ -343,6 +364,8 @@ set_callback(function()
 
         state.quest_flags = QUEST_FLAG.RESET
     end
+
+    change_diceshop_prizes(get_filtered_dice_prizes())
 end, ON.TRANSITION)
 
 for _, data in pairs(Journal_to_ItemEnt) do
@@ -355,15 +378,12 @@ for _, data in pairs(Journal_to_ItemEnt) do
                 clear_callback()
                 return
             end
-            local shop_entry = shop_item_uids[entity.uid]
-            if shop_entry then
-                debug_print(("Entity UID %d (%s) is in owned_items. Replacing."):format(entity.uid,enum_get_name(ENT_TYPE,entity.type.id)))
+            local shopOwner = remove_from_shop(entity)
+            if shopOwner ~= -1 then
                 local spawnItem = getBombOrRope()
                 local newItem = spawn_entity_snapped_to_floor(spawnItem, entity.x, entity.y, entity.layer)
-                if shop_entry.ownerID and shop_entry.ownerID ~= -1 and newItem ~= nil then
-                    add_item_to_shop(newItem, shop_entry.ownerID)
-                end
-                shop_entry.itemPool[entity.uid] = nil
+                get_entity(newItem).last_owner_uid = shopOwner
+                add_item_to_shop(newItem, shopOwner)
             end
             local heldEnt = entity:get_held_entity()
             if heldEnt ~= nil then
