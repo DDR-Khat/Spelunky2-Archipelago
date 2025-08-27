@@ -12,7 +12,6 @@ end
 local ap = nil
 
 -- Various variables to run the client
-local tls_failed = false
 local item_queue = {}
 local send_item_queue = {}
 local ready_for_item = true
@@ -48,6 +47,7 @@ game_info = {
     ap_client_version = {0, 5, 1}
 }
 
+secure_connect_only = false
 save_password = false
 local show_login_data = false
 local show_connect_button = true
@@ -90,6 +90,7 @@ set_callback(function()
                 end
             end
             show_login_data = ctx:win_check("Show login details",show_login_data)
+            secure_connect_only = ctx:win_check("Secure connection only", secure_connect_only)
 
             if show_login_data then
                 ctx:win_text("Slot Name")
@@ -101,7 +102,7 @@ set_callback(function()
                 ctx:win_text("Password")
                 game_info.password = ctx:win_input_text(" ##Password", game_info.password)
 
-                save_password = ctx:win_check("Remember Password",save_password)
+                save_password = ctx:win_check("Remember Password", save_password)
             end
             ctx:win_separator()
 
@@ -118,7 +119,6 @@ set_callback(function()
                     show_connect_button = true
                     prinspect("Disconnecting from the server...")
                     ap = nil
-                    tls_failed = false
                     collectgarbage("collect")
                 end
             end
@@ -137,13 +137,12 @@ end, ON.GUIFRAME)
 
 function connect(server, slot, password)
     function on_socket_connected()
-        local connectType = tls_failed and "Fallback" or "Secure"
-        print(f"[{connectionType}] Socket connected")
+        print(f"Socket connected")
     end
 
     function on_socket_error(msg)
-        if string.match(msg, "TLS handshake failed") then
-            tls_failed = true
+        if string.match(msg, "TLS handshake failed") and secure_connect_only ~= true then
+            return
         elseif string.match(msg, "Invalid HTTP status") then
             print("Fatal connection failure. Please reboot Spelunky 2")
             clear_callback(id)
@@ -169,8 +168,7 @@ function connect(server, slot, password)
     end
 
     function on_slot_connected(slot_data)
-        local connectType = tls_failed and "Fallback" or "Secure"
-        print(f"[{connectType}] Slot connected")
+        print(f"Slot connected")
 
         show_connect_button = false
         clear_callback(id)
@@ -233,7 +231,6 @@ function connect(server, slot, password)
 
     function on_slot_refused(reasons)
         print("Slot refused: " .. table.concat(reasons, ", "))
-        tls_failed = false
         clear_callback(id)
     end
 
@@ -363,7 +360,11 @@ function connect(server, slot, password)
         end
     end
 
-    ap = AP(slot, game_info.game, server);
+    if secure_connect_only then
+        ap = AP(slot, game_info.game, "wss://"..server);
+    else
+        ap = AP(slot, game_info.game, server);
+    end
 
     --ap:set_socket_connected_handler(on_socket_connected)
     ap:set_socket_error_handler(on_socket_error)
