@@ -155,7 +155,6 @@ function remove_from_shop(entity)
         if uid == entity.uid and entry.owner_uid == owner_uid then
             debug_print(f"Removed entity UID {uid} from shop owned by UID {owner_uid}")
             state.room_owners.owned_items:erase(uid)
-            entity:liberate_from_shop()
             entity.last_owner_uid = -1
             return owner_uid
         end
@@ -379,11 +378,15 @@ for _, data in pairs(Journal_to_ItemEnt) do
                 return
             end
             local shopOwner = remove_from_shop(entity)
-            if shopOwner ~= -1 then
+            if shopOwner and shopOwner ~= -1 then
                 local spawnItem = getBombOrRope()
+                debug_print(f"Found {enum_get_name(ENT_TYPE,entity.type.id)} in shop. Replacing with {enum_get_name(ENT_TYPE,spawnItem)})")
                 local newItem = spawn_entity_snapped_to_floor(spawnItem, entity.x, entity.y, entity.layer)
-                get_entity(newItem).last_owner_uid = shopOwner
-                add_item_to_shop(newItem, shopOwner)
+                if newItem and newItem ~= -1 then
+                    add_item_to_shop(newItem, shopOwner)
+                else
+                    debug_print("Something went wrong replacing a shop item.")
+                end
             end
             local heldEnt = entity:get_held_entity()
             if heldEnt ~= nil then
