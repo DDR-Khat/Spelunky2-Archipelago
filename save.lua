@@ -263,7 +263,7 @@ ap_save = {
     }
 }
 
-function initialize_save()
+function initialize_save(includeHardChecks)
     -- Clearing game save
     savegame.tutorial_state = 4
     savegame.shortcuts = 0
@@ -274,6 +274,12 @@ function initialize_save()
 
     for _, chapter in ipairs(journal.chapters) do
         clear_journal(savegame[chapter])
+    end
+
+    if not includeHardChecks then
+        savegame.bestiary[16] = true -- Magmar
+        savegame.bestiary[20] = true -- Lavamander
+        savegame.bestiary[78] = true -- MechRider
     end
 
     -- Clearing AP save

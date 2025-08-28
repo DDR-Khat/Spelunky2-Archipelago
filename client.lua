@@ -210,7 +210,7 @@ function connect(server, slot, password)
         show_delete_button = true
         show_login_data = false
         set_ap_callbacks()
-        initialize_save()
+        initialize_save(slot_data.include_hard_locations)
         local restricted_lookup = {}
         for _, name in pairs(slot_data.restricted_items or {}) do
             restricted_lookup[name] = true
@@ -571,6 +571,7 @@ function send_location(location_id)
     if givingItem then
         return
     end
+
     local success_checked, checked = pcall(function()
         return ap:LocationChecks({location_id})
     end)
