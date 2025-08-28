@@ -246,42 +246,42 @@ character_data =
     [Spel2AP.characters.Margaret_Tunnel] =
     {
         index = 2,
-        ent = ENT_TYPE.CHAR_Margaret_Tunnel,
+        ent = ENT_TYPE.CHAR_MARGARET_TUNNEL,
         binary = 2
     },
     [Spel2AP.characters.Colin_Northward] =
     {
         index = 3,
-        ent = ENT_TYPE.CHAR_Colin_Northward,
+        ent = ENT_TYPE.CHAR_COLIN_NORTHWARD,
         binary = 4
     },
     [Spel2AP.characters.Roffy_D_Sloth] =
     {
         index = 4,
-        ent = ENT_TYPE.CHAR_Roffy_D_Sloth,
+        ent = ENT_TYPE.CHAR_ROFFY_D_SLOTH,
         binary = 8
     },
     [Spel2AP.characters.Alto_Singh] =
     {
         index = 5,
-        ent = ENT_TYPE.CHAR_Alto_Singh,
+        ent = ENT_TYPE.CHAR_BANDA,
         binary = 16
     },
     [Spel2AP.characters.Liz_Mutton] =
     {
         index = 6,
-        ent = ENT_TYPE.CHAR_Liz_Mutton,
+        ent = ENT_TYPE.CHAR_GREEN_GIRL,
         binary = 32},
     [Spel2AP.characters.Nekka_the_Eagle] =
     {
         index = 7,
-        ent = ENT_TYPE.CHAR_NEKKA_THE_EAGLE,
+        ent = ENT_TYPE.CHAR_AMAZON,
         binary = 64
     },
     [Spel2AP.characters.LISE_Project] =
     {
         index = 8,
-        ent = ENT_TYPE.CHAR_LISE,
+        ent = ENT_TYPE.CHAR_LISE_SYSTEM,
         binary = 128
     },
     [Spel2AP.characters.Coco_Von_Diamonds] =
