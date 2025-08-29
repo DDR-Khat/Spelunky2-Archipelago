@@ -249,6 +249,8 @@ function connect(server, slot, password)
                 else
                     sender = "you"
                 end
+                local internal_item = item_ids[data.item]
+                item_handler(internal_item, false)
                 table.insert(item_queue, #item_queue + 1, {item = data.item,player = sender})
             end
         end
@@ -399,7 +401,7 @@ function set_ap_callbacks()
                     return
                 end
                 display = item.display
-                item_handler(item_queue[1].item)
+                item_handler(item_queue[1].item, true)
                 msgTitle = (player == "you" and "You found an item!") or f"Item received from {player}"
                 msgDesc = (player == "you" and f"{item.name}") or f"Received {item.name}"
                 table.remove(item_queue, 1)
@@ -482,7 +484,7 @@ function complete_goal()
 
     while #item_queue > 0 do
         local item = item_ids[item_queue[1]]
-        item_handler(item.type)
+        item_handler(item.type, false)
 
         table.remove(item_queue, 1)
         ap_save.last_index = ap_save.last_index + 1
@@ -491,7 +493,7 @@ function complete_goal()
     end
 end
 
-function item_handler(itemID)
+function item_handler(itemID, isQueued)
     local item_info = item_ids[itemID]
     if not item_info then
         return false
@@ -499,19 +501,19 @@ function item_handler(itemID)
         return true
     end
     local category = item_info.type
-    if category == Spel2AP.filler_items then
+    if category == Spel2AP.filler_items and isQueued then
         give_item(itemID)
         return true
-    elseif category == Spel2AP.characters then
+    elseif category == Spel2AP.characters and isQueued then
         ap_save.character_unlocks[itemID] = true
         update_characters()
         write_save()
         return true
-    elseif category == Spel2AP.locked_items then
+    elseif category == Spel2AP.locked_items and not isQueued then
         ap_save.item_unlocks[itemID] = true
         write_save()
         return true
-    elseif category == Spel2AP.upgrades then
+    elseif category == Spel2AP.upgrades and not isQueued then
         if itemID == Spel2AP.upgrades.Compass then
             ap_save.permanent_item_upgrades[itemID] = (ap_save.permanent_item_upgrades[itemID] or 0) + 1
         else
@@ -519,15 +521,15 @@ function item_handler(itemID)
         end
         write_save()
         return true
-    elseif category == Spel2AP.waddler_upgrades then
+    elseif category == Spel2AP.waddler_upgrades and not isQueued then
         ap_save.waddler_item_unlocks[itemID] = true
         write_save()
         return true
-    elseif category == Spel2AP.permanent_upgrades then
+    elseif category == Spel2AP.permanent_upgrades and not isQueued then
         ap_save.stat_upgrades[itemID] = (ap_save.stat_upgrades[itemID] or 0) + 1
         write_save()
         return true
-    elseif category == Spel2AP.world_unlocks then
+    elseif category == Spel2AP.world_unlocks and not isQueued then
         if player_options.progressive_worlds then
             if itemID == Spel2AP.world_unlocks.Progressive_World then
                 ap_save.max_world = ap_save.max_world + 1
@@ -537,11 +539,11 @@ function item_handler(itemID)
         end
         write_save()
         return true
-    elseif category == Spel2AP.shortcuts then
+    elseif category == Spel2AP.shortcuts and not isQueued then
         ap_save.shortcut_unlocks[itemID] = true
         write_save()
         return true
-    elseif category == Spel2AP.traps then
+    elseif category == Spel2AP.traps and isQueued then
         give_trap(itemID)
         return true
     else
