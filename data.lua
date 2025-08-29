@@ -2034,3 +2034,15 @@ co_journal_entries = {
     Spel2AP.locations.people.Classic_Guy,
     Spel2AP.locations.bestiary.Celestial_Jelly,
 }
+
+unrestricted_items = {
+    ENT_TYPE.ITEM_PICKUP_ROPEPILE,
+    ENT_TYPE.ITEM_PICKUP_BOMBBAG,
+    ENT_TYPE.ITEM_PICKUP_BOMBBOX,
+    ENT_TYPE.ITEM_PICKUP_PARACHUTE,
+    ENT_TYPE.ITEM_SHOTGUN,
+    ENT_TYPE.ITEM_CROSSBOW,
+    ENT_TYPE.ITEM_BOOMERANG,
+    ENT_TYPE.ITEM_PICKUP_ROYALJELLY,
+    ENT_TYPE.ITEM_WOODEN_SHIELD,
+}

@@ -117,7 +117,7 @@ Options:
 {locked_items_text}"""
     display_name = "Restricted Items"
     valid_keys = locked_items
-    default = locked_items
+    default = quest_items
 
 
 class ItemUpgrades(ItemSet):

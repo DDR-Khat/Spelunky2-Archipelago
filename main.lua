@@ -293,7 +293,7 @@ set_post_entity_spawn(function(crate)
         end
         clear_callback()
         local storedItem = crate.inside
-        if storedItem == ENT_TYPE.ITEM_PICKUP_BOMBBAG or storedItem == ENT_TYPE.ITEM_PICKUP_ROPEPILE then
+        if unrestricted_items[storedItem] then
             return
         end
         for _, entry in pairs(Journal_to_ItemEnt) do
