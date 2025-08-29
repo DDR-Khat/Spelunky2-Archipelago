@@ -274,7 +274,8 @@ set_callback(function()
         local coffin = get_entity(uid)
 
         for _, data in pairs(character_data) do
-            if savegame.people[data.index] and coffin.inside == data.ent then
+            local is_unlocked = ap_save.people[data.index] and savegame.people[data.index]
+            if is_unlocked and coffin.inside == data.ent then
                 set_contents(coffin.uid, ENT_TYPE.CHAR_HIREDHAND)
                 break
             end

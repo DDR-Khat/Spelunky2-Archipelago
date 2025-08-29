@@ -210,7 +210,7 @@ function connect(server, slot, password)
         show_delete_button = true
         show_login_data = false
         set_ap_callbacks()
-        initialize_save(slot_data.include_hard_locations)
+        initialize_save()
         local restricted_lookup = {}
         for _, name in pairs(slot_data.restricted_items or {}) do
             restricted_lookup[name] = true
@@ -569,6 +569,18 @@ end
 
 function send_location(location_id)
     if givingItem then
+        return
+    end
+
+    if not slot_data.include_hard_locations and obnoxious_journal_entries[location_id] then
+        return
+    end
+
+    if not slot_data.goal == AP_Goal.HARD and hard_journal_entries[location_id] then
+        return
+    end
+
+    if not slot_data.goal == AP_Goal.CO and co_journal_entries[location_id] then
         return
     end
 

@@ -1854,6 +1854,12 @@ item_ids = {
     }
 }
 
+AP_Goal = {
+    EASY = 0,
+    HARD = 1,
+    CO = 2
+}
+
 ItemCode_to_Index = {
     [Spel2AP.upgrades.Ankh]             = 19, [Spel2AP.waddler_upgrades.Ankh]             = 19, [Spel2AP.locked_items.Ankh]             = 19,
     [Spel2AP.upgrades.Camera]           = 34, [Spel2AP.waddler_upgrades.Camera]           = 34, [Spel2AP.locked_items.Camera]           = 34,
@@ -1992,4 +1998,39 @@ default_dice_prizes = {
     ENT_TYPE.ITEM_TELEPORTER,
     ENT_TYPE.ITEM_PURCHASABLE_TELEPORTER_BACKPACK,
     ENT_TYPE.ITEM_PURCHASABLE_POWERPACK
+}
+
+obnoxious_journal_entries = {
+    Spel2AP.locations.bestiary.Magmar,
+    Spel2AP.locations.bestiary.Lavamander,
+    Spel2AP.locations.bestiary.Mech_Rider
+}
+
+hard_journal_entries = {
+    Spel2AP.locations.place.Tiamats_Throne,
+    Spel2AP.locations.place.Sunken_City,
+    Spel2AP.locations.place.Eggplant_World,
+    Spel2AP.locations.place.HunDunsHideaway,
+    Spel2AP.locations.people.Dirk_Yamaoka,
+    Spel2AP.locations.people.Guy_Spelunky,
+    Spel2AP.locations.people.Eggplant_King,
+    Spel2AP.locations.bestiary.Tadpole,
+    Spel2AP.locations.bestiary.Frog,
+    Spel2AP.locations.bestiary.Fire_Frog,
+    Spel2AP.locations.bestiary.Goliath_Frog,
+    Spel2AP.locations.bestiary.Grub,
+    Spel2AP.locations.bestiary.Giant_Fly,
+    Spel2AP.locations.bestiary.Hundun,
+    Spel2AP.locations.bestiary.Eggplant_Minister,
+    Spel2AP.locations.bestiary.Eggplup,
+    Spel2AP.locations.trap.Frog_Trap,
+    Spel2AP.locations.trap.Sticky_Trap,
+    Spel2AP.locations.trap.Bone_Drop,
+    Spel2AP.locations.trap.Egg_Sac,
+}
+
+co_journal_entries = {
+    Spel2AP.locations.place.Cosmic_Ocean,
+    Spel2AP.locations.people.Classic_Guy,
+    Spel2AP.locations.bestiary.Celestial_Jelly,
 }
