@@ -64,7 +64,8 @@ player_options = {
     starting_bombs = 4,
     starting_ropes = 4,
     death_link = false,
-    bypass_ankh = false
+    bypass_ankh = false,
+    include_hard_locations = false,
 }
 
 if read_last_login() then
@@ -189,6 +190,7 @@ function connect(server, slot, password)
         player_options.starting_bombs = slot_data.starting_bombs
         player_options.starting_ropes = slot_data.starting_ropes
         player_options.death_link = slot_data.death_link
+        player_options.include_hard_locations = slot_data.include_hard_locations
         ap:Set(f"{ourSlot}_{ourTeam}_worldTab", "Entire map", false, { { operation = "add", value = "Entire map" } }, nil)
 
         if player_options.death_link then
@@ -249,8 +251,7 @@ function connect(server, slot, password)
                 else
                     sender = "you"
                 end
-                local internal_item = item_ids[data.item]
-                item_handler(internal_item, false)
+                item_handler(data.item, false)
                 table.insert(item_queue, #item_queue + 1, {item = data.item,player = sender})
             end
         end
@@ -574,15 +575,15 @@ function send_location(location_id)
         return
     end
 
-    if not slot_data.include_hard_locations and obnoxious_journal_entries[location_id] then
+    if not player_options.include_hard_locations and obnoxious_journal_entries[location_id] then
         return
     end
 
-    if not slot_data.goal == AP_Goal.HARD and hard_journal_entries[location_id] then
+    if not player_options.goal == AP_Goal.HARD and hard_journal_entries[location_id] then
         return
     end
 
-    if not slot_data.goal == AP_Goal.CO and co_journal_entries[location_id] then
+    if not player_options.goal == AP_Goal.CO and co_journal_entries[location_id] then
         return
     end
 
