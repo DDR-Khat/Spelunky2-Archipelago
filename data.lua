@@ -1,5 +1,14 @@
 safe_require("lib/Spel2ItemCodes")
 
+function become_lookup_table(list)
+    local lookup = {}
+    for _, value in ipairs(list) do
+        lookup[value] = true
+    end
+    return lookup
+end
+
+
 journal = {
     chapters = {
         [1] = "places",
@@ -2000,13 +2009,15 @@ default_dice_prizes = {
     ENT_TYPE.ITEM_PURCHASABLE_POWERPACK
 }
 
-obnoxious_journal_entries = {
+obnoxious_journal_entries = become_lookup_table
+({
     Spel2AP.locations.bestiary.Magmar,
     Spel2AP.locations.bestiary.Lavamander,
-    Spel2AP.locations.bestiary.Mech_Rider
-}
+    Spel2AP.locations.bestiary.Mech_Rider,
+})
 
-hard_journal_entries = {
+hard_journal_entries = become_lookup_table
+({
     Spel2AP.locations.place.Tiamats_Throne,
     Spel2AP.locations.place.Sunken_City,
     Spel2AP.locations.place.Eggplant_World,
@@ -2027,15 +2038,17 @@ hard_journal_entries = {
     Spel2AP.locations.trap.Sticky_Trap,
     Spel2AP.locations.trap.Bone_Drop,
     Spel2AP.locations.trap.Egg_Sac,
-}
+})
 
-co_journal_entries = {
+co_journal_entries = become_lookup_table
+({
     Spel2AP.locations.place.Cosmic_Ocean,
     Spel2AP.locations.people.Classic_Guy,
     Spel2AP.locations.bestiary.Celestial_Jelly,
-}
+})
 
-unrestricted_items = {
+unrestricted_items = become_lookup_table
+({
     ENT_TYPE.ITEM_PICKUP_ROPEPILE,
     ENT_TYPE.ITEM_PICKUP_BOMBBAG,
     ENT_TYPE.ITEM_PICKUP_BOMBBOX,
@@ -2045,4 +2058,4 @@ unrestricted_items = {
     ENT_TYPE.ITEM_BOOMERANG,
     ENT_TYPE.ITEM_PICKUP_ROYALJELLY,
     ENT_TYPE.ITEM_WOODEN_SHIELD,
-}
+})

@@ -258,7 +258,8 @@ set_callback(function()
 
     set_callback(function()
         clear_callback()
-        if ap_save.permanent_item_upgrades[Spel2AP.upgrades.Four_Leaf_Clover] or waddlerClover then
+        if (ap_save.permanent_item_upgrades[Spel2AP.upgrades.Four_Leaf_Clover] or waddlerClover)
+                and savegame.items[ItemCode_to_Index[Spel2AP.upgrades.Four_Leaf_Clover]] then
             local level_flags = get_level_flags()
             level_flags = set_flag(level_flags, ENT_FLAG.CLOVER_FLAG)
             set_level_flags(level_flags)

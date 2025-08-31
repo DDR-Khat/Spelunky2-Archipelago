@@ -10,13 +10,13 @@ ap_save = {
     max_world = 1,
     shortcut_progress = 0,
 
-    character_unlocks =
+    character_unlocks = become_lookup_table(
     {
         [Spel2AP.characters.Ana_Spelunky] = true,
         [Spel2AP.characters.Margaret_Tunnel] = true,
         [Spel2AP.characters.Colin_Northward] = true,
         [Spel2AP.characters.Roffy_D_Sloth] = true,
-    },
+    }),
 
     item_unlocks = {},
 
@@ -347,6 +347,18 @@ function update_journal(chapter, index)
     local location_id = location_name_to_id[location_name]
 
     table.insert(ap_save.checked_locations, #ap_save.checked_locations + 1, location_id)
+
+    if not player_options.include_hard_locations and obnoxious_journal_entries[location_id] then
+        return
+    end
+
+    if not player_options.goal == AP_Goal.HARD and hard_journal_entries[location_id] then
+        return
+    end
+
+    if not player_options.goal == AP_Goal.CO and co_journal_entries[location_id] then
+        return
+    end
     send_location(location_id)
 end
 

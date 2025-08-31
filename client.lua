@@ -459,20 +459,20 @@ function set_ap_callbacks()
     end, ON.RESET)
 
     set_callback(function()
-        if player_options.goal == 2 and state.world == 8 and state.level == player_options.goal_level - 1 then
+        if player_options.goal == AP_Goal.CO and state.world == 8 and state.level == player_options.goal_level - 1 then
             state.win_state = 3
             state.level_next = 99
         end
     end, ON.LEVEL)
 
     set_callback(function()
-        if (player_options.goal == 0 and state.win_state == 1) or (player_options.goal == 1 and state.win_state == 2) then
+        if (player_options.goal == AP_Goal.EASY and state.win_state == 1) or (player_options.goal == AP_Goal.HARD and state.win_state == 2) then
             complete_goal()
         end
     end, ON.WIN)
 
     set_callback(function()
-        if player_options.goal == 2 and state.win_state == 3 then
+        if player_options.goal == AP_Goal.CO and state.win_state == 3 then
             complete_goal()
         end
     end, ON.CONSTELLATION)
@@ -572,18 +572,6 @@ end
 
 function send_location(location_id)
     if givingItem then
-        return
-    end
-
-    if not player_options.include_hard_locations and obnoxious_journal_entries[location_id] then
-        return
-    end
-
-    if not player_options.goal == AP_Goal.HARD and hard_journal_entries[location_id] then
-        return
-    end
-
-    if not player_options.goal == AP_Goal.CO and co_journal_entries[location_id] then
         return
     end
 
