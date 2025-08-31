@@ -352,13 +352,14 @@ function update_journal(chapter, index)
         return
     end
 
-    if not player_options.goal == AP_Goal.HARD and hard_journal_entries[location_id] then
+    if player_options.goal == AP_Goal.EASY
+            and (hard_journal_entries[location_id] or co_journal_entries[location_id]) then
+        return
+    end
+    if player_options.goal == AP_Goal.HARD and co_journal_entries[location_id] then
         return
     end
 
-    if not player_options.goal == AP_Goal.CO and co_journal_entries[location_id] then
-        return
-    end
     send_location(location_id)
 end
 

@@ -2025,6 +2025,7 @@ hard_journal_entries = become_lookup_table
     Spel2AP.locations.people.Dirk_Yamaoka,
     Spel2AP.locations.people.Guy_Spelunky,
     Spel2AP.locations.people.Eggplant_King,
+    Spel2AP.locations.bestiary.Tiamat,
     Spel2AP.locations.bestiary.Tadpole,
     Spel2AP.locations.bestiary.Frog,
     Spel2AP.locations.bestiary.Fire_Frog,

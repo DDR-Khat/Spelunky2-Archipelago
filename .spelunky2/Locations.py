@@ -144,7 +144,7 @@ bestiary_entries = {
     # Neo Babylon
     "Olmite Journal Entry": Spelunky2LocationData(104, "Neo Babylon"),
     "Lamassu Journal Entry": Spelunky2LocationData(105, "Neo Babylon"),
-    "Tiamat Journal Entry": Spelunky2LocationData(106, "Neo Babylon"),
+    "Tiamat Journal Entry": Spelunky2LocationData(106, "Neo Babylon", Spelunky2Goal.HARD),
 
     # Sunken City
     "Tadpole Journal Entry": Spelunky2LocationData(107, "Sunken City", Spelunky2Goal.HARD),
