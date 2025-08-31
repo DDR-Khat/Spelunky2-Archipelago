@@ -12,10 +12,10 @@ ap_save = {
 
     character_unlocks = become_lookup_table(
     {
-        [Spel2AP.characters.Ana_Spelunky] = true,
-        [Spel2AP.characters.Margaret_Tunnel] = true,
-        [Spel2AP.characters.Colin_Northward] = true,
-        [Spel2AP.characters.Roffy_D_Sloth] = true,
+        Spel2AP.characters.Ana_Spelunky,
+        Spel2AP.characters.Margaret_Tunnel,
+        Spel2AP.characters.Colin_Northward,
+        Spel2AP.characters.Roffy_D_Sloth,
     }),
 
     item_unlocks = {},

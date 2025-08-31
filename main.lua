@@ -73,6 +73,7 @@ progressionItem = makeTexture("assets/progression.png", 128, 128)
 debugging = false
 givingItem = false
 waddlerClover = false
+usedBossDoor = false
 local bombOrRope = false
 function getBombOrRope()
     bombOrRope = not bombOrRope
@@ -311,7 +312,34 @@ set_post_entity_spawn(function(crate)
         local replaceItem = getBombOrRope()
         crate.inside = replaceItem
     end)
-end, SPAWN_TYPE.ANY, MASK.ANY, {ENT_TYPE.ITEM_CRATE, ENT_TYPE.ITEM_PRESENT, ENT_TYPE.ITEM_GHIST_PRESENT})
+end, SPAWN_TYPE.ANY, MASK.ITEM, {ENT_TYPE.ITEM_CRATE, ENT_TYPE.ITEM_PRESENT, ENT_TYPE.ITEM_GHIST_PRESENT})
+
+--[[
+If it's not our goal, let us beat the boss and loop back.
+]]--
+set_post_entity_spawn(function (door)
+    local state = get_local_state()
+    if player_options.goal == AP_Goal.HARD and (state.world ~= 6 or state.level ~= 4) then
+        return
+    end
+    if player_options.goal == AP_Goal.CO and (state.world ~= 7 or state.level ~= 4) then
+        return
+    end
+    door:set_pre_enter(function()
+        if state.world == 6 -- Send Guy Spelunky if we go in. Because we normally would.
+                and not ap_save.checked_locations[Spel2AP.locations.people.Guy_Spelunky] then
+            send_location(Spel2AP.locations.people.Guy_Spelunky)
+        elseif state.world == 7 -- Classic Guy, same reason.
+                and not ap_save.checked_locations[Spel2AP.locations.people.Classic_Guy] then
+            send_location(Spel2AP.locations.people.Classic_Guy)
+        end
+        usedBossDoor = true
+        door.special_door = true
+        door.level = state.level_start
+        door.world = state.world_start
+        door.theme = state.theme_start
+    end)
+end, SPAWN_TYPE.ANY, MASK.ANY, ENT_TYPE.FLOOR_DOOR_EXIT)
 
 set_post_entity_spawn(function(clover)
     if ap_save.waddler_item_unlocks[Spel2AP.waddler_upgrades.Four_Leaf_Clover] ~= true or waddlerClover then
@@ -342,9 +370,29 @@ set_callback(function()
     end
 end, ON.GAMEFRAME)
 
+function run_reset()
+    state.quests.yang_state = 0
+    state.quests.jungle_sisters_flags = 0
+    state.quests.van_horsing_state = 0
+    state.quests.sparrow_state = 0
+    state.quests.madame_tusk_state = 0
+    state.quests.beg_state = 0
+    state.kali_altars_destroyed = 0
+    state.kali_gifts = 0
+    state.quest_flags = QUEST_FLAG.RESET
+end
 
 set_callback(function()
     debug_print("TRANSITION")
+
+    change_diceshop_prizes(get_filtered_dice_prizes())
+
+    if usedBossDoor then
+        toast("Your goal is incomplete. Looping back")
+        run_reset()
+        usedBossDoor = false
+        return
+    end
 
     local shouldReset
     if player_options.progressive_worlds then
@@ -360,19 +408,8 @@ set_callback(function()
         state.level_next = state.level_start
         state.theme_next = state.theme_start
 
-        state.quests.yang_state = 0
-        state.quests.jungle_sisters_flags = 0
-        state.quests.van_horsing_state = 0
-        state.quests.sparrow_state = 0
-        state.quests.madame_tusk_state = 0
-        state.quests.beg_state = 0
-        state.kali_altars_destroyed = 0
-        state.kali_gifts = 0
-
-        state.quest_flags = QUEST_FLAG.RESET
+        run_reset()
     end
-
-    change_diceshop_prizes(get_filtered_dice_prizes())
 end, ON.TRANSITION)
 
 for _, data in pairs(Journal_to_ItemEnt) do
