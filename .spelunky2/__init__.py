@@ -155,9 +155,9 @@ class Spelunky2World(World):
         if self.options.goal.value == Spelunky2Goal.EASY:
             quest_item_names = {"Alien Compass"}
         elif self.options.goal.value == Spelunky2Goal.HARD:
-            quest_item_names = sorted(quest_items - {"Arrow of Light", "Hou Yi's Bow"})
+            quest_item_names = quest_items - {"Arrow of Light", "Hou Yi's Bow"}
         else:
-            quest_item_names = sorted(quest_items)
+            quest_item_names = quest_items
 
         excluded_quest_items = quest_items - quest_item_names
 
