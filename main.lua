@@ -285,15 +285,9 @@ set_callback(function()
     local coffin_uids = get_entities_by(ENT_TYPE.ITEM_COFFIN, MASK.ITEM, LAYER.BOTH)
     for _, uid in ipairs(coffin_uids) do
         local coffin = get_entity(uid)
-        --[[
-        if coffin.inside == ENT_TYPE.CHAR_HIREDHAND and #ap_save.default_character_queue ~= 0 then
-            set_contents(coffin.uid, ap_save.default_character_queue[1])
-            table.remove(ap_save.default_character_queue, 1)
-            break
-        end]]
-
-        for character, is_unlocked in ipairs(ap_save.people) do
-            if coffin.inside == character_data.types[character] and is_unlocked then
+        for _, data in pairs(character_data) do
+            local is_unlocked = ap_save.people[data.index] and savegame.people[data.index]
+            if is_unlocked and coffin.inside == data.ent then
                 set_contents(coffin.uid, ENT_TYPE.CHAR_HIREDHAND)
                 break
             end
@@ -334,6 +328,9 @@ end, SPAWN_TYPE.ANY, MASK.ITEM, {ENT_TYPE.ITEM_CRATE, ENT_TYPE.ITEM_PRESENT, ENT
 If it's not our goal, let us beat the boss and loop back.
 ]]--
 set_post_entity_spawn(function (door)
+    if player_options.goal == AP_Goal.EASY then
+        return
+    end
     local state = get_local_state()
     if player_options.goal == AP_Goal.HARD and (state.world ~= 6 or state.level ~= 4) then
         return
