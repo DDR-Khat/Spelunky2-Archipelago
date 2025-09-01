@@ -389,59 +389,71 @@ end
 function set_ap_callbacks()
     set_callback(function()
         local popupFrames = math.ceil(options.popup_time*60)
-        if state.screen == SCREEN.LEVEL and ready_for_item then
-            local item
-            local display = generalItem
-            local msgTitle
-            local msgDesc
-            if IsType(item_queue,"table") and #item_queue > 0 then
-                local player = item_queue[1].player
-                item = item_ids[item_queue[1].item]
-                if item == nil or item.display == nil then
-                    debug_print(f"{item_queue[1].item} does not have a display?!")
-                    return
-                end
-                display = item.display
-                item_handler(item_queue[1].item, true)
-                msgTitle = (player == "you" and "You found an item!") or f"Item received from {player}"
-                msgDesc = (player == "you" and f"{item.name}") or f"Received {item.name}"
-                table.remove(item_queue, 1)
-                ap_save.last_index = ap_save.last_index + 1
-                write_save()
-            elseif IsType(send_item_queue, "table") and #send_item_queue >0 then
-                item = (type(send_item_queue[1].item) == "string" and send_item_queue[1].item) or "<Error>"
-                if #item > 31 then
-                    item = item:sub(1, 29) .. "..."
-                end
-                local target = send_item_queue[1].target or "<Unknown>"
-                local classification = send_item_queue[1].classification
-                if classification == 1 then
-                    display = trapItem
-                elseif classification == 2 then
-                    display = progressionItem
-                end
-                msgTitle = f"Found {target}'s Item from another world!"
-                if #msgTitle > 39 then
-                    msgTitle = f"Found {target}'s Item!"
-                    if #msgTitle > 39 then
-                        local truncated_target = target:sub(1, 22)
-                        msgTitle = f"Found {truncated_target}...'s Item!"
-                    end
-                end
-                msgDesc = f"Sent \"{item}\""
-                table.remove(send_item_queue, 1)
-            else
+        local currentPlayer = get_player(1)
+        local playerState = currentPlayer.state
+        local isInDoor = playerState == CHAR_STATE.ENTERING or playerState == CHAR_STATE.EXITING
+        local inPipe = false
+        if currentPlayer.overlay then
+            inPipe = currentPlayer.overlay.type.id == ENT_TYPE.FLOOR_PIPE
+        end
+        if isInDoor or inPipe then
+            goto continue
+        end
+        if state.screen ~= SCREEN.LEVEL or not ready_for_item then
+            goto continue
+        end
+        local item
+        local display = generalItem
+        local msgTitle
+        local msgDesc
+        if IsType(item_queue,"table") and #item_queue > 0 then
+            local player = item_queue[1].player
+            item = item_ids[item_queue[1].item]
+            if item == nil or item.display == nil then
+                debug_print(f"{item_queue[1].item} does not have a display?!")
                 return
             end
-
-            ready_for_item = false
-            set_interval(function()
-                ready_for_item = true
-                return false
-            end, popupFrames)
-
-            ShowFeatBox(display, msgTitle, msgDesc, popupFrames, item.TileX, item.TileY)
+            display = item.display
+            item_handler(item_queue[1].item, true)
+            msgTitle = (player == "you" and "You found an item!") or f"Item received from {player}"
+            msgDesc = (player == "you" and f"{item.name}") or f"Received {item.name}"
+            table.remove(item_queue, 1)
+            ap_save.last_index = ap_save.last_index + 1
+            write_save()
+        elseif IsType(send_item_queue, "table") and #send_item_queue >0 then
+            item = (type(send_item_queue[1].item) == "string" and send_item_queue[1].item) or "<Error>"
+            if #item > 31 then
+                item = item:sub(1, 29) .. "..."
+            end
+            local target = send_item_queue[1].target or "<Unknown>"
+            local classification = send_item_queue[1].classification
+            if classification == 1 then
+                display = trapItem
+            elseif classification == 2 then
+                display = progressionItem
+            end
+            msgTitle = f"Found {target}'s Item from another world!"
+            if #msgTitle > 39 then
+                msgTitle = f"Found {target}'s Item!"
+                if #msgTitle > 39 then
+                    local truncated_target = target:sub(1, 22)
+                    msgTitle = f"Found {truncated_target}...'s Item!"
+                end
+            end
+            msgDesc = f"Sent \"{item}\""
+            table.remove(send_item_queue, 1)
+        else
+            return
         end
+
+        ready_for_item = false
+        set_interval(function()
+            ready_for_item = true
+            return false
+        end, popupFrames)
+
+        ShowFeatBox(display, msgTitle, msgDesc, popupFrames, item.TileX, item.TileY)
+        ::continue::
     end, ON.GAMEFRAME)
 
     set_callback(function()
