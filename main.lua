@@ -370,20 +370,20 @@ set_callback(function()
     end
 end, ON.GAMEFRAME)
 
-function run_reset()
-    state.quests.yang_state = 0
-    state.quests.jungle_sisters_flags = 0
-    state.quests.van_horsing_state = 0
-    state.quests.sparrow_state = 0
-    state.quests.madame_tusk_state = 0
-    state.quests.beg_state = 0
-    state.kali_altars_destroyed = 0
-    state.kali_gifts = 0
-    state.quest_flags = QUEST_FLAG.RESET
-end
-
 set_callback(function()
     debug_print("TRANSITION")
+
+    local function run_reset()
+        state.quests.yang_state = 0
+        state.quests.jungle_sisters_flags = 0
+        state.quests.van_horsing_state = 0
+        state.quests.sparrow_state = 0
+        state.quests.madame_tusk_state = 0
+        state.quests.beg_state = 0
+        state.kali_altars_destroyed = 0
+        state.kali_gifts = 0
+        state.quest_flags = QUEST_FLAG.RESET
+    end
 
     change_diceshop_prizes(get_filtered_dice_prizes())
 

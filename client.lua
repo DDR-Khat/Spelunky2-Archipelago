@@ -390,6 +390,9 @@ function set_ap_callbacks()
     set_callback(function()
         local popupFrames = math.ceil(options.popup_time*60)
         local currentPlayer = get_player(1)
+        if currentPlayer == nil then
+            goto continue
+        end
         local playerState = currentPlayer.state
         local isInDoor = playerState == CHAR_STATE.ENTERING or playerState == CHAR_STATE.EXITING
         local inPipe = false
