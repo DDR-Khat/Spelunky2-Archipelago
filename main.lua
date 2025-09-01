@@ -200,6 +200,18 @@ set_callback(function()
         if journal_index and savegame.items[journal_index] ~= true then
             goto continue -- Not something we care about, stop doing stuff with it.
         end
+        if item_code == Spel2AP.upgrades.Elixir then
+            player:set_pre_update_state_machine(function()
+                if not test_flag(player.more_flags, ENT_MORE_FLAG.FINISHED_SPAWNING) then
+                    return
+                end
+                clear_callback()
+                local flags = get_entity_flags2(player.uid)
+                flags = set_flag(flags, ENT_MORE_FLAG.ELIXIR_BUFF)
+                set_entity_flags2(player.uid, flags)
+            end)
+            goto continue -- We've done a special handling.
+        end
         local ent, isPowerup = SpawnJournalIndex(journal_index, true)
         if isPowerup then
             player:give_powerup(ent)
@@ -270,14 +282,18 @@ end, ON.LEVEL)
 
 set_callback(function()
     debug_print("POST_LEVEL_GENERATION")
-
     local coffin_uids = get_entities_by(ENT_TYPE.ITEM_COFFIN, MASK.ITEM, LAYER.BOTH)
     for _, uid in ipairs(coffin_uids) do
         local coffin = get_entity(uid)
+        --[[
+        if coffin.inside == ENT_TYPE.CHAR_HIREDHAND and #ap_save.default_character_queue ~= 0 then
+            set_contents(coffin.uid, ap_save.default_character_queue[1])
+            table.remove(ap_save.default_character_queue, 1)
+            break
+        end]]
 
-        for _, data in pairs(character_data) do
-            local is_unlocked = ap_save.people[data.index] and savegame.people[data.index]
-            if is_unlocked and coffin.inside == data.ent then
+        for character, is_unlocked in ipairs(ap_save.people) do
+            if coffin.inside == character_data.types[character] and is_unlocked then
                 set_contents(coffin.uid, ENT_TYPE.CHAR_HIREDHAND)
                 break
             end
