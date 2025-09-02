@@ -5,6 +5,7 @@ UPGRADE_SUFFIX = " Upgrade"
 SHORTCUT_SUFFIX = " Shortcut"
 VICTORY_STRING = "Victory"
 WORLD_2_STRING = "Any World 2"
+MENU_STRING = "Menu"
 
 class Spelunky2Goal(IntEnum):
     EASY = 0
@@ -160,3 +161,23 @@ class LocationName(StrEnum):
     CITY_OF_GOLD = "City of Gold"
     DUAT = "Duat"
     MOTHERSHIP = "Mothership"
+
+class JournalName(StrEnum):
+    MAGMAR = "Magmar" + JOURNAL_SUFFIX
+    LAVAMANDER = "Lavamander" + JOURNAL_SUFFIX
+    MECH_RIDER = "Mech Rider" + JOURNAL_SUFFIX
+    QILIN = "Qilin" + JOURNAL_SUFFIX
+
+class RuleNames(StrEnum):
+    MENU_TO_DWELLING = MENU_STRING + " -> " + WorldName.DWELLING.value
+    MENU_TO_OLMECS_LAIR = MENU_STRING + " -> " + WorldName.OLMECS_LAIR.value
+    MENU_TO_ICE_CAVES = MENU_STRING + " -> " + WorldName.ICE_CAVES.value
+    DWELLING_TO_ANY_WORLD_2 = WorldName.DWELLING.value + " -> " + WORLD_2_STRING
+    JUNGLE_TO_BLACK_MARKET = WorldName.JUNGLE.value + " -> " + LocationName.BLACK_MARKET.value
+    VOLCANA_TO_VLADS_CASTLE = WorldName.VOLCANA.value + " -> " + LocationName.VLADS_CASTLE.value
+    TEMPLE_TO_CITY_OF_GOLD = WorldName.TEMPLE.value + " -> " + LocationName.CITY_OF_GOLD.value
+    CITY_OF_GOLD_TO_DUAT = LocationName.CITY_OF_GOLD.value + " -> " + LocationName.DUAT.value
+    ICE_CAVES_TO_MOTHERSHIP = WorldName.ICE_CAVES.value + " -> " + LocationName.MOTHERSHIP.value
+    NEO_BABYLON_TO_SUNKEN_CITY = WorldName.NEO_BABYLON.value + " -> " + WorldName.SUNKEN_CITY.value
+    SUNKEN_CITY_TO_EGGPLANT_WORLD = WorldName.SUNKEN_CITY.value + " -> " + WorldName.EGGPLANT.value
+    SUNKEN_CITY_TO_COSMIC_OCEAN = WorldName.SUNKEN_CITY.value + " -> " + WorldName.COSMIC_OCEAN.value
