@@ -159,11 +159,15 @@ class Spelunky2World(World):
         else:
             quest_item_names = quest_items
 
-        self.options.restricted_items.value = list(set(self.options.restricted_items.value) | quest_item_names)
-
-        # Add all explicitly restricted items
+        # Filter restricted_items so only goal‑valid quest items remain
+        filtered_restricted = []
         for item_name in self.options.restricted_items.value:
-            spelunky2_item_pool.append(self.create_item(item_name))
+            if item_name not in quest_items or item_name in quest_item_names:
+                filtered_restricted.append(item_name)
+                spelunky2_item_pool.append(self.create_item(item_name))
+
+        # Update the option so the client sees the filtered list (prevents ghost locks)
+        self.options.restricted_items.value = filtered_restricted
 
         # Get user's Waddler upgrade choices
         waddler_upgrade_choices = set(self.options.waddler_upgrades.value)

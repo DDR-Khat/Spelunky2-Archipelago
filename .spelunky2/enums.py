@@ -1,4 +1,5 @@
-from enum import IntEnum
+from enum import IntEnum, StrEnum
+
 
 class Spelunky2Goal(IntEnum):
     EASY = 0

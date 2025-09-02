@@ -165,8 +165,8 @@ bestiary_entries = {
     "Bee Journal Entry": Spelunky2LocationData(118, "Jungle"),  # Also from destroying altars or Temple
     "Queen Bee Journal Entry": Spelunky2LocationData(119, "Jungle"),  # Also from Temple
     "Scarab Journal Entry": Spelunky2LocationData(120, "Dwelling"),
-    "Golden Monkey Journal Entry": Spelunky2LocationData(121, "Menu"),
-    "Leprechaun Journal Entry": Spelunky2LocationData(122, "Menu"),  # Can be in either Jungle or Volcana
+    "Golden Monkey Journal Entry": Spelunky2LocationData(121, "Any World 2"), # Could be Dwelling, but odds are low.
+    "Leprechaun Journal Entry": Spelunky2LocationData(122, "Any World 2"),  # Can be in either Jungle or Volcana
     "Monty Journal Entry": Spelunky2LocationData(123, "Dwelling"),
     "Percy Journal Entry": Spelunky2LocationData(124, "Dwelling"),
     "Poochi Journal Entry": Spelunky2LocationData(125, "Dwelling"),

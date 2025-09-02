@@ -499,9 +499,10 @@ function complete_goal()
     toast("You have completed your goal!")
 
     while #item_queue > 0 do
-        local item = item_ids[item_queue[1]]
-        item_handler(item.type, false)
-
+        local data = item_queue[1]
+        if data and data.item then
+            item_handler(data.item, false)
+        end
         table.remove(item_queue, 1)
         ap_save.last_index = ap_save.last_index + 1
 
@@ -513,14 +514,12 @@ function item_handler(itemID, isQueued)
     local item_info = item_ids[itemID]
     if not item_info then
         return false
-    elseif goal_completed then
-        return true
     end
     local category = item_info.type
     if category == Spel2AP.filler_items and isQueued then
         give_item(itemID)
         return true
-    elseif category == Spel2AP.characters and isQueued then
+    elseif category == Spel2AP.characters and not isQueued then
         ap_save.character_unlocks[itemID] = true
         update_characters()
         write_save()

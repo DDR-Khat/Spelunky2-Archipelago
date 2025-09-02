@@ -435,7 +435,7 @@ for _, data in pairs(Journal_to_ItemEnt) do
                 clear_callback()
                 return
             end
-            local shopOwner = remove_from_shop(entity)
+            local shopOwner = remove_from_shop(entity) -- TODO: We gotta deal with thieve shop things... somehow.
             if shopOwner and shopOwner ~= -1 then
                 local spawnItem = getBombOrRope()
                 debug_print(f"Found {enum_get_name(ENT_TYPE,entity.type.id)} in shop. Replacing with {enum_get_name(ENT_TYPE,spawnItem)})")
