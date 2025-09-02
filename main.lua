@@ -197,7 +197,9 @@ set_callback(function()
         else
             journal_index = ItemCode_to_Index[item_code]
         end
-        if journal_index and savegame.items[journal_index] ~= true then
+        if journal_index
+                and savegame.items[journal_index] ~= true
+                and player_options.journal_entry_required then
             goto continue -- Not something we care about, stop doing stuff with it.
         end
         if item_code == Spel2AP.upgrades.Elixir then
@@ -238,7 +240,9 @@ set_callback(function()
                 goto continue -- Not something we care about, stop doing stuff with it.
             end
             local journal_index = ItemCode_to_Index[item_code]
-            if journal_index and savegame.items[journal_index] ~= true then
+            if journal_index
+                    and savegame.items[journal_index] ~= true
+                    and player_options.journal_entry_required then
                 goto continue -- Not something we care about, stop doing stuff with it.
             end
             local ent, _ = SpawnJournalIndex(journal_index, false)
@@ -272,7 +276,9 @@ set_callback(function()
     set_callback(function()
         clear_callback()
         if (ap_save.permanent_item_upgrades[Spel2AP.upgrades.Four_Leaf_Clover] or waddlerClover)
-                and savegame.items[ItemCode_to_Index[Spel2AP.upgrades.Four_Leaf_Clover]] then
+            and
+            (savegame.items[ItemCode_to_Index[Spel2AP.upgrades.Four_Leaf_Clover]] or not player_options.journal_entry_required)
+        then
             local level_flags = get_level_flags()
             level_flags = set_flag(level_flags, ENT_FLAG.CLOVER_FLAG)
             set_level_flags(level_flags)

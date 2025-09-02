@@ -66,6 +66,7 @@ player_options = {
     death_link = false,
     bypass_ankh = false,
     include_hard_locations = false,
+    journal_entry_required = true
 }
 
 if read_last_login() then
@@ -109,7 +110,7 @@ set_callback(function()
 
             if show_connect_button then
                 if ctx:win_button("Connect") then
-                    prinspect("Connecting to the server...")
+                    print("Connecting to the server...")
                     id = set_callback(function()
                         return true
                     end, ON.PRE_PROCESS_INPUT)
@@ -118,7 +119,7 @@ set_callback(function()
             else
                 if ctx:win_button("Disconnect") then
                     show_connect_button = true
-                    prinspect("Disconnecting from the server...")
+                    print("Disconnecting from the server...")
                     ap = nil
                     collectgarbage("collect")
                 end
@@ -191,6 +192,7 @@ function connect(server, slot, password)
         player_options.starting_ropes = slot_data.starting_ropes
         player_options.death_link = slot_data.death_link
         player_options.include_hard_locations = slot_data.include_hard_locations
+        player_options.journal_entry_required = slot_data.journal_entry_required
         ap:Set(f"{ourSlot}_{ourTeam}_worldTab", "Entire map", false, { { operation = "add", value = "Entire map" } }, nil)
 
         if player_options.death_link then

@@ -63,6 +63,12 @@ class IncreaseStartingWallet(Toggle):
     display_name = "Increase Starting Wallet"
 
 
+class JournalEntryRequired(DefaultOnToggle):
+    """Should you need to get the Journal Entry for an (Item/Waddler) upgrade
+    before it will be granted, this only controls it being required and not if you can receive them"""
+    display_name = "Journal Entry Required"
+
+
 class StartingHealth(Range):
     """How much Health should you initially start with."""
     display_name = "Starting Health"
@@ -121,7 +127,8 @@ Options:
 
 
 class ItemUpgrades(ItemSet):
-    __doc__ = f"""Add the following useful items in the multi-world item pool which are kept on death, AFTER obtaining it's journal entry.
+    __doc__ = f"""Add the following useful items in the multi-world item pool which are kept on death,
+     AFTER obtaining it's journal entry if 'Journal Entry Required' is true.
 Options: 
 {item_options_text}"""
     display_name = "Item Upgrades"
@@ -130,7 +137,8 @@ Options:
 
 
 class WaddlerUpgrades(ItemSet):
-    __doc__ = f"""Add the following useful items in the multi-world item pool which are added to Waddler's storage between runs, AFTER obtaining it's journal entry.
+    __doc__ = f"""Add the following useful items in the multi-world item pool which are added to Waddler's storage between runs, 
+    AFTER obtaining it's journal entry if 'Journal Entry Required' is true.
 Options (any selected here override options in item_upgrades):
 {locked_items_text}"""
     display_name = "Waddler Items"
@@ -337,3 +345,4 @@ class Spelunky2Options(PerGameCommonOptions):
     death_link: DeathLink
     bypass_ankh: DeathLinkBypassesAnkh
     include_hard_locations: IncludeHardLocations
+    journal_entry_required: JournalEntryRequired

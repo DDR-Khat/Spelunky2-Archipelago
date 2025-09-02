@@ -274,6 +274,7 @@ class Spelunky2World(World):
             "item_upgrades": list(self.options.item_upgrades.value),
             "waddler_upgrades": list(self.options.waddler_upgrades.value),
             "include_hard_locations": bool(self.options.include_hard_locations.value),
+            "journal_entry_required": bool(self.options.journal_entry_required.value),
             "death_link": self.options.death_link.value > 0,
         }
 
