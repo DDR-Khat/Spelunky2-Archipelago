@@ -341,7 +341,9 @@ set_post_entity_spawn(function (door)
     if player_options.goal == AP_Goal.HARD and (state.world ~= 6 or state.level ~= 4) then
         return
     end
-    if player_options.goal == AP_Goal.CO and (state.world ~= 7 or state.level ~= 4) then
+    if player_options.goal == AP_Goal.CO
+            and ((state.world ~= 6 and state.world ~= 7)
+            or (state.level ~= 4 and state.level ~= player_options.goal_level)) then
         return
     end
     door:set_pre_enter(function()
@@ -352,11 +354,18 @@ set_post_entity_spawn(function (door)
                 and not ap_save.checked_locations[Spel2AP.locations.people.Classic_Guy] then
             send_location(Spel2AP.locations.people.Classic_Guy)
         end
-        usedBossDoor = true
-        door.special_door = true
-        door.level = state.level_start
-        door.world = state.world_start
-        door.theme = state.theme_start
+
+        if player_options.goal == AP_Goal.CO and state.level == player_options.goal_level then
+            state.win_state = 3
+            state.screen_next = SCREEN.WIN
+            state.level_next = 99
+        else
+            usedBossDoor = true
+            door.special_door = true
+            door.level = state.level_start
+            door.world = state.world_start
+            door.theme = state.theme_start
+        end
     end)
 end, SPAWN_TYPE.ANY, MASK.ANY, ENT_TYPE.FLOOR_DOOR_EXIT)
 
@@ -470,9 +479,9 @@ function SpawnJournalIndex(journalIndex, asPowerup)
         end
     end
 
-    local ent = Journal_to_ItemEnt[journalIndex].type
-    if ent ~= nil then
-        return ent, false
+    local ent = Journal_to_ItemEnt[journalIndex]
+    if ent ~= nil and ent.type ~= nil then
+        return ent.type, false
     end
 
     debug_print("No entry found for: " .. tostring(journalIndex))

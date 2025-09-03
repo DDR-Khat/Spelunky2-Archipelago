@@ -1902,6 +1902,7 @@ ItemCode_to_Index = {
     [Spel2AP.upgrades.Webgun]           = 29, [Spel2AP.waddler_upgrades.Webgun]           = 29, [Spel2AP.locked_items.Webgun]           = 29,
 
     [Spel2AP.waddler_upgrades.Alien_Compass]     = 11, [Spel2AP.locked_items.Alien_Compass]     = 11,
+    [Spel2AP.waddler_upgrades.Arrow_of_Light]    = 44, [Spel2AP.locked_items.Arrow_of_Light]    = 44,
     [Spel2AP.waddler_upgrades.Crown]             = 16, [Spel2AP.locked_items.Crown]             = 16,
     [Spel2AP.waddler_upgrades.Excalibur]         = 39, [Spel2AP.locked_items.Excalibur]         = 39,
     [Spel2AP.waddler_upgrades.Hedjet]            = 15, [Spel2AP.locked_items.Hedjet]            = 15,

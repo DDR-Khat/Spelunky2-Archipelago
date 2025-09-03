@@ -64,8 +64,7 @@ class IncreaseStartingWallet(Toggle):
 
 
 class JournalEntryRequired(DefaultOnToggle):
-    """Should you need to get the Journal Entry for an (Item/Waddler) upgrade
-    before it will be granted, this only controls it being required and not if you can receive them"""
+    """Should the Journal Entry of an item be required for its Item/Waddler upgrade to take effect?"""
     display_name = "Journal Entry Required"
 
 

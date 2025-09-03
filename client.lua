@@ -476,13 +476,6 @@ function set_ap_callbacks()
     end, ON.RESET)
 
     set_callback(function()
-        if player_options.goal == AP_Goal.CO and state.world == 8 and state.level == player_options.goal_level - 1 then
-            state.win_state = 3
-            state.level_next = 99
-        end
-    end, ON.LEVEL)
-
-    set_callback(function()
         if (player_options.goal == AP_Goal.EASY and state.win_state == 1) or (player_options.goal == AP_Goal.HARD and state.win_state == 2) then
             complete_goal()
         end
