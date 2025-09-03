@@ -397,11 +397,12 @@ function set_ap_callbacks()
         end
         local playerState = currentPlayer.state
         local isInDoor = playerState == CHAR_STATE.ENTERING or playerState == CHAR_STATE.EXITING
+        local isDead = test_flag(currentPlayer.flags, ENT_FLAG.DEAD)
         local inPipe = false
         if currentPlayer.overlay then
             inPipe = currentPlayer.overlay.type.id == ENT_TYPE.FLOOR_PIPE
         end
-        if isInDoor or inPipe then
+        if isInDoor or inPipe or isDead then
             goto continue
         end
         if state.screen ~= SCREEN.LEVEL or not ready_for_item then
@@ -476,13 +477,14 @@ function set_ap_callbacks()
     end, ON.RESET)
 
     set_callback(function()
-        if (player_options.goal == AP_Goal.EASY and state.win_state == 1) or (player_options.goal == AP_Goal.HARD and state.win_state == 2) then
+        if (player_options.goal == AP_Goal.EASY and state.win_state == WIN_STATE.TIAMAT_WIN)
+                or (player_options.goal == AP_Goal.HARD and state.win_state == WIN_STATE.HUNDUN_WIN) then
             complete_goal()
         end
     end, ON.WIN)
 
     set_callback(function()
-        if player_options.goal == AP_Goal.CO and state.win_state == 3 then
+        if player_options.goal == AP_Goal.CO and state.win_state == WIN_STATE.COSMIC_OCEAN_WIN then
             complete_goal()
         end
     end, ON.CONSTELLATION)

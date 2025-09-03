@@ -17,7 +17,7 @@ equip_options = frozenset({ItemName.CAMERA.value, ItemName.CAPE.value, ItemName.
 
 quest_items = frozenset({ItemName.ALIEN_COMPASS.value, ItemName.ARROW_OF_LIGHT.value, ItemName.CROWN.value,
     ItemName.EXCALIBUR.value, ItemName.HEDJET.value, ItemName.HOU_YI_BOW.value, ItemName.SCEPTER.value,
-    ItemName.TABLET_OF_DESTINY.value, ItemName.UDJAT_EYE.value, ItemName.USHABTI.value,})
+    ItemName.TABLET_OF_DESTINY.value, ItemName.UDJAT_EYE.value, ItemName.USHABTI.value})
 
 item_options = sorted(powerup_options | equip_options)
 locked_items = sorted(powerup_options | equip_options | quest_items)

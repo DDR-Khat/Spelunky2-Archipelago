@@ -229,6 +229,7 @@ set_callback(function()
     set_callback(function()
         clear_callback()
         waddlerClover = false
+        usedBossDoor = false
         local compassCount = 0
         for item_code, is_unlocked in pairs(ap_save.waddler_item_unlocks) do
             if is_unlocked ~= true then
@@ -337,34 +338,36 @@ set_post_entity_spawn(function (door)
     if player_options.goal == AP_Goal.EASY then
         return
     end
-    local state = get_local_state()
-    if player_options.goal == AP_Goal.HARD and (state.world ~= 6 or state.level ~= 4) then
+    if state.screen ~= SCREEN.LEVEL or state.world <= 5 or state.level <= 3 then
         return
     end
-    if player_options.goal == AP_Goal.CO
-            and ((state.world ~= 6 and state.world ~= 7)
-            or (state.level ~= 4 and state.level ~= player_options.goal_level)) then
+    local isTiamatWorld = state.world == 6
+    if player_options.goal == AP_Goal.HARD and not isTiamatWorld then
+        return
+    end
+    local isHunDunWorld = state.world == 7
+    local isCosmicOcean = state.level > 4
+    if player_options.goal == AP_Goal.CO and isCosmicOcean and state.level < player_options.goal_level then
         return
     end
     door:set_pre_enter(function()
-        if state.world == 6 -- Send Guy Spelunky if we go in. Because we normally would.
+        if isTiamatWorld -- Send Guy Spelunky if we go in. Because we normally would.
                 and not ap_save.checked_locations[Spel2AP.locations.people.Guy_Spelunky] then
-            send_location(Spel2AP.locations.people.Guy_Spelunky)
-        elseif state.world == 7 -- Classic Guy, same reason.
+            update_journal(journal.chapters["people"], character_data[Spel2AP.locations.people.Guy_Spelunky].index)
+        elseif isHunDunWorld -- Classic Guy, same reason.
                 and not ap_save.checked_locations[Spel2AP.locations.people.Classic_Guy] then
-            send_location(Spel2AP.locations.people.Classic_Guy)
+            update_journal(journal.chapters["people"], character_data[Spel2AP.locations.people.Classic_Guy].index)
         end
-
-        if player_options.goal == AP_Goal.CO and state.level == player_options.goal_level then
-            state.win_state = 3
-            state.screen_next = SCREEN.WIN
-            state.level_next = 99
-        else
+        if isTiamatWorld or isHunDunWorld then
             usedBossDoor = true
             door.special_door = true
             door.level = state.level_start
             door.world = state.world_start
             door.theme = state.theme_start
+        else
+            state.win_state = 3
+            state.screen_next = SCREEN.WIN
+            state.level_next = 99
         end
     end)
 end, SPAWN_TYPE.ANY, MASK.ANY, ENT_TYPE.FLOOR_DOOR_EXIT)
