@@ -1,25 +1,29 @@
 from typing import List, Mapping, Any, Dict
 from worlds.AutoWorld import World, WebWorld
 from BaseClasses import MultiWorld, Tutorial, ItemClassification, Region
-from .enums import Spelunky2Goal
+from .enums import Spelunky2Goal, VICTORY_STRING, ItemName, JournalName, WorldName
 
 # Master Item List
-powerup_options = frozenset({"Ankh", "Climbing Gloves", "Compass", "Eggplant Crown", "Elixir", "Four-Leaf Clover", "Kapala",
-                             "Paste", "Pitcher's Mitt", "Skeleton Key", "Spectacles", "Spike Shoes", "Spring Shoes",
-                             "True Crown"})
+powerup_options = frozenset({ItemName.ANKH.value, ItemName.CLIMBING_GLOVES.value, ItemName.COMPASS.value,
+    ItemName.EGGPLANT_CROWN.value, ItemName.ELIXIR.value, ItemName.FOUR_LEAF_CLOVER.value, ItemName.KAPALA.value,
+    ItemName.PASTE.value, ItemName.PITCHERS_MITT.value, ItemName.SKELETON_KEY.value, ItemName.SPECTACLES.value,
+    ItemName.SPIKE_SHOES.value, ItemName.SPRING_SHOES.value, ItemName.TRUE_CROWN.value})
 
-equip_options = frozenset({"Camera", "Cape", "Clone Gun", "Eggplant", "Freeze Ray", "Hoverpack", "Jetpack", "Machete",
-                           "Mattock", "Paste", "Plasma Cannon", "Powerpack", "Shield", "Telepack", "Teleporter",
-                           "Vlad's Cape", "Webgun"})
+equip_options = frozenset({ItemName.CAMERA.value, ItemName.CAPE.value, ItemName.CLONE_GUN.value, ItemName.EGGPLANT.value,
+    ItemName.FREEZE_RAY.value, ItemName.HOVERPACK.value, ItemName.JETPACK.value, ItemName.MACHETE.value,
+    ItemName.MATTOCK.value, ItemName.PASTE.value, ItemName.PLASMA_CANNON.value, ItemName.POWERPACK.value,
+    ItemName.SHIELD.value, ItemName.TELEPACK.value, ItemName.TELEPORTER.value, ItemName.VLADS_CAPE.value,
+    ItemName.WEBGUN.value})
 
-quest_items = frozenset({"Alien Compass", "Arrow of Light", "Crown", "Excalibur", "Hedjet", "Hou Yi's Bow", "Scepter",
-                         "Tablet of Destiny", "Udjat Eye", "Ushabti"})
+quest_items = frozenset({ItemName.ALIEN_COMPASS.value, ItemName.ARROW_OF_LIGHT.value, ItemName.CROWN.value,
+    ItemName.EXCALIBUR.value, ItemName.HEDJET.value, ItemName.HOU_YI_BOW.value, ItemName.SCEPTER.value,
+    ItemName.TABLET_OF_DESTINY.value, ItemName.UDJAT_EYE.value, ItemName.USHABTI.value,})
 
 item_options = sorted(powerup_options | equip_options)
 locked_items = sorted(powerup_options | equip_options | quest_items)
 # End of Master Item List
 
-obnoxious_locations = frozenset({"Magmar Journal Entry", "Lavamander Journal Entry", "Mech Rider Journal Entry"})
+obnoxious_locations = frozenset({JournalName.MAGMAR.value, JournalName.LAVAMANDER.value, JournalName.MECH_RIDER.value})
 
 from .Items import (Spelunky2Item, item_data_table, filler_items, traps, filler_weights, trap_weights,
                     characters, upgrade_items_dict, waddler_items_dict, locked_items_dict,
@@ -83,11 +87,11 @@ class Spelunky2World(World):
         exclude_regions = []
 
         if self.options.goal == Spelunky2Goal.EASY:
-            exclude_regions.append("Sunken City")
-            exclude_regions.append("Eggplant World")
+            exclude_regions.append(WorldName.SUNKEN_CITY.value)
+            exclude_regions.append(WorldName.EGGPLANT.value)
 
         if self.options.goal != Spelunky2Goal.CO:
-            exclude_regions.append("Cosmic Ocean")
+            exclude_regions.append(WorldName.COSMIC_OCEAN.value)
 
         for region_name in region_data_table.keys():
             if region_name in exclude_regions:
@@ -112,20 +116,23 @@ class Spelunky2World(World):
                 location_name: self.location_name_to_id[location_name]
                 for location_name, location_data in location_data_table.items()
                 if location_data.region == region_name and location_data.goal <= self.options.goal
-                and (location_name not in obnoxious_locations or self.options.include_hard_locations)
+                   and (location_name not in obnoxious_locations or self.options.include_hard_locations)
             }, Spelunky2Location)
 
         if self.options.goal == Spelunky2Goal.HARD:
-            goal_region = self.get_region("Sunken City")
+            goal_region = self.get_region(WorldName.SUNKEN_CITY.value)
         elif self.options.goal == Spelunky2Goal.CO:
-            goal_region = self.get_region("Cosmic Ocean")
+            goal_region = self.get_region(WorldName.COSMIC_OCEAN.value)
         else:
-            goal_region = self.get_region("Neo Babylon")
+            goal_region = self.get_region(WorldName.NEO_BABYLON.value)
 
-        goal_location = Spelunky2Location(self.player, "Victory", None, goal_region)
-        goal_location.place_locked_item(Spelunky2Item("Victory", ItemClassification.progression, None, self.player))
-        self.multiworld.completion_condition[self.player] = lambda state: state.has("Victory", self.player)
+        goal_location = Spelunky2Location(self.player, VICTORY_STRING, None, goal_region)
+        goal_location.place_locked_item(
+            Spelunky2Item(VICTORY_STRING, ItemClassification.progression, None, self.player)
+        )
+        self.multiworld.completion_condition[self.player] = lambda state: state.has(VICTORY_STRING, self.player)
         goal_region.locations.append(goal_location)
+
 
     def create_item(self, name: str) -> "Spelunky2Item":
         data = self.item_data_table[name]
@@ -142,31 +149,45 @@ class Spelunky2World(World):
             if self.options.goal.value > Spelunky2Goal.HARD:
                 unlock_count += 1
             for _ in range(unlock_count):
-                spelunky2_item_pool.append(self.create_item("Progressive World Unlock"))
+                spelunky2_item_pool.append(
+                    self.create_item(str(WorldName.PROGRESSIVE.value))
+                )
         else:
-            individual_worlds = ["Jungle", "Volcana", "Olmec's Lair", "Tide Pool", "Temple", "Ice Caves", "Neo Babylon"]
+            individual_worlds = [
+                WorldName.JUNGLE.value,
+                WorldName.VOLCANA.value,
+                WorldName.OLMECS_LAIR.value,
+                WorldName.TIDE_POOL.value,
+                WorldName.TEMPLE.value,
+                WorldName.ICE_CAVES.value,
+                WorldName.NEO_BABYLON.value,
+            ]
             if self.options.goal.value > 0:
-                individual_worlds.append("Sunken City")
+                individual_worlds.append(WorldName.SUNKEN_CITY.value)
             if self.options.goal.value > 1:
-                individual_worlds.append("Cosmic Ocean")
-            spelunky2_item_pool.extend([self.create_item(world) for world in individual_worlds])
+                individual_worlds.append(WorldName.COSMIC_OCEAN.value)
+            spelunky2_item_pool.extend([
+                self.create_item(str(world)) for world in individual_worlds
+            ])
 
         # Add all quest items that match the goal
         if self.options.goal.value == Spelunky2Goal.EASY:
-            quest_item_names = {"Alien Compass"}
+            quest_item_names = {ItemName.ALIEN_COMPASS.value}
         elif self.options.goal.value == Spelunky2Goal.HARD:
-            quest_item_names = quest_items - {"Arrow of Light", "Hou Yi's Bow"}
+            quest_item_names = quest_items - {
+                ItemName.ARROW_OF_LIGHT.value,
+                ItemName.HOU_YI_BOW.value,
+            }
         else:
             quest_item_names = quest_items
 
-        # Filter restricted_items so only goal‑valid quest items remain
+        # Filter restricted_items so only goal-valid quest items remain
         filtered_restricted = []
         for item_name in self.options.restricted_items.value:
             if item_name not in quest_items or item_name in quest_item_names:
                 filtered_restricted.append(item_name)
                 spelunky2_item_pool.append(self.create_item(item_name))
 
-        # Update the option so the client sees the filtered list (prevents ghost locks)
         self.options.restricted_items.value = filtered_restricted
 
         # Get user's Waddler upgrade choices
@@ -184,21 +205,28 @@ class Spelunky2World(World):
             if item_name not in waddler_upgrade_choices:
                 upgrade_name = f"{item_name} Upgrade"
                 spelunky2_item_pool.append(self.create_item(upgrade_name))
-                if item_name == "Compass":
+                if item_name == ItemName.COMPASS.value:
                     spelunky2_item_pool.append(self.create_item(upgrade_name))
-
         # Permanent upgrades
         for _ in range(self.options.health_upgrades.value):
-            spelunky2_item_pool.append(self.create_item("Health Upgrade"))
+            spelunky2_item_pool.append(
+                self.create_item(str(ItemName.HEALTH_UPGRADE.value))
+            )
         for _ in range(self.options.bomb_upgrades.value):
-            spelunky2_item_pool.append(self.create_item("Bomb Upgrade"))
+            spelunky2_item_pool.append(
+                self.create_item(str(ItemName.BOMB_UPGRADE.value))
+            )
         for _ in range(self.options.rope_upgrades.value):
-            spelunky2_item_pool.append(self.create_item("Rope Upgrade"))
+            spelunky2_item_pool.append(
+                self.create_item(str(ItemName.ROPE_UPGRADE.value))
+            )
 
         # Cosmic Ocean checkpoints
         if self.options.goal.value == Spelunky2Goal.CO:
             for _ in range(int(self.options.goal_level.value / 10)):
-                spelunky2_item_pool.append(self.create_item("Cosmic Ocean Checkpoint"))
+                spelunky2_item_pool.append(
+                    self.create_item(str(ItemName.COSMIC_OCEAN_CP.value))
+                )
 
         # Characters are always in pool
         for char_name in characters:
@@ -208,28 +236,28 @@ class Spelunky2World(World):
         locations_count = len(self.multiworld.get_unfilled_locations(self.player))
         self.filler_count = locations_count - len(spelunky2_item_pool)
 
-        self.filler_weights["Rope Pile"] = self.options.rope_pile_weight.value
-        self.filler_weights["Bomb Bag"] = self.options.bomb_bag_weight.value
-        self.filler_weights["Bomb Box"] = self.options.bomb_box_weight.value
-        self.filler_weights["Cooked Turkey"] = self.options.cooked_turkey_weight.value
-        self.filler_weights["Royal Jelly"] = self.options.royal_jelly_weight.value
-        self.filler_weights["Gold Bar"] = self.options.gold_bar_weight.value
-        self.filler_weights["Emerald Gem"] = self.options.emerald_gem_weight.value
-        self.filler_weights["Sapphire Gem"] = self.options.sapphire_gem_weight.value
-        self.filler_weights["Ruby Gem"] = self.options.ruby_gem_weight.value
-        self.filler_weights["Diamond Gem"] = self.options.diamond_gem_weight.value
+        self.filler_weights[ItemName.ROPE_PILE.value]   = self.options.rope_pile_weight.value
+        self.filler_weights[ItemName.BOMB_BAG.value]    = self.options.bomb_bag_weight.value
+        self.filler_weights[ItemName.BOMB_BOX.value]    = self.options.bomb_box_weight.value
+        self.filler_weights[ItemName.COOKED_TURKEY.value] = self.options.cooked_turkey_weight.value
+        self.filler_weights[ItemName.ROYAL_JELLY.value] = self.options.royal_jelly_weight.value
+        self.filler_weights[ItemName.GOLD_BAR.value]    = self.options.gold_bar_weight.value
+        self.filler_weights[ItemName.EMERALD_GEM.value] = self.options.emerald_gem_weight.value
+        self.filler_weights[ItemName.SAPPHIRE_GEM.value] = self.options.sapphire_gem_weight.value
+        self.filler_weights[ItemName.RUBY_GEM.value]    = self.options.ruby_gem_weight.value
+        self.filler_weights[ItemName.DIAMOND_GEM.value] = self.options.diamond_gem_weight.value
 
         if self.options.enable_traps.value:
             self.trap_count = int(self.filler_count * (self.options.trap_weight.value / 100))
             self.filler_count -= self.trap_count
 
-            self.trap_weights["Poison Trap"] = self.options.poison_weight.value
-            self.trap_weights["Curse Trap"] = self.options.curse_weight.value
-            self.trap_weights["Ghost Trap"] = self.options.ghost_weight.value
-            self.trap_weights["Stun Trap"] = self.options.stun_weight.value
-            self.trap_weights["Loose Bombs Trap"] = self.options.bomb_weight.value
-            self.trap_weights["Blindness Trap"] = self.options.blind_weight.value
-            self.trap_weights["Punish Ball Trap"] = self.options.punish_weight.value
+            self.trap_weights[ItemName.POISON_TRAP.value]      = self.options.poison_weight.value
+            self.trap_weights[ItemName.CURSE_TRAP.value]       = self.options.curse_weight.value
+            self.trap_weights[ItemName.GHOST_TRAP.value]       = self.options.ghost_weight.value
+            self.trap_weights[ItemName.STUN_TRAP.value]        = self.options.stun_weight.value
+            self.trap_weights[ItemName.LOOSE_BOMBS_TRAP.value] = self.options.bomb_weight.value
+            self.trap_weights[ItemName.BLINDNESS_TRAP.value]   = self.options.blind_weight.value
+            self.trap_weights[ItemName.PUNISH_BALL_TRAP.value] = self.options.punish_weight.value
 
             for _ in range(self.trap_count):
                 spelunky2_item_pool.append(self.create_trap())
@@ -238,6 +266,7 @@ class Spelunky2World(World):
             spelunky2_item_pool.append(self.create_filler())
 
         self.multiworld.itempool.extend(spelunky2_item_pool)
+
 
     def create_filler(self) -> "Spelunky2Item":
         return self.create_item(

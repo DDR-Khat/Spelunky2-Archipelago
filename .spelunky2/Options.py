@@ -1,7 +1,7 @@
 from . import item_options, locked_items, powerup_options, equip_options, quest_items
 from Options import ExcludeLocations, Toggle, DefaultOnToggle, Range, Choice, PerGameCommonOptions, DeathLink, ItemSet
 from dataclasses import dataclass
-
+from .enums import ItemName
 
 def format_options(options, row_length=10):
     """Formats a list of options into a multi-line string, with each line
@@ -132,7 +132,7 @@ Options:
 {item_options_text}"""
     display_name = "Item Upgrades"
     valid_keys = item_options
-    default = powerup_options - {"True Crown", "Eggplant Crown"}
+    default = powerup_options - {ItemName.TRUE_CROWN.value, ItemName.EGGPLANT_CROWN.value}
 
 
 class WaddlerUpgrades(ItemSet):
@@ -142,7 +142,7 @@ Options (any selected here override options in item_upgrades):
 {locked_items_text}"""
     display_name = "Waddler Items"
     valid_keys = locked_items
-    default = equip_options - {"True Crown", "Eggplant Crown"}
+    default = equip_options - {ItemName.TRUE_CROWN.value, ItemName.EGGPLANT_CROWN.value}
 
 
 class DeathLinkBypassesAnkh(Toggle):
@@ -310,8 +310,13 @@ class PunishBallTrapChance(Range):
 class Spelunky2Options(PerGameCommonOptions):
     goal: Goal
     goal_level: GoalLevel
+    death_link: DeathLink
+    bypass_ankh: DeathLinkBypassesAnkh
+    include_hard_locations: IncludeHardLocations
+    journal_entry_required: JournalEntryRequired
     starting_wallet: IncreaseStartingWallet
     progressive_worlds: ProgressiveWorlds
+    # progressive_shortcuts: ProgressiveShortcuts - Not implemented yet
     starting_health: StartingHealth
     health_upgrades: HealthUpgrades
     starting_bombs: StartingBombs
@@ -321,7 +326,6 @@ class Spelunky2Options(PerGameCommonOptions):
     restricted_items: RestrictedItems
     item_upgrades: ItemUpgrades
     waddler_upgrades: WaddlerUpgrades
-    # progressive_shortcuts: ProgressiveShortcuts - Not implemented yet
     rope_pile_weight: RopePileWeight
     bomb_bag_weight: BombBagWeight
     bomb_box_weight: BombBoxWeight
@@ -341,7 +345,3 @@ class Spelunky2Options(PerGameCommonOptions):
     bomb_weight: LooseBombsTrapChance
     blind_weight: BlindnessTrapChance
     punish_weight: PunishBallTrapChance
-    death_link: DeathLink
-    bypass_ankh: DeathLinkBypassesAnkh
-    include_hard_locations: IncludeHardLocations
-    journal_entry_required: JournalEntryRequired
