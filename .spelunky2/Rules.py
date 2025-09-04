@@ -227,7 +227,7 @@ def can_access_cosmic_ocean(
             has_or_unrestricted(
                 world, state, player, ItemName.HOU_YI_BOW.value
             )
-            and state.has(ItemName.ARROW_OF_LIGHT.value, player)
+            and has_or_unrestricted(world, state, player, ItemName.ARROW_OF_LIGHT.value)
             and (
                     state.has(WorldName.COSMIC_OCEAN.value, player)
                     or state.has(WorldName.PROGRESSIVE.value, player, 7)

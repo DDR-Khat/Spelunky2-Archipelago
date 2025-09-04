@@ -1,7 +1,7 @@
 from typing import List, Mapping, Any, Dict
 from worlds.AutoWorld import World, WebWorld
 from BaseClasses import MultiWorld, Tutorial, ItemClassification, Region
-from .enums import Spelunky2Goal, VICTORY_STRING, ItemName, JournalName, WorldName
+from .enums import Spelunky2Goal, VICTORY_STRING, ItemName, JournalName, WorldName, LocationName, RuleNames
 
 # Master Item List
 powerup_options = frozenset({ItemName.ANKH.value, ItemName.CLIMBING_GLOVES.value, ItemName.COMPASS.value,
@@ -58,7 +58,7 @@ class Spelunky2World(World):
 
     game = "Spelunky 2"
     web = Spelunky2WebWorld()
-    options = Spelunky2Options
+    options: Spelunky2Options
     options_dataclass = Spelunky2Options
     filler_count = 0
     trap_count = 0
@@ -162,9 +162,9 @@ class Spelunky2World(World):
                 WorldName.ICE_CAVES.value,
                 WorldName.NEO_BABYLON.value,
             ]
-            if self.options.goal.value > 0:
+            if self.options.goal.value >= Spelunky2Goal.HARD:
                 individual_worlds.append(WorldName.SUNKEN_CITY.value)
-            if self.options.goal.value > 1:
+            if self.options.goal.value == Spelunky2Goal.CO:
                 individual_worlds.append(WorldName.COSMIC_OCEAN.value)
             spelunky2_item_pool.extend([
                 self.create_item(str(world)) for world in individual_worlds
@@ -281,12 +281,17 @@ class Spelunky2World(World):
 
         if self.options.goal != Spelunky2Goal.EASY:
             set_sunken_city_rules(self, self.player)
+            self.multiworld.register_indirect_condition(self.get_region(LocationName.DUAT.value), self.get_entrance(RuleNames.NEO_BABYLON_TO_SUNKEN_CITY.value))
+            self.multiworld.register_indirect_condition(self.get_region(LocationName.ABZU.value), self.get_entrance(RuleNames.NEO_BABYLON_TO_SUNKEN_CITY.value))
 
         if self.options.goal == Spelunky2Goal.CO:
             set_cosmic_ocean_rules(self, self.player)
+            self.multiworld.register_indirect_condition(self.get_region(WorldName.SUNKEN_CITY.value), self.get_entrance(RuleNames.SUNKEN_CITY_TO_COSMIC_OCEAN.value))
 
         # Add the rule-setter for starter item upgrades
         set_starter_upgrade_rules(self, self.player)
+
+        self.multiworld.register_indirect_condition(self.get_region(LocationName.VLADS_CASTLE.value), self.get_entrance(RuleNames.ICE_CAVES_TO_MOTHERSHIP.value))
 
     def fill_slot_data(self) -> Mapping[str, Any]:
         slot_data = {
