@@ -21,7 +21,7 @@ jobs:
         run: |
           mkdir client
           shopt -s extglob
-          cp -r !(.spelunky2|.git|.github|client) client/
+          cp -r !(.spelunky2|spelunky2|.git|.github|client|README.md|spelunky2.apworld) client/
           cd client
           zip -r ../Spelunky2-Archipelago.zip .
 
