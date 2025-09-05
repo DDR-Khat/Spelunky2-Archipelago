@@ -24,15 +24,20 @@ jobs:
         run: |
           mkdir client
           shopt -s extglob
-          cp -r !( .spelunky2|.git|.github|client) client/
+          cp -r !(.spelunky2|.git|.github|client) client/
           cd client
           zip -r ../Spelunky2-Client.zip .
 
-      # 3️⃣ Upload both as downloadable artifacts (instead of attaching to a release)
-      - name: Upload test artifacts
+      # 3️⃣ Upload spelunky2.apworld as its own artifact
+      - name: Upload spelunky2.apworld
         uses: actions/upload-artifact@v4
         with:
-          name: spelunky2-zips
-          path: |
-            spelunky2.apworld
-            Spelunky2-Client.zip
+          name: spelunky2.apworld
+          path: spelunky2.apworld
+
+      # 4️⃣ Upload Spelunky2-Client.zip as its own artifact
+      - name: Upload Spelunky2-Client.zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: Spelunky2-Client.zip
+          path: Spelunky2-Client.zip
