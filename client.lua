@@ -480,6 +480,20 @@ function set_ap_callbacks()
         if (player_options.goal == AP_Goal.EASY and state.win_state == WIN_STATE.TIAMAT_WIN)
                 or (player_options.goal == AP_Goal.HARD and state.win_state == WIN_STATE.HUNDUN_WIN) then
             complete_goal()
+        else
+            toast("Returning to starting area")
+            state.fade_length = 30
+            set_global_timeout(function()
+                clear_callback()
+                run_reset()
+                state.loading = FADE.OUT
+                state.fade_timer = 60
+                state.win_state = WIN_STATE.NO_WIN
+                state.screen_next = SCREEN.LEVEL
+                state.level_next = state.level_start
+                state.world_next = state.world_start
+                state.theme_next = state.theme_start
+            end, 120)
         end
     end, ON.WIN)
 

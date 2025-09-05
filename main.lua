@@ -73,7 +73,6 @@ progressionItem = makeTexture("assets/progression.png", 128, 128)
 debugging = false
 givingItem = false
 waddlerClover = false
-usedBossDoor = false
 local bombOrRope = false
 function getBombOrRope()
     bombOrRope = not bombOrRope
@@ -229,7 +228,6 @@ set_callback(function()
     set_callback(function()
         clear_callback()
         waddlerClover = false
-        usedBossDoor = false
         local compassCount = 0
         for item_code, is_unlocked in pairs(ap_save.waddler_item_unlocks) do
             if is_unlocked ~= true then
@@ -331,47 +329,6 @@ set_post_entity_spawn(function(crate)
     end)
 end, SPAWN_TYPE.ANY, MASK.ITEM, {ENT_TYPE.ITEM_CRATE, ENT_TYPE.ITEM_PRESENT, ENT_TYPE.ITEM_GHIST_PRESENT})
 
---[[
-If it's not our goal, let us beat the boss and loop back.
-]]--
-set_post_entity_spawn(function (door)
-    if player_options.goal == AP_Goal.EASY then
-        return
-    end
-    if state.screen ~= SCREEN.LEVEL or state.world <= 5 or state.level <= 3 then
-        return
-    end
-    local isTiamatWorld = state.world == 6
-    if player_options.goal == AP_Goal.HARD and not isTiamatWorld then
-        return
-    end
-    local isHunDunWorld = state.world == 7
-    local isCosmicOcean = state.level > 4
-    if player_options.goal == AP_Goal.CO and isCosmicOcean and state.level < player_options.goal_level then
-        return
-    end
-    door:set_pre_enter(function()
-        if isTiamatWorld -- Send Guy Spelunky if we go in. Because we normally would.
-                and not ap_save.checked_locations[Spel2AP.locations.people.Guy_Spelunky] then
-            update_journal(journal.chapters["people"], character_data[Spel2AP.locations.people.Guy_Spelunky].index)
-        elseif isHunDunWorld -- Classic Guy, same reason.
-                and not ap_save.checked_locations[Spel2AP.locations.people.Classic_Guy] then
-            update_journal(journal.chapters["people"], character_data[Spel2AP.locations.people.Classic_Guy].index)
-        end
-        if isTiamatWorld or isHunDunWorld then
-            usedBossDoor = true
-            door.special_door = true
-            door.level = state.level_start
-            door.world = state.world_start
-            door.theme = state.theme_start
-        else
-            state.win_state = 3
-            state.screen_next = SCREEN.WIN
-            state.level_next = 99
-        end
-    end)
-end, SPAWN_TYPE.ANY, MASK.ANY, ENT_TYPE.FLOOR_DOOR_EXIT)
-
 set_post_entity_spawn(function(clover)
     if ap_save.waddler_item_unlocks[Spel2AP.waddler_upgrades.Four_Leaf_Clover] ~= true or waddlerClover then
         return
@@ -401,29 +358,24 @@ set_callback(function()
     end
 end, ON.GAMEFRAME)
 
+function run_reset()
+    state.quests.yang_state = 0
+    state.quests.jungle_sisters_flags = 0
+    state.quests.van_horsing_state = 0
+    state.quests.sparrow_state = 0
+    state.quests.madame_tusk_state = 0
+    state.quests.beg_state = 0
+    state.kali_altars_destroyed = 0
+    state.kali_gifts = 0
+    state.quest_flags = QUEST_FLAG.RESET
+end
+
+
 set_callback(function()
     debug_print("TRANSITION")
 
-    local function run_reset()
-        state.quests.yang_state = 0
-        state.quests.jungle_sisters_flags = 0
-        state.quests.van_horsing_state = 0
-        state.quests.sparrow_state = 0
-        state.quests.madame_tusk_state = 0
-        state.quests.beg_state = 0
-        state.kali_altars_destroyed = 0
-        state.kali_gifts = 0
-        state.quest_flags = QUEST_FLAG.RESET
-    end
 
     change_diceshop_prizes(get_filtered_dice_prizes())
-
-    if usedBossDoor then
-        toast("Your goal is incomplete. Looping back")
-        run_reset()
-        usedBossDoor = false
-        return
-    end
 
     local shouldReset
     if player_options.progressive_worlds then
