@@ -395,6 +395,22 @@ set_callback(function()
     end
 end, ON.TRANSITION)
 
+local purchasables_list = {
+    [ENT_TYPE.ITEM_PURCHASABLE_JETPACK] = true,
+    [ENT_TYPE.ITEM_PURCHASABLE_POWERPACK] = true,
+    [ENT_TYPE.ITEM_PURCHASABLE_HOVERPACK] = true,
+    [ENT_TYPE.ITEM_PURCHASABLE_TELEPORTER_BACKPACK] = true,
+    [ENT_TYPE.ITEM_PURCHASABLE_CAPE] = true
+}
+
+local purchasable_counterpart = {
+    [ENT_TYPE.ITEM_PURCHASABLE_JETPACK] = ENT_TYPE.ITEM_JETPACK,
+    [ENT_TYPE.ITEM_PURCHASABLE_POWERPACK] = ENT_TYPE.ITEM_POWERPACK,
+    [ENT_TYPE.ITEM_PURCHASABLE_HOVERPACK] = ENT_TYPE.ITEM_HOVERPACK,
+    [ENT_TYPE.ITEM_PURCHASABLE_TELEPORTER_BACKPACK] = ENT_TYPE.ITEM_TELEPORTER_BACKPACK,
+    [ENT_TYPE.ITEM_PURCHASABLE_CAPE] = ENT_TYPE.ITEM_CAPE,
+}
+
 for _, data in pairs(Journal_to_ItemEnt) do
     set_post_entity_spawn(function(entity, _)
         entity:set_pre_update_state_machine(function (_)
@@ -405,15 +421,26 @@ for _, data in pairs(Journal_to_ItemEnt) do
                 clear_callback()
                 return
             end
-            local shopOwner = remove_from_shop(entity) -- TODO: We gotta deal with thieve shop things... somehow.
+            local shopOwner = remove_from_shop(entity)
             if shopOwner and shopOwner ~= -1 then
                 local spawnItem = getBombOrRope()
                 debug_print(f"Found {enum_get_name(ENT_TYPE,entity.type.id)} in shop. Replacing with {enum_get_name(ENT_TYPE,spawnItem)})")
                 local newItem = spawn_entity_snapped_to_floor(spawnItem, entity.x, entity.y, entity.layer)
-                if newItem and newItem ~= -1 then
-                    add_item_to_shop(newItem, shopOwner)
-                else
-                    debug_print("Something went wrong replacing a shop item.")
+                if state.shoppie_aggro < 1 and state.shoppie_aggro_next < 1 then
+                    if newItem and newItem ~= -1 then
+                        add_item_to_shop(newItem, shopOwner)
+                    else
+                        debug_print("Something went wrong replacing a shop item.")
+                    end
+                end
+                if purchasables_list[entity.type.id] then
+                    entity:set_pre_destroy(function()
+                        local liberatedItems = get_entities_at(purchasable_counterpart[entity.type.id], MASK.ANY, entity.x, entity.y, entity.layer, 1)
+                        for _, liberatedItem in ipairs(liberatedItems) do
+                            local liberatedEntity = get_entity(liberatedItem)
+                            liberatedEntity:destroy()
+                        end
+                    end)
                 end
             end
             local heldEnt = entity:get_held_entity()
