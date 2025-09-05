@@ -1,25 +1,24 @@
-name: Build release zips (manual test)
+name: Build and attach release zips
 
 on:
-  push:
-    branches:
-      - new_apworld
+  release:
+    types: [created]
 
 jobs:
-  build-and-test:
+  build-and-upload:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 1️⃣ Create spelunky2.apworld from .spelunky2 contents
+      #Create spelunky2.apworld
       - name: Prepare spelunky2.apworld
         run: |
           mkdir spelunky2
           cp -r .spelunky2/* spelunky2/
           zip -r spelunky2.apworld spelunky2
 
-      # 2️⃣ Create Spelunky2-Client.zip from everything else
+      #Create Spelunky2-Client.zip
       - name: Prepare Spelunky2-Client.zip
         run: |
           mkdir client
@@ -28,16 +27,18 @@ jobs:
           cd client
           zip -r ../Spelunky2-Client.zip .
 
-      # 3️⃣ Upload spelunky2.apworld as its own artifact
-      - name: Upload spelunky2.apworld
-        uses: actions/upload-artifact@v4
+      # Attach spelunky2.apworld to the release
+      - name: Upload spelunky2.apworld to release
+        uses: softprops/action-gh-release@v1
         with:
-          name: spelunky2.apworld
-          path: spelunky2.apworld
+          files: spelunky2.apworld
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # 4️⃣ Upload Spelunky2-Client.zip as its own artifact
-      - name: Upload Spelunky2-Client.zip
-        uses: actions/upload-artifact@v4
+      # Attach Spelunky2-Client.zip to the release
+      - name: Upload Spelunky2-Client.zip to release
+        uses: softprops/action-gh-release@v1
         with:
-          name: Spelunky2-Client.zip
-          path: Spelunky2-Client.zip
+          files: Spelunky2-Client.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
