@@ -24,7 +24,7 @@ jobs:
         run: |
           mkdir client
           shopt -s extglob
-          cp -r !( .spelunky2|.git|.github|client ) client/
+          cp -r !( .spelunky2|.git|.github|client) client/
           cd client
           zip -r ../Spelunky2-Client.zip .
 
