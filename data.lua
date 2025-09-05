@@ -959,7 +959,7 @@ item_ids = {
         name = "Hedjet Unlocked",
         lock_name = "Hedjet",
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
-        TileY = 0,
+        TileY = 1,
         TileX = 3,
     },
     [Spel2AP.locked_items.Hoverpack] = {
@@ -1668,9 +1668,9 @@ item_ids = {
     [Spel2AP.permanent_upgrades.Cosmic_Ocean_Checkpoint] = {
         type = Spel2AP.permanent_upgrades,
         name = "Cosmic Ocean Checkpoint",
-        display = TEXTURE.DATA_TEXTURES_FX_SMALL3_0,
-        TileX = 7,
-        TileY = 0
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_BG_0,
+        TileX = 1,
+        TileY = 2
     },
     [Spel2AP.world_unlocks.Progressive_World] = {
         type = Spel2AP.world_unlocks,
