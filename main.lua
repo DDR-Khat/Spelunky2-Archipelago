@@ -348,14 +348,12 @@ set_post_entity_spawn(function(clover)
 end, SPAWN_TYPE.ANY, MASK.ITEM, ENT_TYPE.ITEM_PICKUP_CLOVER)
 
 set_callback(function()
-    -- Iterates over all 5 Journal chapters
     for _, chapter in ipairs(journal.chapters) do
+        local save_entries = savegame[chapter]
+        local ap_entries   = ap_save[chapter]
 
-        -- Iterates over every entry in the given Journal chapter
-        for index, entry_obtained in ipairs(savegame[chapter]) do
-
-            -- Verifies that the entry has been unlocked in the game save, but not the AP save
-            if not ap_save[chapter][index] and entry_obtained then
+        for index = 1, #save_entries do
+            if save_entries[index] and not ap_entries[index] then
                 update_journal(chapter, index)
             end
         end

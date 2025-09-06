@@ -341,20 +341,26 @@ end
 
 
 function update_journal(chapter, index)
+    -- Mark as unlocked in AP save
     ap_save[chapter][index] = true
 
-    debug_print(F"Updated {chapter} entry {journal[chapter][index]}")
+    local entry = journal[chapter][index]
+    local location_id = entry.id
 
-    local location_name = f"{journal[chapter][index]} Journal Entry"
-    local location_id = location_name_to_id[location_name]
+    debug_print(f"Updated {chapter} entry {entry.name}")
 
-    table.insert(ap_save.checked_locations, #ap_save.checked_locations + 1, location_id)
+    -- Track in checked_locations
+    table.insert(ap_save.checked_locations, location_id)
+
+    -- If the location is a character, mark in checked_characters
     if location_id >= Spel2AP.locations.people.Ana_Spelunky
             and location_id <= Spel2AP.locations.people.Classic_Guy then
         checked_characters[location_id] = true
     end
 
-    if not player_options.include_hard_locations and obnoxious_journal_entries[location_id] then
+    -- Skip sending if excluded by player options, because it won't exist in the multiworld
+    if not player_options.include_hard_locations
+            and obnoxious_journal_entries[location_id] then
         return
     end
 
@@ -362,10 +368,13 @@ function update_journal(chapter, index)
             and (hard_journal_entries[location_id] or co_journal_entries[location_id]) then
         return
     end
-    if player_options.goal == AP_Goal.HARD and co_journal_entries[location_id] then
+
+    if player_options.goal == AP_Goal.HARD
+            and co_journal_entries[location_id] then
         return
     end
 
+    -- Send the location to AP
     send_location(location_id)
 end
 
