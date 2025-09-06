@@ -239,7 +239,7 @@ function connect(server, slot, password)
     end
 
     function on_items_received(items)
-        if not isInGame then
+        if not isInGame() then
             return
         end
         local sender = "another world"
@@ -263,7 +263,7 @@ function connect(server, slot, password)
     end
 
     function on_location_info(items)
-        if not isInGame then
+        if not isInGame() then
             return
         end
         local success, err = pcall(function()
@@ -320,15 +320,22 @@ function connect(server, slot, password)
         local chapters_to_update = {}
 
         for _, location_id in ipairs(locations) do
+            for _, checked_id in ipairs(ap_save.checked_locations) do
+                if checked_id == location_id then
+                    goto continue
+                end
+            end
+
             local entry = journal_lookup[location_id]
             if entry then
-                if not ap_save[entry.chapter][entry.index] then
-                    ap_save[entry.chapter][entry.index] = true
-                    chapters_to_update[entry.chapter] = true
-                end
+                ap_save[entry.chapter][entry.index] = true
+                table.insert(ap_save.checked_locations, location_id)
+                chapters_to_update[entry.chapter] = true
             else
-                debug_print(("Warning: Received unknown location ID %s from server."):format(location_id))
+                debug_print(f"Warning: Received unknown location ID {location_id} from server.")
             end
+
+            ::continue::
         end
 
         if next(chapters_to_update) ~= nil then
@@ -339,6 +346,7 @@ function connect(server, slot, password)
             write_save()
         end
     end
+
 
 
     function on_data_package_changed(data_package)

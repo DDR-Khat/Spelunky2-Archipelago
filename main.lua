@@ -358,7 +358,7 @@ set_callback(function()
         local ap_entries   = ap_save[chapter]
 
         for index = 1, #save_entries do
-            if save_entries[index] and not ap_entries[index] and isInGame then
+            if save_entries[index] and not ap_entries[index] and isInGame() then
                 update_journal(chapter, index)
             end
         end

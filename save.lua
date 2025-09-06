@@ -349,7 +349,7 @@ function update_journal(chapter, index)
     local entry = journal[chapter][index]
     local location_id = entry.id
 
-    debug_print(f"[InGame: {tostring(isInGame())}] Updated {chapter} entry {entry.name}")
+    debug_print(f"Updated {chapter} entry {entry.name}")
 
     -- Track in checked_locations
     table.insert(ap_save.checked_locations, location_id)
