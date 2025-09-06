@@ -287,18 +287,22 @@ end, ON.LEVEL)
 
 set_callback(function()
     debug_print("POST_LEVEL_GENERATION")
+
     local coffin_uids = get_entities_by(ENT_TYPE.ITEM_COFFIN, MASK.ITEM, LAYER.BOTH)
+
     for _, uid in ipairs(coffin_uids) do
         local coffin = get_entity(uid)
+
         for _, data in pairs(character_data) do
-            local is_unlocked = ap_save.people[data.index] and savegame.people[data.index]
-            if is_unlocked and coffin.inside == data.ent then
+            -- data.location is the Spel2AP.locations.people.* code for this character
+            if checked_characters[data.location] and coffin.inside == data.ent then
                 set_contents(coffin.uid, ENT_TYPE.CHAR_HIREDHAND)
                 break
             end
         end
     end
 end, ON.POST_LEVEL_GENERATION)
+
 
 set_post_entity_spawn(function(crate)
     if get_local_state().screen ~= SCREEN.LEVEL then

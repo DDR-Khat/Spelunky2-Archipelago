@@ -250,120 +250,141 @@ character_data =
     {
         index = 1,
         ent = ENT_TYPE.CHAR_ANA_SPELUNKY,
-        binary = 1
+        binary = 1,
+        location = Spel2AP.locations.people.Ana_Spelunky
     },
     [Spel2AP.characters.Margaret_Tunnel] =
     {
         index = 2,
         ent = ENT_TYPE.CHAR_MARGARET_TUNNEL,
-        binary = 2
+        binary = 2,
+        location = Spel2AP.locations.people.Margaret_Tunnel
     },
     [Spel2AP.characters.Colin_Northward] =
     {
         index = 3,
         ent = ENT_TYPE.CHAR_COLIN_NORTHWARD,
-        binary = 4
+        binary = 4,
+        location = Spel2AP.locations.people.Colin_Northward
     },
     [Spel2AP.characters.Roffy_D_Sloth] =
     {
         index = 4,
         ent = ENT_TYPE.CHAR_ROFFY_D_SLOTH,
-        binary = 8
+        binary = 8,
+        location = Spel2AP.locations.people.Roffy_D_Sloth
     },
     [Spel2AP.characters.Alto_Singh] =
     {
         index = 5,
         ent = ENT_TYPE.CHAR_BANDA,
-        binary = 16
+        binary = 16,
+        location = Spel2AP.locations.people.Alto_Singh
     },
     [Spel2AP.characters.Liz_Mutton] =
     {
         index = 6,
         ent = ENT_TYPE.CHAR_GREEN_GIRL,
-        binary = 32},
+        binary = 32,
+        location = Spel2AP.locations.people.Liz_Mutton
+    },
     [Spel2AP.characters.Nekka_the_Eagle] =
     {
         index = 7,
         ent = ENT_TYPE.CHAR_AMAZON,
-        binary = 64
+        binary = 64,
+        location = Spel2AP.locations.people.Nekka_the_Eagle
     },
     [Spel2AP.characters.LISE_Project] =
     {
         index = 8,
         ent = ENT_TYPE.CHAR_LISE_SYSTEM,
-        binary = 128
+        binary = 128,
+        location = Spel2AP.locations.people.LISE_Project
     },
     [Spel2AP.characters.Coco_Von_Diamonds] =
     {
         index = 9,
         ent = ENT_TYPE.CHAR_COCO_VON_DIAMONDS,
-        binary = 256
+        binary = 256,
+        location = Spel2AP.locations.people.Coco_Von_Diamonds
     },
     [Spel2AP.characters.Manfred_Tunnel] =
     {
         index = 10,
         ent = ENT_TYPE.CHAR_MANFRED_TUNNEL,
-        binary = 512
+        binary = 512,
+        location = Spel2AP.locations.people.Manfred_Tunnel
     },
     [Spel2AP.characters.Little_Jay] =
     {
         index = 11,
         ent = ENT_TYPE.CHAR_OTAKU,
-        binary = 1024
+        binary = 1024,
+        location = Spel2AP.locations.people.Little_Jay
     },
     [Spel2AP.characters.Tina_Flan] =
     {
         index = 12,
         ent = ENT_TYPE.CHAR_TINA_FLAN,
-        binary = 2048
+        binary = 2048,
+        location = Spel2AP.locations.people.Tina_Flan
     },
     [Spel2AP.characters.Valerie_Crump] =
     {
         index = 13,
         ent = ENT_TYPE.CHAR_VALERIE_CRUMP,
-        binary = 4096
+        binary = 4096,
+        location = Spel2AP.locations.people.Valerie_Crump
     },
     [Spel2AP.characters.Au] =
     {
         index = 14,
         ent = ENT_TYPE.CHAR_AU,
-        binary = 8192
+        binary = 8192,
+        location = Spel2AP.locations.people.Au
     },
     [Spel2AP.characters.Demi_Von_Diamonds] =
     {
         index = 15,
         ent = ENT_TYPE.CHAR_DEMI_VON_DIAMONDS,
-        binary = 16384
+        binary = 16384,
+        location = Spel2AP.locations.people.Demi_Von_Diamonds
     },
     [Spel2AP.characters.Pilot] =
     {
         index = 16,
         ent = ENT_TYPE.CHAR_PILOT,
-        binary = 32768
+        binary = 32768,
+        location = Spel2AP.locations.people.Pilot
     },
     [Spel2AP.characters.Princess_Airyn] =
     {
         index = 17,
         ent = ENT_TYPE.CHAR_PRINCESS_AIRYN,
-        binary = 65536
+        binary = 65536,
+        location = Spel2AP.locations.people.Princess_Airyn
     },
     [Spel2AP.characters.Dirk_Yamaoka] =
     {
         index = 18,
         ent = ENT_TYPE.CHAR_DIRK_YAMAOKA,
-        binary = 131072
+        binary = 131072,
+        location = Spel2AP.locations.people.Dirk_Yamaoka
     },
     [Spel2AP.characters.Guy_Spelunky] =
     {
         index = 19,
         ent = ENT_TYPE.CHAR_GUY_SPELUNKY,
-        binary = 262144
+        binary = 262144,
+        location = Spel2AP.locations.people.Guy_Spelunky
     },
     [Spel2AP.characters.Classic_Guy] =
     {
         index = 20,
         ent = ENT_TYPE.CHAR_CLASSIC_GUY,
-        binary = 524288
+        binary = 524288,
+        location = Spel2AP.locations.people.Classic_Guy
     },
 }
 

@@ -263,6 +263,8 @@ ap_save = {
     }
 }
 
+checked_characters = {}
+
 function initialize_save()
     -- Clearing game save
     savegame.tutorial_state = 4
@@ -347,6 +349,10 @@ function update_journal(chapter, index)
     local location_id = location_name_to_id[location_name]
 
     table.insert(ap_save.checked_locations, #ap_save.checked_locations + 1, location_id)
+    if location_id >= Spel2AP.locations.people.Ana_Spelunky
+            and location_id <= Spel2AP.locations.people.Classic_Guy then
+        checked_characters[location_id] = true
+    end
 
     if not player_options.include_hard_locations and obnoxious_journal_entries[location_id] then
         return
@@ -429,6 +435,40 @@ function read_save()
     ap_save.item_unlocks = ap_save.item_unlocks or {}
     ap_save.permanent_item_upgrades = ap_save.permanent_item_upgrades or {}
     ap_save.waddler_item_unlocks = ap_save.waddler_item_unlocks or {}
+    checked_characters = {}
+    if ap_save.checked_locations then
+        for _, loc_id in pairs(ap_save.checked_locations) do
+            if loc_id >= Spel2AP.locations.people.Ana_Spelunky
+                    and loc_id <= Spel2AP.locations.people.Classic_Guy then
+                checked_characters[loc_id] = true
+            end
+        end
+    end
+    if ap_save.places then
+        for idx, unlocked in pairs(ap_save.places) do
+            savegame.places[idx] = unlocked and true or false
+        end
+    end
+    if ap_save.people then
+        for idx, unlocked in pairs(ap_save.people) do
+            savegame.people[idx] = unlocked and true or false
+        end
+    end
+    if ap_save.bestiary then
+        for idx, unlocked in pairs(ap_save.bestiary) do
+            savegame.bestiary[idx] = unlocked and true or false
+        end
+    end
+    if ap_save.items then
+        for idx, unlocked in pairs(ap_save.items) do
+            savegame.items[idx] = unlocked and true or false
+        end
+    end
+    if ap_save.traps then
+        for idx, unlocked in pairs(ap_save.traps) do
+            savegame.traps[idx] = unlocked and true or false
+        end
+    end
     update_game_save()
     debug_print(f"Loaded data from {filename}")
 end
