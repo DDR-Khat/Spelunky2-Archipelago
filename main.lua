@@ -90,7 +90,12 @@ local shortcut_save_values = {
     [3] = 10
 }
 
-local function get_shortcut_level()
+function isInGame()
+    return state.screen >= SCREEN.CAMP or
+            state.screen >= SCREEN.RECAP
+end
+
+function get_shortcut_level()
     if player_options.progressive_worlds then
         if ap_save.max_world > 4 then
             return 3
@@ -116,7 +121,7 @@ local function get_shortcut_level()
     end
 end
 
-local function set_shortcut_progress(level)
+function set_shortcut_progress(level)
     savegame.shortcuts = shortcut_save_values[level] or 1
 end
 
@@ -353,7 +358,7 @@ set_callback(function()
         local ap_entries   = ap_save[chapter]
 
         for index = 1, #save_entries do
-            if save_entries[index] and not ap_entries[index] then
+            if save_entries[index] and not ap_entries[index] and isInGame then
                 update_journal(chapter, index)
             end
         end

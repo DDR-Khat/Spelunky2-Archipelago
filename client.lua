@@ -239,6 +239,9 @@ function connect(server, slot, password)
     end
 
     function on_items_received(items)
+        if not isInGame then
+            return
+        end
         local sender = "another world"
         for _, data in ipairs(items) do
             if data.index > ap_save.last_index then
@@ -260,6 +263,9 @@ function connect(server, slot, password)
     end
 
     function on_location_info(items)
+        if not isInGame then
+            return
+        end
         local success, err = pcall(function()
             debug_print("Locations scouted:")
             for _, data in ipairs(items or {}) do
@@ -309,9 +315,31 @@ function connect(server, slot, password)
     end
 
     function on_location_checked(locations)
-        debug_print("Locations checked:" .. table.concat(locations, ", "))
-        debug_print("Checked locations: " .. table.concat(ap.checked_locations, ", "))
+        debug_print("Server reported checked locations: " .. table.concat(locations, ", "))
+
+        local chapters_to_update = {}
+
+        for _, location_id in ipairs(locations) do
+            local entry = journal_lookup[location_id]
+            if entry then
+                if not ap_save[entry.chapter][entry.index] then
+                    ap_save[entry.chapter][entry.index] = true
+                    chapters_to_update[entry.chapter] = true
+                end
+            else
+                debug_print(("Warning: Received unknown location ID %s from server."):format(location_id))
+            end
+        end
+
+        if next(chapters_to_update) ~= nil then
+            debug_print("Updating in-game journal from server data.")
+            for chapter in pairs(chapters_to_update) do
+                copy_journal_data(chapter)
+            end
+            write_save()
+        end
     end
+
 
     function on_data_package_changed(data_package)
         debug_print("Data package changed:")
@@ -379,7 +407,7 @@ function connect(server, slot, password)
     ap:set_slot_refused_handler(on_slot_refused)
     ap:set_items_received_handler(on_items_received)
     ap:set_location_info_handler(on_location_info)
-    --ap:set_location_checked_handler(on_location_checked)
+    ap:set_location_checked_handler(on_location_checked)
     --ap:set_data_package_changed_handler(on_data_package_changed)
     --ap:set_print_handler(on_print)
     --ap:set_print_json_handler(on_print_json)
