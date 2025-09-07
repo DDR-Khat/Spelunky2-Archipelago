@@ -59,10 +59,10 @@ function makeTexture(path, width, height)
     end
 end
 
+safe_require("lib/Spel2ItemCodes")
 safe_require("data")
 safe_require("save")
 safe_require("client")
-safe_require("lib/Spel2ItemCodes")
 
 ENT_MORE_FLAG.FINISHED_SPAWNING = 7 -- Manually define this missing flag. So we don't have a "Magic number" in code.
 ENT_FLAG.CLOVER_FLAG = 23 -- Add level flag not in ent_flag list. So we don't have a "Magic number" in code.
@@ -134,7 +134,7 @@ set_callback(function()
 
     if state.screen_next == SCREEN.CAMP then
         ap_save.last_character = savegame.players[1]
-        lock_characters()
+        update_characters()
         set_shortcut_progress(get_shortcut_level())
     end
 end, ON.LOADING)
@@ -179,8 +179,6 @@ end
 -- This handles all of the permanent upgrades to give the player at the start of every run
 set_callback(function()
     debug_print("START")
-    
-    savegame.shortcuts = ap_save.shortcut_progress
 
     local player = get_player(1, false)
     player.health = player_options.starting_health + ap_save.stat_upgrades[Spel2AP.permanent_upgrades.Health]
@@ -275,6 +273,7 @@ set_callback(function()
 
     if savegame.shortcuts > ap_save.shortcut_progress then
         ap_save.shortcut_progress = savegame.shortcuts
+        write_save()
     end
 
     set_callback(function()
@@ -346,21 +345,32 @@ set_post_entity_spawn(function(clover)
         if meta ~= Spel2AP.waddler_upgrades.Four_Leaf_Clover then
             return
         end
-        clover:set_pre_virtual(94, function()
+        clover:set_pre_virtual(ENTITY_OVERRIDE.GIVE_POWERUP, function()
             waddlerClover = true
         end)
     end)
 end, SPAWN_TYPE.ANY, MASK.ITEM, ENT_TYPE.ITEM_PICKUP_CLOVER)
 
 set_callback(function()
+    if not isInGame() then
+        return
+    end
     for _, chapter in ipairs(journal.chapters) do
-        local save_entries = savegame[chapter]
-        local ap_entries   = ap_save[chapter]
+        local save_entries = savegame[chapter]  -- numeric array from game save
+        local ap_entries   = ap_save[chapter]   -- numeric array from AP
 
-        for index = 1, #save_entries do
-            if save_entries[index] and not ap_entries[index] and isInGame() then
-                update_journal(chapter, index)
+        -- Loop over numeric save indexes
+        for save_index = 1, #save_entries do
+            if not save_entries[save_index] or ap_entries[save_index] then
+                goto continue
             end
+            for _, entry in ipairs(journal[chapter]) do
+                if entry.index == save_index then
+                    update_journal(chapter, entry.id, true)
+                    break
+                end
+            end
+            ::continue::
         end
     end
 end, ON.GAMEFRAME)
@@ -461,19 +471,21 @@ for _, data in pairs(Journal_to_ItemEnt) do
 end
 
 function SpawnJournalIndex(journalIndex, asPowerup)
-    if asPowerup then
-        local ent = Journal_to_PowerupEnt[journalIndex]
-        if ent ~= nil then
-            return ent, true
-        end
+    local entry = Journal_to_ItemEnt[journalIndex]
+    if not entry then
+        debug_print("No entry found for: " .. tostring(journalIndex))
+        return nil, false
     end
 
-    local ent = Journal_to_ItemEnt[journalIndex]
-    if ent ~= nil and ent.type ~= nil then
-        return ent.type, false
+    if asPowerup and entry.powerup then
+        return entry.powerup, true
     end
 
-    debug_print("No entry found for: " .. tostring(journalIndex))
+    if entry.type then
+        return entry.type, false
+    end
+
+    debug_print("No valid type for: " .. tostring(journalIndex))
     return nil, false
 end
 

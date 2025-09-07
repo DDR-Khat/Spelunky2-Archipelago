@@ -21,7 +21,7 @@ function initialize_save()
     debug_print("Initialising save to defaults")
 
     ap_save = {
-        last_character = 1,
+        last_character = 0,
         last_index = -1, -- Stores AP item data sent from the server
         checked_locations = {},
 
@@ -315,70 +315,79 @@ function update_game_save()
     end
 end
 
-
 function update_characters()
     local flags = 0
     for item_code, is_unlocked in pairs(ap_save.character_unlocks) do
-        if is_unlocked then
-            local entry = character_data[item_code]
-            if entry then
-                flags = set_flag(flags, entry.index - 1)
+        local entry = character_data[item_code]
+        if entry then
+            if is_unlocked then
+                flags = set_flag(flags, entry.index)
             else
-                debug_print(f"update_characters: no character_data for item_code {tostring(item_code)}}")
+                flags = clr_flag(flags, entry.index)
+            end
+        else
+            debug_print(f"update_characters: no character_data for item_code {tostring(item_code)}}")
+        end
+    end
+    savegame.characters = flags
+end
+
+function update_journal(chapter, location, sendLocation)
+    local locationInfo = journal_lookup[location]
+    local entry = nil
+    if locationInfo and locationInfo.chapter == chapter then
+        entry = journal[chapter][locationInfo.index]
+    else
+        -- Fallback: scan the chapter for this id
+        for _, data in ipairs(journal[chapter]) do
+            if data.id == location then
+                entry = data
+                break
             end
         end
     end
-    savegame.characters = flags
-end
 
-function lock_characters()
-    local flags = 0
-    for people_index, is_unlocked in ipairs(ap_save.people) do
-           if is_unlocked and people_index > 4 and people_index <= 18 then
-               flags = set_flag(flags, people_index - 1)
-        end
+    if not entry then
+        debug_print(f"Warning: Tried to update unknown {chapter} entry for location ID {tostring(id)}")
+        return
     end
-    savegame.characters = flags
-end
 
-
-function update_journal(chapter, index)
     -- Mark as unlocked in AP save
-    ap_save[chapter][index] = true
-
-    local entry = journal[chapter][index]
-    local location_id = entry.id
+    ap_save[chapter][entry.index] = true
+    if not sendLocation then
+        savegame[chapter][entry.index] = true
+    end
 
     debug_print(f"Updated {chapter} entry {entry.name}")
 
     -- Track in checked_locations
-    table.insert(ap_save.checked_locations, location_id)
+    table.insert(ap_save.checked_locations, location)
 
     -- If the location is a character, mark in checked_characters
-    if location_id >= Spel2AP.locations.people.Ana_Spelunky
-            and location_id <= Spel2AP.locations.people.Classic_Guy then
-        checked_characters[location_id] = true
+    if location >= Spel2AP.locations.people.Ana_Spelunky
+            and location <= Spel2AP.locations.people.Classic_Guy then
+        checked_characters[location] = true
     end
 
     -- Skip sending if excluded by player options, because it won't exist in the multiworld
     if not player_options.include_hard_locations
-            and obnoxious_journal_entries[location_id] then
+            and obnoxious_journal_entries[location] then
         return
     end
 
     if player_options.goal == AP_Goal.EASY
-            and (hard_journal_entries[location_id] or co_journal_entries[location_id]) then
+            and (hard_journal_entries[location] or co_journal_entries[location]) then
         return
     end
 
     if player_options.goal == AP_Goal.HARD
-            and co_journal_entries[location_id] then
+            and co_journal_entries[location] then
         return
     end
 
-    if isInGame() then
+    if sendLocation then
         -- Send the location to AP
-        send_location(location_id)
+        send_location(location)
     end
 end
 
@@ -453,15 +462,13 @@ function read_save()
     end
     local loaded_data = restore_number_keys(data)
 
-    -- Merge loaded data into the current ap_save table, which was set by initialize_save()
     ap_save = deep_merge(ap_save, loaded_data)
 
-    -- Rebuild transient data (like checked_characters) and apply full state to the game
     checked_characters = {}
     if ap_save.checked_locations then
-        for _, loc_id in pairs(ap_save.checked_locations) do
-            if loc_id >= Spel2AP.locations.people.Ana_Spelunky and loc_id <= Spel2AP.locations.people.Classic_Guy then
-                checked_characters[loc_id] = true
+        for _, location in pairs(ap_save.checked_locations) do
+            if location >= Spel2AP.locations.people.Ana_Spelunky and location <= Spel2AP.locations.people.Classic_Guy then
+                checked_characters[location] = true
             end
         end
     end
@@ -470,7 +477,7 @@ function read_save()
     update_game_save() -- Syncs journal
     update_characters() -- Syncs character unlocks
 
-    debug_print(f"Loaded and merged data from {filename}")
+    debug_print(f"Loaded data from {filename}")
 end
 
 

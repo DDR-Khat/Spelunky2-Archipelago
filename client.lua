@@ -239,9 +239,6 @@ function connect(server, slot, password)
     end
 
     function on_items_received(items)
-        if not isInGame() then
-            return
-        end
         local sender = "another world"
         for _, data in ipairs(items) do
             if data.index > ap_save.last_index then
@@ -257,15 +254,14 @@ function connect(server, slot, password)
                     sender = "you"
                 end
                 item_handler(data.item, false)
-                table.insert(item_queue, #item_queue + 1, {item = data.item,player = sender})
+                if isInGame() then
+                    table.insert(item_queue, #item_queue + 1, {item = data.item,player = sender})
+                end
             end
         end
     end
 
     function on_location_info(items)
-        if not isInGame() then
-            return
-        end
         local success, err = pcall(function()
             debug_print("Locations scouted:")
             for _, data in ipairs(items or {}) do
@@ -297,7 +293,9 @@ function connect(server, slot, password)
                         item_name = result_item
                     end
 
-                    table.insert(send_item_queue, #send_item_queue + 1, {item = item_name, target = player_name, classification = flags})
+                    if isInGame() then
+                        table.insert(send_item_queue, #send_item_queue + 1, {item = item_name, target = player_name, classification = flags})
+                    end
 
                     debug_print(string.format(
                             "Item: %s (ID: %d), Owner: %s (Slot: %d), Game: %s, Flags: %s",
@@ -317,8 +315,6 @@ function connect(server, slot, password)
     function on_location_checked(locations)
         debug_print("Server reported checked locations: " .. table.concat(locations, ", "))
 
-        local chapters_to_update = {}
-
         for _, location_id in ipairs(locations) do
             for _, checked_id in ipairs(ap_save.checked_locations) do
                 if checked_id == location_id then
@@ -326,25 +322,21 @@ function connect(server, slot, password)
                 end
             end
 
-            local entry = journal_lookup[location_id]
-            if entry then
-                ap_save[entry.chapter][entry.index] = true
-                table.insert(ap_save.checked_locations, location_id)
-                chapters_to_update[entry.chapter] = true
-            else
-                debug_print(f"Warning: Received unknown location ID {location_id} from server.")
+            for _, chapter in ipairs(journal.chapters) do
+                local locinfo = journal_lookup[location_id]
+                if locinfo and locinfo.chapter == chapter then
+                    update_journal(chapter, location_id, false)
+                    goto continue
+                end
             end
+
+            debug_print(f"Warning: Received unknown location ID {location_id} from server.")
 
             ::continue::
         end
 
-        if next(chapters_to_update) ~= nil then
-            debug_print("Updating in-game journal from server data.")
-            for chapter in pairs(chapters_to_update) do
-                copy_journal_data(chapter)
-            end
-            write_save()
-        end
+        write_save()
+        update_characters()
     end
 
 
