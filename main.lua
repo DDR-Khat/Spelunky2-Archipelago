@@ -495,6 +495,20 @@ local purchasable_counterpart = {
     [ENT_TYPE.ITEM_PURCHASABLE_TELEPORTER_BACKPACK] = ENT_TYPE.ITEM_TELEPORTER_BACKPACK,
     [ENT_TYPE.ITEM_PURCHASABLE_CAPE] = ENT_TYPE.ITEM_CAPE,
 }
+--[[
+Auto-complete the moon challenge if the mattock is missing.
+]]--
+set_callback(function()
+    if not state.logic or not state.logic.tun_moon_challenge then
+        return
+    end
+    local moonMattockID = state.logic.tun_moon_challenge.mattock_uid
+    if moonMattockID ~= -1 then
+        return
+    end
+    local fakeMattock = spawn_entity(ENT_TYPE.ITEM_SKULL, -1000, -1000, LAYER.BACK, 0, 0)
+    state.logic.tun_moon_challenge.mattock_uid = fakeMattock
+end, ON.SPEECH_BUBBLE)
 
 for _, data in pairs(Journal_to_ItemEnt) do
     set_post_entity_spawn(function(entity, _)
