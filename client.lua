@@ -254,7 +254,7 @@ function connect(server, slot, password)
                     sender = "you"
                 end
                 item_handler(data.item, false)
-                if isInGame() then
+                if IsInGame() then
                     table.insert(item_queue, #item_queue + 1, {item = data.item,player = sender})
                 end
             end
@@ -293,7 +293,7 @@ function connect(server, slot, password)
                         item_name = result_item
                     end
 
-                    if isInGame() then
+                    if IsInGame() then
                         table.insert(send_item_queue, #send_item_queue + 1, {item = item_name, target = player_name, classification = flags})
                     end
 
@@ -508,20 +508,6 @@ function set_ap_callbacks()
         if (player_options.goal == AP_Goal.EASY and state.win_state == WIN_STATE.TIAMAT_WIN)
                 or (player_options.goal == AP_Goal.HARD and state.win_state == WIN_STATE.HUNDUN_WIN) then
             complete_goal()
-        else
-            toast("Returning to starting area")
-            state.fade_length = 30
-            set_global_timeout(function()
-                clear_callback()
-                run_reset()
-                state.loading = FADE.OUT
-                state.fade_timer = 60
-                state.win_state = WIN_STATE.NO_WIN
-                state.screen_next = SCREEN.LEVEL
-                state.level_next = state.level_start
-                state.world_next = state.world_start
-                state.theme_next = state.theme_start
-            end, 120)
         end
     end, ON.WIN)
 
