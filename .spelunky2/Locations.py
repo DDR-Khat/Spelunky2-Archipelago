@@ -31,7 +31,7 @@ place_entries = {
     JournalName.TIAMAT_THRONE.value:   Spelunky2LocationData(12, WorldName.SUNKEN_CITY.value, Spelunky2Goal.HARD),
     JournalName.SUNKEN_CITY.value:     Spelunky2LocationData(13, WorldName.SUNKEN_CITY.value, Spelunky2Goal.HARD),
     JournalName.EGGPLANT_WORLD.value:  Spelunky2LocationData(14, WorldName.EGGPLANT.value, Spelunky2Goal.HARD),
-    JournalName.HUNDUN_HIDEAWAY.value: Spelunky2LocationData(15, LocationName.HUNDUN_HIDEAWAY.value, Spelunky2Goal.HARD),
+    JournalName.HUNDUN_HIDEAWAY.value: Spelunky2LocationData(15, WorldName.SUNKEN_CITY.value, Spelunky2Goal.HARD),
     JournalName.COSMIC_OCEAN.value:    Spelunky2LocationData(16, WorldName.COSMIC_OCEAN.value, Spelunky2Goal.CO),
 }
 
