@@ -302,7 +302,6 @@ set_callback(function()
             or (IsHundunLevel() and player_options.goal ~= AP_Goal.HARD) then
         state.theme_info:set_post_virtual(THEME_OVERRIDE.PRE_TRANSITION, function()
             if state.win_state ~= WIN_STATE.NO_WIN then
-                print("Win state changed. Resetting")
                 state.win_state = WIN_STATE.NO_WIN
             end
         end)
@@ -387,6 +386,7 @@ set_post_entity_spawn(function (door)
         end
         if isTiamatWorld or isHunDunWorld then
             usedBossDoor = true
+            state.screen_next = SCREEN.TRANSITION
             state.world_next = state.world_start
             state.level_next = state.level_start
             state.theme_next = state.theme_start
