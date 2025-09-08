@@ -42,7 +42,7 @@ class GoalLevel(Range):
 
 class IncludeHardLocations(Toggle):
     """Include the following more problematic journal entries as locations in the AP world:
-    Magmar, Lavamander, MechSuit"""
+    Magmar, Lavamander, MechSuit, Scorpion + True Crown"""
     display_name = "Include harder journal entries"
 
 class ProgressiveWorlds(DefaultOnToggle):

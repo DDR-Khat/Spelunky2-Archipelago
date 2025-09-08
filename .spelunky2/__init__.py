@@ -23,7 +23,8 @@ item_options = sorted(powerup_options | equip_options)
 locked_items = sorted(powerup_options | equip_options | quest_items)
 # End of Master Item List
 
-obnoxious_locations = frozenset({JournalName.MAGMAR.value, JournalName.LAVAMANDER.value, JournalName.MECH_RIDER.value})
+obnoxious_locations = frozenset({JournalName.MAGMAR.value, JournalName.LAVAMANDER.value, JournalName.MECH_RIDER.value,
+                                 JournalName.SCORPION, JournalName.TRUE_CROWN})
 
 from .Items import (Spelunky2Item, item_data_table, filler_items, traps, filler_weights, trap_weights,
                     characters, upgrade_items_dict, waddler_items_dict, locked_items_dict,
