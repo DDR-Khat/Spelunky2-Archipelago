@@ -57,59 +57,54 @@ for item_name in locked_items:
 
 upgrade_items_dict = {}
 item_code = 300
-for item_name in item_options:
+for item_name in locked_items:
     item_code += 1
     upgrade_items_dict[f"{item_name} Upgrade"] = Spelunky2ItemData(item_code, ItemClassification.useful)
 
-waddler_items_dict = {}
-item_code = 400
-for item_name in locked_items:
-    item_code += 1
-    waddler_items_dict[f"{item_name} Waddler Upgrade"] = Spelunky2ItemData(item_code, ItemClassification.useful)
 
 permanent_upgrades = {
-    ItemName.HEALTH_UPGRADE.value:           Spelunky2ItemData(501, ItemClassification.useful, 0),
-    ItemName.BOMB_UPGRADE.value:             Spelunky2ItemData(502, ItemClassification.useful, 0),
-    ItemName.ROPE_UPGRADE.value:             Spelunky2ItemData(503, ItemClassification.useful, 0),
-    ItemName.COSMIC_OCEAN_CP.value:          Spelunky2ItemData(504, ItemClassification.useful, 0),  # Count set by player settings
+    ItemName.HEALTH_UPGRADE.value:           Spelunky2ItemData(401, ItemClassification.useful, 0),
+    ItemName.BOMB_UPGRADE.value:             Spelunky2ItemData(402, ItemClassification.useful, 0),
+    ItemName.ROPE_UPGRADE.value:             Spelunky2ItemData(403, ItemClassification.useful, 0),
+    ItemName.COSMIC_OCEAN_CP.value:          Spelunky2ItemData(404, ItemClassification.useful, 0),  # Count set by player settings
 }
 
 shortcuts = {  # TODO: Maybe add more shortcuts by editing the Camp to allow specific world selection from camp
-    # ShortcutName.PROGRESSIVE.value:      Spelunky2ItemData(601, ItemClassification.helpful),
-    # ShortcutName.DWELLING.value:         Spelunky2ItemData(602, ItemClassification.helpful),
-    # ShortcutName.JUNGLE.value:           Spelunky2ItemData(603, ItemClassification.helpful),
-    # ShortcutName.VOLCANA.value:          Spelunky2ItemData(604, ItemClassification.helpful),
-    # ShortcutName.OLMECS_LAIR.value:      Spelunky2ItemData(605, ItemClassification.helpful),
-    # ShortcutName.TIDE_POOL.value:        Spelunky2ItemData(606, ItemClassification.helpful),
-    # ShortcutName.TEMPLE.value:           Spelunky2ItemData(607, ItemClassification.helpful),
-    # ShortcutName.ICE_CAVES.value:        Spelunky2ItemData(608, ItemClassification.helpful),
-    # ShortcutName.NEO_BABYLON.value:      Spelunky2ItemData(609, ItemClassification.helpful),  # literal "Neo Babylon" vs enum is "Neo Babylon Shortcut"
-    # ShortcutName.SUNKEN_CITY.value:      Spelunky2ItemData(610, ItemClassification.helpful),  # literal "Sunken City" vs enum is "Sunken City Shortcut"
+    # ShortcutName.PROGRESSIVE.value:      Spelunky2ItemData(501, ItemClassification.helpful),
+    # ShortcutName.DWELLING.value:         Spelunky2ItemData(502, ItemClassification.helpful),
+    # ShortcutName.JUNGLE.value:           Spelunky2ItemData(503, ItemClassification.helpful),
+    # ShortcutName.VOLCANA.value:          Spelunky2ItemData(504, ItemClassification.helpful),
+    # ShortcutName.OLMECS_LAIR.value:      Spelunky2ItemData(505, ItemClassification.helpful),
+    # ShortcutName.TIDE_POOL.value:        Spelunky2ItemData(506, ItemClassification.helpful),
+    # ShortcutName.TEMPLE.value:           Spelunky2ItemData(507, ItemClassification.helpful),
+    # ShortcutName.ICE_CAVES.value:        Spelunky2ItemData(508, ItemClassification.helpful),
+    # ShortcutName.NEO_BABYLON.value:      Spelunky2ItemData(509, ItemClassification.helpful),  # literal "Neo Babylon" vs enum is "Neo Babylon Shortcut"
+    # ShortcutName.SUNKEN_CITY.value:      Spelunky2ItemData(510, ItemClassification.helpful),  # literal "Sunken City" vs enum is "Sunken City Shortcut"
 }
 
 world_unlocks = {
-    WorldName.PROGRESSIVE.value: Spelunky2ItemData(701, ItemClassification.progression, 0),  # Count set by goal
-    WorldName.JUNGLE.value:       Spelunky2ItemData(702, ItemClassification.progression, 0),
-    WorldName.VOLCANA.value:      Spelunky2ItemData(703, ItemClassification.progression, 0),
-    WorldName.OLMECS_LAIR.value:  Spelunky2ItemData(704, ItemClassification.progression, 0),
-    WorldName.TIDE_POOL.value:    Spelunky2ItemData(705, ItemClassification.progression, 0),
-    WorldName.TEMPLE.value:       Spelunky2ItemData(706, ItemClassification.progression, 0),
-    WorldName.ICE_CAVES.value:    Spelunky2ItemData(707, ItemClassification.progression, 0),
-    WorldName.NEO_BABYLON.value:  Spelunky2ItemData(708, ItemClassification.progression, 0),
-    WorldName.SUNKEN_CITY.value:  Spelunky2ItemData(709, ItemClassification.progression, 0),
-    WorldName.COSMIC_OCEAN.value: Spelunky2ItemData(710, ItemClassification.progression, 0),
+    WorldName.PROGRESSIVE.value: Spelunky2ItemData(601, ItemClassification.progression, 0),  # Count set by goal
+    WorldName.JUNGLE.value:       Spelunky2ItemData(602, ItemClassification.progression, 0),
+    WorldName.VOLCANA.value:      Spelunky2ItemData(603, ItemClassification.progression, 0),
+    WorldName.OLMECS_LAIR.value:  Spelunky2ItemData(604, ItemClassification.progression, 0),
+    WorldName.TIDE_POOL.value:    Spelunky2ItemData(605, ItemClassification.progression, 0),
+    WorldName.TEMPLE.value:       Spelunky2ItemData(606, ItemClassification.progression, 0),
+    WorldName.ICE_CAVES.value:    Spelunky2ItemData(607, ItemClassification.progression, 0),
+    WorldName.NEO_BABYLON.value:  Spelunky2ItemData(608, ItemClassification.progression, 0),
+    WorldName.SUNKEN_CITY.value:  Spelunky2ItemData(609, ItemClassification.progression, 0),
+    WorldName.COSMIC_OCEAN.value: Spelunky2ItemData(610, ItemClassification.progression, 0),
 }
 
 traps = {
-    ItemName.POISON_TRAP.value:      Spelunky2ItemData(801, ItemClassification.trap, 0),
-    ItemName.CURSE_TRAP.value:       Spelunky2ItemData(802, ItemClassification.trap, 0),
-    ItemName.GHOST_TRAP.value:       Spelunky2ItemData(803, ItemClassification.trap, 0),
-    ItemName.STUN_TRAP.value:        Spelunky2ItemData(804, ItemClassification.trap, 0),
-    ItemName.LOOSE_BOMBS_TRAP.value: Spelunky2ItemData(805, ItemClassification.trap, 0),
-    ItemName.BLINDNESS_TRAP.value:   Spelunky2ItemData(806, ItemClassification.trap, 0),
-    # ItemName.AMNESIA_TRAP.value:     Spelunky2ItemData(807, ItemClassification.trap, 0),
-    # ItemName.ANGRY_SHOPKEEPERS_TRAP.value: Spelunky2ItemData(808, ItemClassification.trap, 0),
-    ItemName.PUNISH_BALL_TRAP.value: Spelunky2ItemData(809, ItemClassification.trap, 0),
+    ItemName.POISON_TRAP.value:      Spelunky2ItemData(701, ItemClassification.trap, 0),
+    ItemName.CURSE_TRAP.value:       Spelunky2ItemData(702, ItemClassification.trap, 0),
+    ItemName.GHOST_TRAP.value:       Spelunky2ItemData(703, ItemClassification.trap, 0),
+    ItemName.STUN_TRAP.value:        Spelunky2ItemData(704, ItemClassification.trap, 0),
+    ItemName.LOOSE_BOMBS_TRAP.value: Spelunky2ItemData(705, ItemClassification.trap, 0),
+    ItemName.BLINDNESS_TRAP.value:   Spelunky2ItemData(706, ItemClassification.trap, 0),
+    # ItemName.AMNESIA_TRAP.value:     Spelunky2ItemData(707, ItemClassification.trap, 0),
+    # ItemName.ANGRY_SHOPKEEPERS_TRAP.value: Spelunky2ItemData(708, ItemClassification.trap, 0),
+    ItemName.PUNISH_BALL_TRAP.value: Spelunky2ItemData(709, ItemClassification.trap, 0),
 }
 
 # Populate further with locked_items, starter_items and quest_items inside __init.py__ based on Options
@@ -118,7 +113,6 @@ item_data_table = {
     **characters,
     **locked_items_dict,
     **upgrade_items_dict,
-    **waddler_items_dict,
     **permanent_upgrades,
     **world_unlocks,
     # **shortcuts,

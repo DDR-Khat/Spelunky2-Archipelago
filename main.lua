@@ -246,8 +246,8 @@ set_callback(function()
             if is_unlocked ~= true then
                 goto continue -- Not something we care about, stop doing stuff with it.
             end
-            if item_code == Spel2AP.waddler_upgrades.Alien_Compass
-                    or item_code == Spel2AP.waddler_upgrades.Compass then
+            if item_code == Spel2AP.upgrades.Alien_Compass
+                    or item_code == Spel2AP.upgrades.Compass then
                 compassCount = compassCount + 1
                 goto continue -- Not something we care about, stop doing stuff with it.
             end
@@ -259,8 +259,8 @@ set_callback(function()
             end
             local ent, _ = SpawnJournalIndex(journal_index, false)
             local itemSlot = waddler_store_entity(ent)
-            if item_code == Spel2AP.waddler_upgrades.Four_Leaf_Clover then
-                waddler_set_entity_meta(itemSlot, Spel2AP.waddler_upgrades.Four_Leaf_Clover)
+            if item_code == Spel2AP.upgrades.Four_Leaf_Clover then
+                waddler_set_entity_meta(itemSlot, Spel2AP.upgrades.Four_Leaf_Clover)
             end
             ::continue::
         end
@@ -400,11 +400,11 @@ end, SPAWN_TYPE.ANY, MASK.ANY, ENT_TYPE.FLOOR_DOOR_EXIT)
 
 
 set_post_entity_spawn(function(clover)
-    if ap_save.waddler_item_unlocks[Spel2AP.waddler_upgrades.Four_Leaf_Clover] ~= true or waddlerClover then
+    if ap_save.waddler_item_unlocks[Spel2AP.upgrades.Four_Leaf_Clover] ~= true or waddlerClover then
         return
     end
     clover:set_pre_apply_metadata(function(_, meta)
-        if meta ~= Spel2AP.waddler_upgrades.Four_Leaf_Clover then
+        if meta ~= Spel2AP.upgrades.Four_Leaf_Clover then
             return
         end
         clover:set_pre_virtual(ENTITY_OVERRIDE.GIVE_POWERUP, function()

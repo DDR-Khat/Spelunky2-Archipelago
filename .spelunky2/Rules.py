@@ -239,42 +239,23 @@ def get_upgrade_item_name(item_name: str) -> str:
     return f"{item_name} Upgrade"
 
 
-def get_waddler_item_name(item_name: str) -> str:
-    return f"{item_name} Waddler Upgrade"
-
-
 def set_starter_upgrade_rules(world: "Spelunky2World", player: int):
     """Ensure starter upgrades require their locked/quest counterpart first."""
 
-    # Set rules for all possible Waddler upgrades.
-    # We iterate over locked_items because the user can select any of these for Waddler storage.
-    waddler_items_selected = world.options.waddler_upgrades.value
-    for item_name in locked_items:
-        if item_name in waddler_items_selected:
-            waddler_name = get_waddler_item_name(item_name)
-            try:
-                loc = world.get_location(waddler_name)
-                # Waddler items require their locked item counterpart
-                name_enum = ItemName(item_name).value
-                set_rule(
-                    loc,
-                    lambda state, name=name_enum: has_or_unrestricted(world, state, player, name)
-                )
-            except KeyError:
-                pass
+    # Get the union of all items selected for any type of upgrade.
+    all_upgrades_selected = world.options.waddler_upgrades.value | world.options.item_upgrades.value
 
-    # Set rules for all powerup upgrades that were NOT selected as Waddler items.
-    item_upgrades_selected = world.options.item_upgrades.value
-    for item_name in powerup_options:
-        if item_name not in waddler_items_selected and item_name in item_upgrades_selected:
-            upgrade_name = get_upgrade_item_name(item_name)
-            try:
-                loc = world.get_location(upgrade_name)
-                # Upgrades require their locked item counterpart
-                name_enum = ItemName(item_name).value
-                set_rule(
-                    loc,
-                    lambda state, name=name_enum: has_or_unrestricted(world, state, player, name)
-                )
-            except KeyError:
-                pass
+    for item_name in all_upgrades_selected:
+        upgrade_name = get_upgrade_item_name(item_name)
+        try:
+            loc = world.get_location(upgrade_name)
+            # All upgrades require their base item counterpart
+            name_enum = ItemName(item_name).value
+            set_rule(
+                loc,
+                lambda state, name=name_enum: has_or_unrestricted(world, state, player, name)
+            )
+        except KeyError:
+            # This handles cases where an upgrade for an item exists but isn't
+            # a location in the world (e.g., not selected by the player).
+            pass

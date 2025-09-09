@@ -27,8 +27,7 @@ obnoxious_locations = frozenset({JournalName.MAGMAR.value, JournalName.LAVAMANDE
                                  JournalName.SCORPION, JournalName.TRUE_CROWN})
 
 from .Items import (Spelunky2Item, item_data_table, filler_items, traps, filler_weights, trap_weights,
-                    characters, upgrade_items_dict, waddler_items_dict, locked_items_dict,
-                    permanent_upgrades, world_unlocks)
+                    characters, upgrade_items_dict, locked_items_dict, permanent_upgrades, world_unlocks)
 
 from .Locations import Spelunky2Location, location_data_table
 from .Options import Spelunky2Options
@@ -68,7 +67,6 @@ class Spelunky2World(World):
 
     item_name_to_id = {name: data.code for name, data in locked_items_dict.items()}
     item_name_to_id.update({name: data.code for name, data in upgrade_items_dict.items()})
-    item_name_to_id.update({name: data.code for name, data in waddler_items_dict.items()})
     item_name_to_id.update({name: data.code for name, data in filler_items.items()})
     item_name_to_id.update({name: data.code for name, data in traps.items()})
     item_name_to_id.update({name: data.code for name, data in characters.items()})
@@ -191,23 +189,16 @@ class Spelunky2World(World):
 
         self.options.restricted_items.value = filtered_restricted
 
-        # Get user's Waddler upgrade choices
-        waddler_upgrade_choices = set(self.options.waddler_upgrades.value)
+        all_upgrades_selected = self.options.waddler_upgrades.value | self.options.item_upgrades.value
 
-        # Add Waddler Upgrades for the items the user selected.
-        for item_name in waddler_upgrade_choices:
-            upgrade_name = f"{item_name} Waddler Upgrade"
+        # Add a single "Upgrade" item for each unique item selected.
+        for item_name in all_upgrades_selected:
+            upgrade_name = f"{item_name} Upgrade"
             spelunky2_item_pool.append(self.create_item(upgrade_name))
-
-        # Add regular Item Upgrades for items the user selected,
-        # but only if they were NOT also selected as a Waddler upgrade.
-        item_upgrade_choices = set(self.options.item_upgrades.value)
-        for item_name in item_upgrade_choices:
-            if item_name not in waddler_upgrade_choices:
-                upgrade_name = f"{item_name} Upgrade"
+            # Special handling for Compass, if needed
+            if item_name == ItemName.COMPASS.value and item_name in self.options.item_upgrades.value:
                 spelunky2_item_pool.append(self.create_item(upgrade_name))
-                if item_name == ItemName.COMPASS.value:
-                    spelunky2_item_pool.append(self.create_item(upgrade_name))
+
         # Permanent upgrades
         for _ in range(self.options.health_upgrades.value):
             spelunky2_item_pool.append(
@@ -306,8 +297,17 @@ class Spelunky2World(World):
             "bomb_upgrades": self.options.bomb_upgrades.value,
             "rope_upgrades": self.options.rope_upgrades.value,
             "restricted_items": list(self.options.restricted_items.value),
-            "item_upgrades": list(self.options.item_upgrades.value),
-            "waddler_upgrades": list(self.options.waddler_upgrades.value),
+            "item_upgrades": [
+                self.item_name_to_id[f"{name} Upgrade"]
+                for name in self.options.item_upgrades.value
+                if name not in self.options.waddler_upgrades.value
+                   and name in self.item_name_to_id
+            ],
+            "waddler_upgrades": [
+                self.item_name_to_id[f"{name} Upgrade"]
+                for name in self.options.waddler_upgrades.value
+                if name in self.item_name_to_id
+            ],
             "include_hard_locations": bool(self.options.include_hard_locations.value),
             "journal_entry_required": bool(self.options.journal_entry_required.value),
             "death_link": self.options.death_link.value > 0,

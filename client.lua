@@ -63,6 +63,8 @@ player_options = {
     starting_health = 4,
     starting_bombs = 4,
     starting_ropes = 4,
+    starter_upgrades = {},
+    waddler_upgrades = {},
     death_link = false,
     bypass_ankh = false,
     include_hard_locations = false,
@@ -190,6 +192,8 @@ function connect(server, slot, password)
         player_options.starting_health = slot_data.starting_health
         player_options.starting_bombs = slot_data.starting_bombs
         player_options.starting_ropes = slot_data.starting_ropes
+        player_options.starter_upgrades = become_lookup_table(slot_data.item_upgrades)
+        player_options.waddler_upgrades = become_lookup_table(slot_data.waddler_upgrades)
         player_options.death_link = slot_data.death_link
         player_options.include_hard_locations = slot_data.include_hard_locations
         player_options.journal_entry_required = slot_data.journal_entry_required
@@ -554,15 +558,19 @@ function item_handler(itemID, isQueued)
         write_save()
         return true
     elseif category == Spel2AP.upgrades and not isQueued then
-        if itemID == Spel2AP.upgrades.Compass then
-            ap_save.permanent_item_upgrades[itemID] = (ap_save.permanent_item_upgrades[itemID] or 0) + 1
+        if player_options.waddler_upgrades[itemID] then
+            if itemID == Spel2AP.upgrades.Compass then
+                ap_save.waddler_item_unlocks[itemID] = (ap_save.waddler_item_unlocks[itemID] or 0) + 1
+            else
+                ap_save.waddler_item_unlocks[itemID] = true
+            end
         else
-            ap_save.permanent_item_upgrades[itemID] = true
+            if itemID == Spel2AP.upgrades.Compass then
+                ap_save.item_unlocks[itemID] = (ap_save.item_unlocks[itemID] or 0) + 1
+            else
+                ap_save.item_unlocks[itemID] = true
+            end
         end
-        write_save()
-        return true
-    elseif category == Spel2AP.waddler_upgrades and not isQueued then
-        ap_save.waddler_item_unlocks[itemID] = true
         write_save()
         return true
     elseif category == Spel2AP.permanent_upgrades and not isQueued then
