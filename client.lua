@@ -566,9 +566,9 @@ function item_handler(itemID, isQueued)
             end
         else
             if itemID == Spel2AP.upgrades.Compass then
-                ap_save.item_unlocks[itemID] = (ap_save.item_unlocks[itemID] or 0) + 1
+                ap_save.permanent_item_upgrades[itemID] = (ap_save.permanent_item_upgrades[itemID] or 0) + 1
             else
-                ap_save.item_unlocks[itemID] = true
+                ap_save.permanent_item_upgrades[itemID] = true
             end
         end
         write_save()
