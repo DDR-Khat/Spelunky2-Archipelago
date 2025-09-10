@@ -2,6 +2,7 @@ from typing import List, Mapping, Any, Dict
 from worlds.AutoWorld import World, WebWorld
 from BaseClasses import MultiWorld, Tutorial, ItemClassification, Region
 from .enums import Spelunky2Goal, VICTORY_STRING, ItemName, JournalName, WorldName, LocationName, RuleNames
+from .Rules import get_upgrade_item_name
 
 # Master Item List
 powerup_options = frozenset({ItemName.ANKH.value, ItemName.CLIMBING_GLOVES.value, ItemName.COMPASS.value,
@@ -298,13 +299,13 @@ class Spelunky2World(World):
             "rope_upgrades": self.options.rope_upgrades.value,
             "restricted_items": list(self.options.restricted_items.value),
             "item_upgrades": [
-                self.item_name_to_id[f"{name} Upgrade"]
+                self.item_name_to_id[get_upgrade_item_name(name)]
                 for name in self.options.item_upgrades.value
                 if name not in self.options.waddler_upgrades.value
                    and name in self.item_name_to_id
             ],
             "waddler_upgrades": [
-                self.item_name_to_id[f"{name} Upgrade"]
+                self.item_name_to_id[get_upgrade_item_name(name)]
                 for name in self.options.waddler_upgrades.value
                 if name in self.item_name_to_id
             ],
