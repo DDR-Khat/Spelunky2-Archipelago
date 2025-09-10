@@ -1,1219 +1,1587 @@
+safe_require("lib/Spel2ItemCodes")
+
+function become_lookup_table(list)
+    local lookup = {}
+    for _, value in ipairs(list) do
+        lookup[value] = true
+    end
+    return lookup
+end
+
 journal = {
-    chapters = {
-        [1] = "places",
-        [2] = "people",
-        [3] = "bestiary",
-        [4] = "items",
-        [5] = "traps"
-    },
+    chapters = { "places", "people", "bestiary", "items", "traps" },
 
     places = {
-        [1] = "Dwelling",
-        [2] = "Jungle",
-        [3] = "Volcana",
-        [4] = "Olmec's Lair",
-        [5] = "Tide Pool",
-        [6] = "Abzu",
-        [7] = "Temple of Anubis",
-        [8] = "The City of Gold",
-        [9] = "Duat",
-        [10] = "Ice Caves",
-        [11] = "Neo Babylon",
-        [12] = "Tiamat's Throne",
-        [13] = "Sunken City",
-        [14] = "Eggplant World",
-        [15] = "Hundun's Hideaway",
-        [16] = "Cosmic Ocean"
+        { name = "Dwelling",          id = Spel2AP.locations.place.Dwelling,         index = 1  },
+        { name = "Jungle",            id = Spel2AP.locations.place.Jungle,           index = 2  },
+        { name = "Volcana",           id = Spel2AP.locations.place.Volcana,          index = 3  },
+        { name = "Olmec's Lair",      id = Spel2AP.locations.place.Olmecs_Lair,      index = 4  },
+        { name = "Tide Pool",         id = Spel2AP.locations.place.Tide_Pool,        index = 5  },
+        { name = "Abzu",              id = Spel2AP.locations.place.Abzu,             index = 6  },
+        { name = "Temple of Anubis",  id = Spel2AP.locations.place.Temple,           index = 7  },
+        { name = "City of Gold",      id = Spel2AP.locations.place.City_of_Gold,     index = 8  },
+        { name = "Duat",              id = Spel2AP.locations.place.Duat,             index = 9  },
+        { name = "Ice Caves",         id = Spel2AP.locations.place.Ice_Caves,        index = 10 },
+        { name = "Neo Babylon",       id = Spel2AP.locations.place.Neo_Babylon,      index = 11 },
+        { name = "Tiamat's Throne",   id = Spel2AP.locations.place.Tiamats_Throne,   index = 12 },
+        { name = "Sunken City",       id = Spel2AP.locations.place.Sunken_City,      index = 13 },
+        { name = "Eggplant World",    id = Spel2AP.locations.place.Eggplant_World,   index = 14 },
+        { name = "Hundun's Hideaway", id = Spel2AP.locations.place.HunDunsHideaway,  index = 15 },
+        { name = "Cosmic Ocean",      id = Spel2AP.locations.place.Cosmic_Ocean,     index = 16 },
     },
-
     people = {
-        [1] = "Ana Spelunky",
-        [2] = "Margaret Tunnel",
-        [3] = "Colin Northward",
-        [4] = "Roffy D. Sloth",
-        [5] = "Alto Singh",
-        [6] = "Liz Mutton",
-        [7] = "Nekka the Eagle",
-        [8] = "LISE Project",
-        [9] = "Coco Von Diamonds",
-        [10] = "Manfred Tunnel",
-        [11] = "Little Jay",
-        [12] = "Tina Flan",
-        [13] = "Valerie Crump",
-        [14] = "Au",
-        [15] = "Demi Von Diamonds",
-        [16] = "Pilot",
-        [17] = "Princess Airyn",
-        [18] = "Dirk Yamaoka",
-        [19] = "Guy Spelunky",
-        [20] = "Classic Guy",
-        [21] = "Terra Tunnel",
-        [22] = "Hired Hand",
-        [23] = "Eggplant Child",
-        [24] = "Shopkeeper",
-        [25] = "Tun",
-        [26] = "Yang",
-        [27] = "Madame Tusk",
-        [28] = "Tusk's Bodyguard",
-        [29] = "Waddler",
-        [30] = "Caveman Shopkeeper",
-        [31] = "Ghist Shopkeeper",
-        [32] = "Van Horsing",
-        [33] = "Parsley",
-        [34] = "Parsnip",
-        [35] = "Parmesan",
-        [36] = "Sparrow",
-        [37] = "Beg",
-        [38] = "Eggplant King"
+        { name = "Ana Spelunky",       id = Spel2AP.locations.people.Ana_Spelunky,       index = 1  }, -- Not implemented until I figure out how to do it
+        { name = "Margaret Tunnel",    id = Spel2AP.locations.people.Margaret_Tunnel,    index = 2  }, -- Not implemented until I figure out how to do it
+        { name = "Colin Northward",    id = Spel2AP.locations.people.Colin_Northward,    index = 3  }, -- Not implemented until I figure out how to do it
+        { name = "Roffy D. Sloth",     id = Spel2AP.locations.people.Roffy_D_Sloth,      index = 4  }, -- Not implemented until I figure out how to do it
+        { name = "Alto Singh",         id = Spel2AP.locations.people.Alto_Singh,         index = 5  },
+        { name = "Liz Mutton",         id = Spel2AP.locations.people.Liz_Mutton,         index = 6  },
+        { name = "Nekka the Eagle",    id = Spel2AP.locations.people.Nekka_the_Eagle,    index = 7  },
+        { name = "LISE Project",       id = Spel2AP.locations.people.LISE_Project,       index = 8  },
+        { name = "Coco Von Diamonds",  id = Spel2AP.locations.people.Coco_Von_Diamonds,  index = 9  },
+        { name = "Manfred Tunnel",     id = Spel2AP.locations.people.Manfred_Tunnel,     index = 10 },
+        { name = "Little Jay",         id = Spel2AP.locations.people.Little_Jay,         index = 11 },
+        { name = "Tina Flan",          id = Spel2AP.locations.people.Tina_Flan,          index = 12 },
+        { name = "Valerie Crump",      id = Spel2AP.locations.people.Valerie_Crump,      index = 13 },
+        { name = "Au",                 id = Spel2AP.locations.people.Au,                 index = 14 },
+        { name = "Demi Von Diamonds",  id = Spel2AP.locations.people.Demi_Von_Diamonds,  index = 15 },
+        { name = "Pilot",              id = Spel2AP.locations.people.Pilot,              index = 16 },
+        { name = "Princess Airyn",     id = Spel2AP.locations.people.Princess_Airyn,     index = 17 },
+        { name = "Dirk Yamaoka",       id = Spel2AP.locations.people.Dirk_Yamaoka,       index = 18 },
+        { name = "Guy Spelunky",       id = Spel2AP.locations.people.Guy_Spelunky,       index = 19 },
+        { name = "Classic Guy",        id = Spel2AP.locations.people.Classic_Guy,        index = 20 },
+        { name = "Terra Tunnel",       id = Spel2AP.locations.people.Terra_Tunnel,       index = 21 },
+        { name = "Hired Hand",         id = Spel2AP.locations.people.Hired_Hand,         index = 22 },
+        { name = "Eggplant Child",     id = Spel2AP.locations.people.Eggplant_Child,     index = 23 },
+        { name = "Shopkeeper",         id = Spel2AP.locations.people.Shopkeeper,         index = 24 },
+        { name = "Tun",                id = Spel2AP.locations.people.Tun,                index = 25 },
+        { name = "Yang",               id = Spel2AP.locations.people.Yang,               index = 26 },
+        { name = "Madame Tusk",        id = Spel2AP.locations.people.Madame_Tusk,        index = 27 },
+        { name = "Tusk's Bodyguard",   id = Spel2AP.locations.people.Tusks_Bodyguard,    index = 28 },
+        { name = "Waddler",            id = Spel2AP.locations.people.Waddler,            index = 29 },
+        { name = "Caveman Shopkeeper", id = Spel2AP.locations.people.Caveman_Shopkeeper, index = 30 },
+        { name = "Ghist Shopkeeper",   id = Spel2AP.locations.people.Ghist_Shopkeeper,   index = 31 },
+        { name = "Van Horsing",        id = Spel2AP.locations.people.Van_Horsing,        index = 32 },
+        { name = "Parsley",            id = Spel2AP.locations.people.Parsley,            index = 33 },
+        { name = "Parsnip",            id = Spel2AP.locations.people.Parsnip,            index = 34 },
+        { name = "Parmesan",           id = Spel2AP.locations.people.Parmesan,           index = 35 },
+        { name = "Sparrow",            id = Spel2AP.locations.people.Sparrow,            index = 36 },
+        { name = "Beg",                id = Spel2AP.locations.people.Beg,                index = 37 },
+        { name = "Eggplant King",      id = Spel2AP.locations.people.Eggplant_King,      index = 38 },
     },
-
     bestiary = {
-        [1] = "Snake",
-        [2] = "Spider",
-        [3] = "Bat",
-        [4] = "Caveman",
-        [5] = "Skeleton",
-        [6] = "Horned Lizard",
-        [7] = "Cave Mole",
-        [8] = "Quillback",
-        [9] = "Mantrap",
-        [10] = "Tiki Man",
-        [11] = "Witch Doctor",
-        [12] = "Mosquito",
-        [13] = "Monkey",
-        [14] = "Hang Spider",
-        [15] = "Giant Spider",
-        [16] = "Magmar",
-        [17] = "Robot",
-        [18] = "Fire Bug",
-        [19] = "Imp",
-        [20] = "Lavamander",
-        [21] = "Vampire",
-        [22] = "Vlad",
-        [23] = "Olmec",
-        [24] = "Jiangshi",
-        [25] = "Jiangshi Assassin",
-        [26] = "Flying Fish",
-        [27] = "Octopy",
-        [28] = "Hermit Crab",
-        [29] = "Pangxie",
-        [30] = "Great Humphead",
-        [31] = "Kingu",
-        [32] = "Crocman",
-        [33] = "Cobra",
-        [34] = "Mummy",
-        [35] = "Sorceress",
-        [36] = "Cat Mummy",
-        [37] = "Necromancer",
-        [38] = "Anubis",
-        [39] = "Ammit",
-        [40] = "Apep",
-        [41] = "Anubis II",
-        [42] = "Osiris",
-        [43] = "UFO",
-        [44] = "Alien",
-        [45] = "Yeti",
-        [46] = "Yeti King",
-        [47] = "Yeti Queen",
-        [48] = "Lamahu",
-        [49] = "Proto Shopkeeper",
-        [50] = "Olmite",
-        [51] = "Lamassu",
-        [52] = "Tiamat",
-        [53] = "Tadpole",
-        [54] = "Frog",
-        [55] = "Fire Frog",
-        [56] = "Goliath Frog",
-        [57] = "Grub",
-        [58] = "Giant Fly",
-        [59] = "Hundun",
-        [60] = "Eggplant Minister",
-        [61] = "Eggplup",
-        [62] = "Celestial Jelly",
-        [63] = "Scorpion",
-        [64] = "Bee",
-        [65] = "Queen Bee",
-        [66] = "Scarab",
-        [67] = "Golden Monkey",
-        [68] = "Leprechaun",
-        [69] = "Monty",
-        [70] = "Percy",
-        [71] = "Poochi",
-        [72] = "Ghist",
-        [73] = "Ghost",
-        [74] = "Cave Turkey",
-        [75] = "Rock Dog",
-        [76] = "Axolotl",
-        [77] = "Qilin",
-        [78] = "Mech Rider"
+        { name = "Snake",              id = Spel2AP.locations.bestiary.Snake,              index = 1  },
+        { name = "Spider",             id = Spel2AP.locations.bestiary.Spider,             index = 2  },
+        { name = "Bat",                id = Spel2AP.locations.bestiary.Bat,                index = 3  },
+        { name = "Caveman",            id = Spel2AP.locations.bestiary.Caveman,            index = 4  },
+        { name = "Skeleton",           id = Spel2AP.locations.bestiary.Skeleton,           index = 5  },
+        { name = "Horned Lizard",      id = Spel2AP.locations.bestiary.Horned_Lizard,      index = 6  },
+        { name = "Cave Mole",          id = Spel2AP.locations.bestiary.Cave_Mole,          index = 7  },
+        { name = "Quillback",          id = Spel2AP.locations.bestiary.Quillback,          index = 8  },
+        { name = "Mantrap",            id = Spel2AP.locations.bestiary.Mantrap,            index = 9  },
+        { name = "Tiki Man",           id = Spel2AP.locations.bestiary.Tiki_Man,           index = 10 },
+        { name = "Witch Doctor",       id = Spel2AP.locations.bestiary.Witch_Doctor,       index = 11 },
+        { name = "Mosquito",           id = Spel2AP.locations.bestiary.Mosquito,           index = 12 },
+        { name = "Monkey",             id = Spel2AP.locations.bestiary.Monkey,             index = 13 },
+        { name = "Hang Spider",        id = Spel2AP.locations.bestiary.Hang_Spider,        index = 14 },
+        { name = "Giant Spider",       id = Spel2AP.locations.bestiary.Giant_Spider,       index = 15 },
+        { name = "Magmar",             id = Spel2AP.locations.bestiary.Magmar,             index = 16 },
+        { name = "Robot",              id = Spel2AP.locations.bestiary.Robot,              index = 17 },
+        { name = "Fire Bug",           id = Spel2AP.locations.bestiary.Fire_Bug,           index = 18 },
+        { name = "Imp",                id = Spel2AP.locations.bestiary.Imp,                index = 19 },
+        { name = "Lavamander",         id = Spel2AP.locations.bestiary.Lavamander,         index = 20 },
+        { name = "Vampire",            id = Spel2AP.locations.bestiary.Vampire,            index = 21 },
+        { name = "Vlad",               id = Spel2AP.locations.bestiary.Vlad,               index = 22 },
+        { name = "Olmec",              id = Spel2AP.locations.bestiary.Olmec,              index = 23 },
+        { name = "Jiangshi",           id = Spel2AP.locations.bestiary.Jiangshi,           index = 24 },
+        { name = "Jiangshi Assassin",  id = Spel2AP.locations.bestiary.Jiangshi_Assassin,  index = 25 },
+        { name = "Flying Fish",        id = Spel2AP.locations.bestiary.Flying_Fish,        index = 26 },
+        { name = "Octopy",             id = Spel2AP.locations.bestiary.Octopy,             index = 27 },
+        { name = "Hermit Crab",        id = Spel2AP.locations.bestiary.Hermit_Crab,        index = 28 },
+        { name = "Pangxie",            id = Spel2AP.locations.bestiary.Pangxie,            index = 29 },
+        { name = "Great Humphead",     id = Spel2AP.locations.bestiary.Great_Humphead,     index = 30 },
+        { name = "Kingu",              id = Spel2AP.locations.bestiary.Kingu,              index = 31 },
+        { name = "Crocman",            id = Spel2AP.locations.bestiary.Crocman,            index = 32 },
+        { name = "Cobra",              id = Spel2AP.locations.bestiary.Cobra,              index = 33 },
+        { name = "Mummy",              id = Spel2AP.locations.bestiary.Mummy,              index = 34 },
+        { name = "Sorceress",          id = Spel2AP.locations.bestiary.Sorceress,          index = 35 },
+        { name = "Cat Mummy",          id = Spel2AP.locations.bestiary.Cat_Mummy,          index = 36 },
+        { name = "Necromancer",        id = Spel2AP.locations.bestiary.Necromancer,        index = 37 },
+        { name = "Anubis",             id = Spel2AP.locations.bestiary.Anubis,             index = 38 },
+        { name = "Ammit",              id = Spel2AP.locations.bestiary.Ammit,              index = 39 },
+        { name = "Apep",               id = Spel2AP.locations.bestiary.Apep,               index = 40 },
+        { name = "Anubis II",          id = Spel2AP.locations.bestiary.Anubis_II,          index = 41 },
+        { name = "Osiris",             id = Spel2AP.locations.bestiary.Osiris,             index = 42 },
+        { name = "UFO",                id = Spel2AP.locations.bestiary.UFO,                index = 43 },
+        { name = "Alien",              id = Spel2AP.locations.bestiary.Alien,              index = 44 },
+        { name = "Yeti",               id = Spel2AP.locations.bestiary.Yeti,               index = 45 },
+        { name = "Yeti King",          id = Spel2AP.locations.bestiary.Yeti_King,          index = 46 },
+        { name = "Yeti Queen",         id = Spel2AP.locations.bestiary.Yeti_Queen,         index = 47 },
+        { name = "Lamahu",             id = Spel2AP.locations.bestiary.Lamahu,             index = 48 },
+        { name = "Proto Shopkeeper",   id = Spel2AP.locations.bestiary.Proto_Shopkeeper,   index = 49 },
+        { name = "Olmite",             id = Spel2AP.locations.bestiary.Olmite,             index = 50 },
+        { name = "Lamassu",            id = Spel2AP.locations.bestiary.Lamassu,            index = 51 },
+        { name = "Tiamat",             id = Spel2AP.locations.bestiary.Tiamat,             index = 52 },
+        { name = "Tadpole",            id = Spel2AP.locations.bestiary.Tadpole,            index = 53 },
+        { name = "Frog",               id = Spel2AP.locations.bestiary.Frog,               index = 54 },
+        { name = "Fire Frog",          id = Spel2AP.locations.bestiary.Fire_Frog,          index = 55 },
+        { name = "Goliath Frog",       id = Spel2AP.locations.bestiary.Goliath_Frog,       index = 56 },
+        { name = "Grub",               id = Spel2AP.locations.bestiary.Grub,               index = 57 },
+        { name = "Giant Fly",          id = Spel2AP.locations.bestiary.Giant_Fly,          index = 58 },
+        { name = "Hundun",             id = Spel2AP.locations.bestiary.Hundun,             index = 59 },
+        { name = "Eggplant Minister",  id = Spel2AP.locations.bestiary.Eggplant_Minister,  index = 60 },
+        { name = "Eggplup",            id = Spel2AP.locations.bestiary.Eggplup,            index = 61 },
+        { name = "Celestial Jelly",    id = Spel2AP.locations.bestiary.Celestial_Jelly,    index = 62 },
+        { name = "Scorpion",           id = Spel2AP.locations.bestiary.Scorpion,           index = 63 },
+        { name = "Bee",                id = Spel2AP.locations.bestiary.Bee,                index = 64 },
+        { name = "Queen Bee",          id = Spel2AP.locations.bestiary.Queen_Bee,          index = 65 },
+        { name = "Scarab",             id = Spel2AP.locations.bestiary.Scarab,             index = 66 },
+        { name = "Golden Monkey",      id = Spel2AP.locations.bestiary.Golden_Monkey,      index = 67 },
+        { name = "Leprechaun",         id = Spel2AP.locations.bestiary.Leprechaun,         index = 68 },
+        { name = "Monty",              id = Spel2AP.locations.bestiary.Monty,              index = 69 },
+        { name = "Percy",              id = Spel2AP.locations.bestiary.Percy,              index = 70 },
+        { name = "Poochi",             id = Spel2AP.locations.bestiary.Poochi,             index = 71 },
+        { name = "Ghist",              id = Spel2AP.locations.bestiary.Ghist,              index = 72 },
+        { name = "Ghost",              id = Spel2AP.locations.bestiary.Ghost,              index = 73 },
+        { name = "Cave Turkey",        id = Spel2AP.locations.bestiary.Cave_Turkey,        index = 74 },
+        { name = "Rock Dog",           id = Spel2AP.locations.bestiary.Rock_Dog,           index = 75 },
+        { name = "Axolotl",            id = Spel2AP.locations.bestiary.Axolotl,            index = 76 },
+        { name = "Qilin",              id = Spel2AP.locations.bestiary.Qilin,              index = 77 },
+        { name = "Mech Rider",         id = Spel2AP.locations.bestiary.Mech_Rider,         index = 78 },
     },
-    
     items = {
-        [1] = "Rope Pile",
-        [2] = "Bomb Bag",
-        [3] = "Bomb Box",
-        [4] = "Paste",
-        [5] = "Spectacles",
-        [6] = "Climbing Gloves",
-        [7] = "Pitcher's Mitt",
-        [8] = "Spring Shoes",
-        [9] = "Spike Shoes",
-        [10] = "Compass",
-        [11] = "Alien Compass",
-        [12] = "Parachute",
-        [13] = "Udjat Eye",
-        [14] = "Kapala",
-        [15] = "Hedjet",
-        [16] = "Crown",
-        [17] = "Eggplant Crown",
-        [18] = "True Crown",
-        [19] = "Ankh",
-        [20] = "Tablet of Destiny",
-        [21] = "Skeleton Key",
-        [22] = "Royal Jelly",
-        [23] = "Cape",
-        [24] = "Vlad's Cape",
-        [25] = "Jetpack",
-        [26] = "Telepack",
-        [27] = "Hoverpack",
-        [28] = "Powerpack",
-        [29] = "Webgun",
-        [30] = "Shotgun",
-        [31] = "Freeze Ray",
-        [32] = "Clone Gun",
-        [33] = "Crossbow",
-        [34] = "Camera",
-        [35] = "Teleporter",
-        [36] = "Mattock",
-        [37] = "Boomerang",
-        [38] = "Machete",
-        [39] = "Excalibur",
-        [40] = "Broken Sword",
-        [41] = "Plasma Cannon",
-        [42] = "Scepter",
-        [43] = "Hou Yi's Bow",
-        [44] = "Arrow of Light",
-        [45] = "Wooden Shield",
-        [46] = "Metal Shield",
-        [47] = "Idol",
-        [48] = "The Tusk Idol",
-        [49] = "Curse Pot",
-        [50] = "Ushabti",
-        [51] = "Eggplant",
-        [52] = "Cooked Turkey",
-        [53] = "Elixir",
-        [54] = "Four-Leaf Clover"
+        { name = "Rope Pile",         id = Spel2AP.locations.item.Rope_Pile,          index = 1  },
+        { name = "Bomb Bag",          id = Spel2AP.locations.item.Bomb_Bag,           index = 2  },
+        { name = "Bomb Box",          id = Spel2AP.locations.item.Bomb_Box,           index = 3  },
+        { name = "Paste",             id = Spel2AP.locations.item.Paste,              index = 4  },
+        { name = "Spectacles",        id = Spel2AP.locations.item.Spectacles,         index = 5  },
+        { name = "Climbing Gloves",   id = Spel2AP.locations.item.Climbing_Gloves,    index = 6  },
+        { name = "Pitcher's Mitt",    id = Spel2AP.locations.item.Pitchers_Mitt,      index = 7  },
+        { name = "Spring Shoes",      id = Spel2AP.locations.item.Spring_Shoes,       index = 8  },
+        { name = "Spike Shoes",       id = Spel2AP.locations.item.Spike_Shoes,        index = 9  },
+        { name = "Compass",           id = Spel2AP.locations.item.Compass,            index = 10 },
+        { name = "Alien Compass",     id = Spel2AP.locations.item.Alien_Compass,      index = 11 },
+        { name = "Parachute",         id = Spel2AP.locations.item.Parachute,          index = 12 },
+        { name = "Udjat Eye",         id = Spel2AP.locations.item.Udjat_Eye,           index = 13 },
+        { name = "Kapala",            id = Spel2AP.locations.item.Kapala,             index = 14 },
+        { name = "Hedjet",            id = Spel2AP.locations.item.Hedjet,              index = 15 },
+        { name = "Crown",             id = Spel2AP.locations.item.Crown,               index = 16 },
+        { name = "Eggplant Crown",    id = Spel2AP.locations.item.Eggplant_Crown,      index = 17 },
+        { name = "True Crown",        id = Spel2AP.locations.item.True_Crown,          index = 18 },
+        { name = "Ankh",              id = Spel2AP.locations.item.Ankh,                index = 19 },
+        { name = "Tablet of Destiny", id = Spel2AP.locations.item.Tablet_of_Destiny,   index = 20 },
+        { name = "Skeleton Key",      id = Spel2AP.locations.item.Skeleton_Key,        index = 21 },
+        { name = "Royal Jelly",       id = Spel2AP.locations.item.Royal_Jelly,         index = 22 },
+        { name = "Cape",              id = Spel2AP.locations.item.Cape,                index = 23 },
+        { name = "Vlad's Cape",       id = Spel2AP.locations.item.Vlads_Cape,          index = 24 },
+        { name = "Jetpack",           id = Spel2AP.locations.item.Jetpack,             index = 25 },
+        { name = "Telepack",          id = Spel2AP.locations.item.Telepack,            index = 26 },
+        { name = "Hoverpack",         id = Spel2AP.locations.item.Hoverpack,           index = 27 },
+        { name = "Powerpack",         id = Spel2AP.locations.item.Powerpack,           index = 28 },
+        { name = "Webgun",            id = Spel2AP.locations.item.Webgun,              index = 29 },
+        { name = "Shotgun",           id = Spel2AP.locations.item.Shotgun,             index = 30 },
+        { name = "Freeze Ray",        id = Spel2AP.locations.item.Freeze_Ray,          index = 31 },
+        { name = "Clone Gun",         id = Spel2AP.locations.item.Clone_Gun,           index = 32 },
+        { name = "Crossbow",          id = Spel2AP.locations.item.Crossbow,            index = 33 },
+        { name = "Camera",            id = Spel2AP.locations.item.Camera,              index = 34 },
+        { name = "Teleporter",        id = Spel2AP.locations.item.Teleporter,          index = 35 },
+        { name = "Mattock",           id = Spel2AP.locations.item.Mattock,             index = 36 },
+        { name = "Boomerang",         id = Spel2AP.locations.item.Boomerang,           index = 37 },
+        { name = "Machete",           id = Spel2AP.locations.item.Machete,             index = 38 },
+        { name = "Excalibur",         id = Spel2AP.locations.item.Excalibur,           index = 39 },
+        { name = "Broken Sword",      id = Spel2AP.locations.item.Broken_Sword,        index = 40 },
+        { name = "Plasma Cannon",     id = Spel2AP.locations.item.Plasma_Cannon,       index = 41 },
+        { name = "Scepter",           id = Spel2AP.locations.item.Scepter,             index = 42 },
+        { name = "Hou Yi's Bow",      id = Spel2AP.locations.item.Hou_Yis_Bow,         index = 43 },
+        { name = "Arrow of Light",    id = Spel2AP.locations.item.Arrow_of_Light,      index = 44 },
+        { name = "Wooden Shield",     id = Spel2AP.locations.item.Wooden_Shield,       index = 45 },
+        { name = "Metal Shield",      id = Spel2AP.locations.item.Metal_Shield,        index = 46 },
+        { name = "Idol",              id = Spel2AP.locations.item.Idol,                index = 47 },
+        { name = "The Tusk Idol",     id = Spel2AP.locations.item.The_Tusk_Idol,       index = 48 },
+        { name = "Curse Pot",         id = Spel2AP.locations.item.Curse_Pot,           index = 49 },
+        { name = "Ushabti",           id = Spel2AP.locations.item.Ushabti,             index = 50 },
+        { name = "Eggplant",          id = Spel2AP.locations.item.Eggplant,            index = 51 },
+        { name = "Cooked Turkey",     id = Spel2AP.locations.item.Cooked_Turkey,       index = 52 },
+        { name = "Elixir",            id = Spel2AP.locations.item.Elixir,              index = 53 },
+        { name = "Four-Leaf Clover",  id = Spel2AP.locations.item.Four_Leaf_Clover,    index = 54 },
     },
-    
     traps = {
-        [1] = "Spikes",
-        [2] = "Arrow Trap",
-        [3] = "Totem Trap",
-        [4] = "Log Trap",
-        [5] = "Spear Trap",
-        [6] = "Thorny Vine",
-        [7] = "Bear Trap",
-        [8] = "Powder Box",
-        [9] = "Falling Platform",
-        [10] = "Spikeball",
-        [11] = "Lion Trap",
-        [12] = "Giant Clam",
-        [13] = "Sliding Wall",
-        [14] = "Crush Trap",
-        [15] = "Giant Crush Trap",
-        [16] = "Boulder",
-        [17] = "Spring Trap",
-        [18] = "Landmine",
-        [19] = "Laser Trap",
-        [20] = "Spark Trap",
-        [21] = "Frog Trap",
-        [22] = "Sticky Trap",
-        [23] = "Bone Drop",
-        [24] = "Egg Sac"
+        { name = "Spikes",            id = Spel2AP.locations.trap.Spikes,            index = 1  },
+        { name = "Arrow Trap",        id = Spel2AP.locations.trap.Arrow_Trap,        index = 2  },
+        { name = "Totem Trap",        id = Spel2AP.locations.trap.Totem_Trap,        index = 3  },
+        { name = "Log Trap",          id = Spel2AP.locations.trap.Log_Trap,          index = 4  },
+        { name = "Spear Trap",        id = Spel2AP.locations.trap.Spear_Trap,        index = 5  },
+        { name = "Thorny Vine",       id = Spel2AP.locations.trap.Thorny_Vine,       index = 6  },
+        { name = "Bear Trap",         id = Spel2AP.locations.trap.Bear_Trap,         index = 7  },
+        { name = "Powder Box",        id = Spel2AP.locations.trap.Powder_Box,        index = 8  },
+        { name = "Falling Platform",  id = Spel2AP.locations.trap.Falling_Platform,  index = 9  },
+        { name = "Spikeball",         id = Spel2AP.locations.trap.Spikeball,         index = 10 },
+        { name = "Lion Trap",         id = Spel2AP.locations.trap.Lion_Trap,         index = 11 },
+        { name = "Giant Clam",        id = Spel2AP.locations.trap.Giant_Clam,        index = 12 },
+        { name = "Sliding Wall",      id = Spel2AP.locations.trap.Sliding_Wall,      index = 13 },
+        { name = "Crush Trap",        id = Spel2AP.locations.trap.Crush_Trap,        index = 14 },
+        { name = "Giant Crush Trap",  id = Spel2AP.locations.trap.Giant_Crush_Trap,  index = 15 },
+        { name = "Boulder",           id = Spel2AP.locations.trap.Boulder,           index = 16 },
+        { name = "Spring Trap",       id = Spel2AP.locations.trap.Spring_Trap,       index = 17 },
+        { name = "Landmine",          id = Spel2AP.locations.trap.Landmine,          index = 18 },
+        { name = "Laser Trap",        id = Spel2AP.locations.trap.Laser_Trap,        index = 19 },
+        { name = "Spark Trap",        id = Spel2AP.locations.trap.Spark_Trap,        index = 20 },
+        { name = "Frog Trap",         id = Spel2AP.locations.trap.Frog_Trap,         index = 21 },
+        { name = "Sticky Trap",       id = Spel2AP.locations.trap.Sticky_Trap,       index = 22 },
+        { name = "Bone Drop",         id = Spel2AP.locations.trap.Bone_Drop,         index = 23 },
+        { name = "Egg Sac",           id = Spel2AP.locations.trap.Egg_Sac,           index = 24 },
     }
 }
 
-character_data = {
-    binary_values = {
-        [1] = 1,       -- Ana Spelunky
-        [2] = 2,       -- Margaret Tunnel
-        [3] = 4,       -- Colin Northward
-        [4] = 8,       -- Roffy D. Sloth
-        [5] = 16,      -- Alto Singh
-        [6] = 32,      -- Liz Mutton
-        [7] = 64,      -- Nekka the Eagle
-        [8] = 128,     -- LISE Project
-        [9] = 256,     -- Coco Von Diamonds
-        [10] = 512,    -- Manfred Tunnel
-        [11] = 1024,   -- Little Jay
-        [12] = 2048,   -- Tina Flan
-        [13] = 4096,   -- Valerie Crump
-        [14] = 8192,   -- Au
-        [15] = 16384,  -- Demi Von Diamonds
-        [16] = 32768,  -- Pilot
-        [17] = 65536,  -- Princess Airyn
-        [18] = 131072, -- Dirk Yamaoka
-        [19] = 262144, -- Guy Spelunky
-        [20] = 524288  -- Classic Guy
-    },
+journal_lookup = {}
+for _, chapter in ipairs(journal.chapters) do
+    for index, entry in ipairs(journal[chapter]) do
+        journal_lookup[entry.id] = { chapter = chapter, index = index }
+    end
+end
 
-    types = {
-        [1] = ENT_TYPE.CHAR_ANA_SPELUNKY,       -- Ana Spelunky
-        [2] = ENT_TYPE.CHAR_MARGARET_TUNNEL,    -- Margaret Tunnel
-        [3] = ENT_TYPE.CHAR_COLIN_NORTHWARD,    -- Colin Northward
-        [4] = ENT_TYPE.CHAR_ROFFY_D_SLOTH,      -- Roffy D. Sloth
-        [5] = ENT_TYPE.CHAR_BANDA,              -- Alto Singh
-        [6] = ENT_TYPE.CHAR_GREEN_GIRL,         -- Liz Mutton
-        [7] = ENT_TYPE.CHAR_AMAZON,             -- Nekka the Eagle
-        [8] = ENT_TYPE.CHAR_LISE_SYSTEM,        -- LISE Project
-        [9] = ENT_TYPE.CHAR_COCO_VON_DIAMONDS,  -- Coco Von Diamonds
-        [10] = ENT_TYPE.CHAR_MANFRED_TUNNEL,    -- Manfred Tunnel
-        [11] = ENT_TYPE.CHAR_OTAKU,             -- Little Jay
-        [12] = ENT_TYPE.CHAR_TINA_FLAN,         -- Tina Flan
-        [13] = ENT_TYPE.CHAR_VALERIE_CRUMP,     -- Valerie Crump
-        [14] = ENT_TYPE.CHAR_AU,                -- Au
-        [15] = ENT_TYPE.CHAR_DEMI_VON_DIAMONDS, -- Demi Von Diamonds
-        [16] = ENT_TYPE.CHAR_PILOT,             -- Pilot
-        [17] = ENT_TYPE.CHAR_PRINCESS_AIRYN,    -- Princess Airyn
-        [18] = ENT_TYPE.CHAR_DIRK_YAMAOKA,      -- Dirk Yamaoka
-        [19] = ENT_TYPE.CHAR_GUY_SPELUNKY,      -- Guy Spelunky
-        [20] = ENT_TYPE.CHAR_CLASSIC_GUY        -- Classic Guy
+character_data =
+{
+    [Spel2AP.characters.Ana_Spelunky] =
+    {
+        index = 1,
+        ent = ENT_TYPE.CHAR_ANA_SPELUNKY,
+        location = Spel2AP.locations.people.Ana_Spelunky
     },
-
-    locations = {
-    [ENT_TYPE.CHAR_BANDA] = {
-        world = 1,
-        level = 4,
-        layer = LAYER.FRONT,
-        theme = THEME.DWELLING
+    [Spel2AP.characters.Margaret_Tunnel] =
+    {
+        index = 2,
+        ent = ENT_TYPE.CHAR_MARGARET_TUNNEL,
+        location = Spel2AP.locations.people.Margaret_Tunnel
     },
-    [ENT_TYPE.CHAR_GREEN_GIRL] = {
-        world = 2,
-        level = {1, 2, 3, 4},
-        layer = LAYER.FRONT,
-        theme = THEME.JUNGLE
+    [Spel2AP.characters.Colin_Northward] =
+    {
+        index = 3,
+        ent = ENT_TYPE.CHAR_COLIN_NORTHWARD,
+        location = Spel2AP.locations.people.Colin_Northward
     },
-    [ENT_TYPE.CHAR_AMAZON] = {
-        world = 2,
-        level = {2, 3, 4},
-        layer = LAYER.BACK,
-        theme = THEME.JUNGLE
+    [Spel2AP.characters.Roffy_D_Sloth] =
+    {
+        index = 4,
+        ent = ENT_TYPE.CHAR_ROFFY_D_SLOTH,
+        location = Spel2AP.locations.people.Roffy_D_Sloth
     },
-    [ENT_TYPE.CHAR_LISE_SYSTEM] = {
-        world = 2,
-        level = {1, 2, 3, 4},
-        layer = LAYER.FRONT,
-        theme = THEME.VOLCANA
+    [Spel2AP.characters.Alto_Singh] =
+    {
+        index = 5,
+        ent = ENT_TYPE.CHAR_BANDA,
+        location = Spel2AP.locations.people.Alto_Singh
     },
-    [ENT_TYPE.CHAR_COCO_VON_DIAMONDS] = {
-        world = 2,
-        level = {2, 3, 4},
-        layer = LAYER.BACK,
-        theme = THEME.VOLCANA
+    [Spel2AP.characters.Liz_Mutton] =
+    {
+        index = 6,
+        ent = ENT_TYPE.CHAR_GREEN_GIRL,
+        location = Spel2AP.locations.people.Liz_Mutton
     },
-    [ENT_TYPE.CHAR_MANFRED_TUNNEL] = {
-        world = 3,
-        level = {1},
-        layer = LAYER.BACK,
-        theme = THEME.OLMEC
+    [Spel2AP.characters.Nekka_the_Eagle] =
+    {
+        index = 7,
+        ent = ENT_TYPE.CHAR_AMAZON,
+        location = Spel2AP.locations.people.Nekka_the_Eagle
     },
-    [ENT_TYPE.CHAR_OTAKU] = {
-        world = 4,
-        level = {1, 2, 3, 4},
-        layer = LAYER.FRONT,
-        theme = THEME.TIDE_POOL
+    [Spel2AP.characters.LISE_Project] =
+    {
+        index = 8,
+        ent = ENT_TYPE.CHAR_LISE_SYSTEM,
+        location = Spel2AP.locations.people.LISE_Project
     },
-    [ENT_TYPE.CHAR_TINA_FLAN] = {
-        world = 4,
-        level = {3},
-        layer = LAYER.FRONT,
-        theme = THEME.ABZU
+    [Spel2AP.characters.Coco_Von_Diamonds] =
+    {
+        index = 9,
+        ent = ENT_TYPE.CHAR_COCO_VON_DIAMONDS,
+        location = Spel2AP.locations.people.Coco_Von_Diamonds
     },
-    [ENT_TYPE.CHAR_VALERIE_CRUMP] = {
-        world = 4,
-        level = {1, 2, 3, 4},
-        layer = LAYER.FRONT,
-        theme = THEME.TEMPLE
+    [Spel2AP.characters.Manfred_Tunnel] =
+    {
+        index = 10,
+        ent = ENT_TYPE.CHAR_MANFRED_TUNNEL,
+        location = Spel2AP.locations.people.Manfred_Tunnel
     },
-    [ENT_TYPE.CHAR_AU] = {
-        world = 4,
-        level = {2},
-        layer = LAYER.FRONT,
-        theme = THEME.CITY_OF_GOLD
+    [Spel2AP.characters.Little_Jay] =
+    {
+        index = 11,
+        ent = ENT_TYPE.CHAR_OTAKU,
+        location = Spel2AP.locations.people.Little_Jay
     },
-    [ENT_TYPE.CHAR_DEMI_VON_DIAMONDS] = {
-        world = 5,
-        level = {1},
-        layer = LAYER.BACK,
-        theme = THEME.ICE_CAVES
+    [Spel2AP.characters.Tina_Flan] =
+    {
+        index = 12,
+        ent = ENT_TYPE.CHAR_TINA_FLAN,
+        location = Spel2AP.locations.people.Tina_Flan
     },
-    [ENT_TYPE.CHAR_PILOT] = {
-        world = 5,
-        level = {1},
-        layer = LAYER.BACK,
-        theme = THEME.ICE_CAVES
+    [Spel2AP.characters.Valerie_Crump] =
+    {
+        index = 13,
+        ent = ENT_TYPE.CHAR_VALERIE_CRUMP,
+        location = Spel2AP.locations.people.Valerie_Crump
     },
-    [ENT_TYPE.CHAR_PRINCESS_AIRYN] = {
-        world = 6,
-        level = {1, 2, 3},
-        layer = LAYER.FRONT,
-        theme = THEME.NEO_BABYLON
+    [Spel2AP.characters.Au] =
+    {
+        index = 14,
+        ent = ENT_TYPE.CHAR_AU,
+        location = Spel2AP.locations.people.Au
     },
-    [ENT_TYPE.CHAR_DIRK_YAMAOKA] = {
-        world = 7,
-        level = {1, 2, 3},
-        layer = LAYER.BACK,
-        theme = THEME.SUNKEN_CITY
+    [Spel2AP.characters.Demi_Von_Diamonds] =
+    {
+        index = 15,
+        ent = ENT_TYPE.CHAR_DEMI_VON_DIAMONDS,
+        location = Spel2AP.locations.people.Demi_Von_Diamonds
     },
-    [ENT_TYPE.CHAR_GUY_SPELUNKY] = {
-        world = 6,
-        level = {4},
-        layer = nil,
-        theme = THEME.NEO_BABYLON
+    [Spel2AP.characters.Pilot] =
+    {
+        index = 16,
+        ent = ENT_TYPE.CHAR_PILOT,
+        location = Spel2AP.locations.people.Pilot
     },
-    [ENT_TYPE.CHAR_CLASSIC_GUY] = {
-        world = 7,
-        level = {4},
-        layer = nil,
-        theme = THEME.HUNDUN
-    }
+    [Spel2AP.characters.Princess_Airyn] =
+    {
+        index = 17,
+        ent = ENT_TYPE.CHAR_PRINCESS_AIRYN,
+        location = Spel2AP.locations.people.Princess_Airyn
     },
-
-    name_to_index = {
-        ["Ana Spelunky"] = 1,
-        ["Margaret Tunnel"] = 2,
-        ["Colin Northward"] = 3,
-        ["Roffy D. Sloth"] = 4,
-        ["Alto Singh"] = 5,
-        ["Liz Mutton"] = 6,
-        ["Nekka the Eagle"] = 7,
-        ["LISE Project"] = 8,
-        ["Coco von Diamonds"] = 9,
-        ["Manfred Tunnel"] = 10,
-        ["Little Jay"] = 11,
-        ["Tina Flan"] = 12,
-        ["Valerie Crump"] = 13,
-        ["Au"] = 14,
-        ["Demi von Diamonds"] = 15,
-        ["Pilot"] = 16,
-        ["Princess Airyn"] = 17,
-        ["Dirk Yamaoka"] = 18,
-        ["Guy Spelunky"] = 19,
-        ["Classic Guy"] = 20
-    }
+    [Spel2AP.characters.Dirk_Yamaoka] =
+    {
+        index = 18,
+        ent = ENT_TYPE.CHAR_DIRK_YAMAOKA,
+        location = Spel2AP.locations.people.Dirk_Yamaoka
+    },
+    [Spel2AP.characters.Guy_Spelunky] =
+    {
+        index = 19,
+        ent = ENT_TYPE.CHAR_GUY_SPELUNKY,
+        location = Spel2AP.locations.people.Guy_Spelunky
+    },
+    [Spel2AP.characters.Classic_Guy] =
+    {
+        index = 20,
+        ent = ENT_TYPE.CHAR_CLASSIC_GUY,
+        location = Spel2AP.locations.people.Classic_Guy
+    },
 }
 
-theme_to_index = {
-    [THEME.DWELLING] = "dwelling",
-    [THEME.JUNGLE] = "jungle",
-    [THEME.VOLCANA] = "volcana",
-    [THEME.OLMEC] = "olmec",
-    [THEME.TIDE_POOL] = "tide_pool",
-    [THEME.TEMPLE] = "temple",
-    [THEME.ICE_CAVES]= "ice_caves",
-    [THEME.NEO_BABYLON] = "neo_babylon",
-    [THEME.SUNKEN_CITY] = "sunken_city",
-    [THEME.COSMIC_OCEAN] = "cosmic_ocean",
-    [THEME.CITY_OF_GOLD] = "temple",
-    [THEME.DUAT] = "temple",
-    [THEME.ABZU] = "tide_pool",
-    [THEME.TIAMAT] = "neo_babylon",
-    [THEME.EGGPLANT_WORLD] = "sunken_city",
-    [THEME.HUNDUN] = "sunken_city"
-}
-
-key_item_to_index = {
-    [ENT_TYPE.ITEM_PICKUP_UDJATEYE] = 1,
-    [ENT_TYPE.ITEM_PICKUP_HEDJET] = 2,
-    [ENT_TYPE.ITEM_PICKUP_CROWN] = 3,
-    [ENT_TYPE.ITEM_PICKUP_ANKH] = 4,
-    [ENT_TYPE.ITEM_PICKUP_TABLETOFDESTINY] = 5,
-    [ENT_TYPE.ITEM_EXCALIBUR] = 6,
-    [ENT_TYPE.ITEM_SCEPTER] = 7,
-    [ENT_TYPE.ITEM_HOUYIBOW] = 8,
-    [ENT_TYPE.ITEM_LIGHT_ARROW] = 9,
-    [ENT_TYPE.ITEM_USHABTI] = 10
-}
-
-location_name_to_id = {
-
-    -- Place Entries
-    ["Dwelling Journal Entry"] = 1,
-    ["Jungle Journal Entry"] = 2,
-    ["Volcana Journal Entry"] = 3,
-    ["Olmec's Lair Journal Entry"] = 4,
-    ["Tide Pool Journal Entry"] = 5,
-    ["Abzu Journal Entry"] = 6,
-    ["Temple of Anubis Journal Entry"] = 7,
-    ["The City of Gold Journal Entry"] = 8,
-    ["Duat Journal Entry"] = 9,
-    ["Ice Caves Journal Entry"] = 10,
-    ["Neo Babylon Journal Entry"] = 11,
-    ["Tiamat's Throne Journal Entry"] = 12,
-    ["Sunken City Journal Entry"] = 13,
-    ["Eggplant World Journal Entry"] = 14,
-    ["Hundun's Hideaway Journal Entry"] = 15,
-    ["Cosmic Ocean Journal Entry"] = 16,
-
-    -- People Entries
-    -- ["Ana Spelunky Journal Entry"] = 17, -- Not implemented until I figure out how to do it
-    -- ["Margaret Tunnel Journal Entry"] = 18, -- Not implemented until I figure out how to do it
-    -- ["Colin Northward Journal Entry"] = 19, -- Not implemented until I figure out how to do it
-    -- ["Roffy D. Sloth Journal Entry"] = 20, -- Not implemented until I figure out how to do it
-    ["Alto Singh Journal Entry"] = 21,
-    ["Liz Mutton Journal Entry"] = 22,
-    ["Nekka the Eagle Journal Entry"] = 23,
-    ["LISE Project Journal Entry"] = 24,
-    ["Coco Von Diamonds Journal Entry"] = 25,
-    ["Manfred Tunnel Journal Entry"] = 26,
-    ["Little Jay Journal Entry"] = 27,
-    ["Tina Flan Journal Entry"] = 28,
-    ["Valerie Crump Journal Entry"] = 29,
-    ["Au Journal Entry"] = 30,
-    ["Demi Von Diamonds Journal Entry"] = 31,
-    ["Pilot Journal Entry"] = 32,
-    ["Princess Airyn Journal Entry"] = 33,
-    ["Dirk Yamaoka Journal Entry"] = 34,
-    ["Guy Spelunky Journal Entry"] = 35,
-    ["Classic Guy Journal Entry"] = 36,
-    ["Terra Tunnel Journal Entry"] = 37,
-    ["Hired Hand Journal Entry"] = 38,
-    ["Eggplant Child Journal Entry"] = 39,
-    ["Shopkeeper Journal Entry"] = 40,
-    ["Tun Journal Entry"] = 41,
-    ["Yang Journal Entry"] = 42,
-    ["Madame Tusk Journal Entry"] = 43,
-    ["Tusk's Bodyguard Journal Entry"] = 44,
-    ["Waddler Journal Entry"] = 45,
-    ["Caveman Shopkeeper Journal Entry"] = 46,
-    ["Ghist Shopkeeper Journal Entry"] = 47,
-    ["Van Horsing Journal Entry"] = 48,
-    ["Parsley Journal Entry"] = 49,
-    ["Parsnip Journal Entry"] = 50,
-    ["Parmesan Journal Entry"] = 51,
-    ["Sparrow Journal Entry"] = 52,
-    ["Beg Journal Entry"] = 53,
-    ["Eggplant King Journal Entry"] = 54,
-
-    -- Bestiary Entries
-    -- Dwelling 
-    ["Snake Journal Entry"] = 55,
-    ["Spider Journal Entry"] = 56,
-    ["Bat Journal Entry"] = 57,
-    ["Caveman Journal Entry"] = 58,
-    ["Skeleton Journal Entry"] = 59,
-    ["Horned Lizard Journal Entry"] = 60,
-    ["Cave Mole Journal Entry"] = 61,
-    ["Quillback Journal Entry"] = 62,
-
-    -- Jungle
-    ["Mantrap Journal Entry"] = 63,
-    ["Tiki Man Journal Entry"] = 64,
-    ["Witch Doctor Journal Entry"] = 65,
-    ["Mosquito Journal Entry"] = 66,
-    ["Monkey Journal Entry"] = 67,
-    ["Hang Spider Journal Entry"] = 68,
-    ["Giant Spider Journal Entry"] = 69,
-
-    -- Volcana
-    ["Magmar Journal Entry"] = 70,
-    ["Robot Journal Entry"] = 71,
-    ["Fire Bug Journal Entry"] = 72,
-    ["Imp Journal Entry"] = 73,
-    ["Lavamander Journal Entry"] = 74,
-    ["Vampire Journal Entry"] = 75,
-    ["Vlad Journal Entry"] = 76,
-
-    -- Olmec
-    ["Olmec Journal Entry"] = 77,
-
-    -- Tide Pool
-    ["Jiangshi Journal Entry"] = 78,
-    ["Jiangshi Assassin Journal Entry"] = 79,
-    ["Flying Fish Journal Entry"] = 80,
-    ["Octopy Journal Entry"] = 81,
-    ["Hermit Crab Journal Entry"] = 82,
-    ["Pangxie Journal Entry"] = 83,
-    ["Great Humphead Journal Entry"] = 84,
-    ["Kingu Journal Entry"] = 85,
-
-    -- Temple
-    ["Crocman Journal Entry"] = 86,
-    ["Cobra Journal Entry"] = 87,
-    ["Mummy Journal Entry"] = 88,
-    ["Sorceress Journal Entry"] = 89,
-    ["Cat Mummy Journal Entry"] = 90,
-    ["Necromancer Journal Entry"] = 91,
-    ["Anubis Journal Entry"] = 92,
-    ["Ammit Journal Entry"] = 93,
-    ["Apep Journal Entry"] = 94,
-    ["Anubis II Journal Entry"] = 95,
-    ["Osiris Journal Entry"] = 96,
-
-    -- Ice Caves
-    ["UFO Journal Entry"] = 97,
-    ["Alien Journal Entry"] = 98,
-    ["Yeti Journal Entry"] = 99,
-    ["Yeti King Journal Entry"] = 100,
-    ["Yeti Queen Journal Entry"] = 101,
-    ["Lamahu Journal Entry"] = 102,
-    ["Proto Shopkeeper Journal Entry"] = 103,
-
-    -- Neo Babylon
-    ["Olmite Journal Entry"] = 104,
-    ["Lamassu Journal Entry"] = 105,
-    ["Tiamat Journal Entry"] = 106,
-
-    -- Sunken City
-    ["Tadpole Journal Entry"] = 107,
-    ["Frog Journal Entry"] = 108,
-    ["Fire Frog Journal Entry"] = 109,
-    ["Goliath Frog Journal Entry"] = 110,
-    ["Grub Journal Entry"] = 111,
-    ["Giant Fly Journal Entry"] = 112,
-    ["Hundun Journal Entry"] = 113,
-    ["Eggplant Minister Journal Entry"] = 114,
-    ["Eggplup Journal Entry"] = 115,
-
-    -- Cosmic Ocean
-    ["Celestial Jelly Journal Entry"] = 116,
-
-    -- Miscellaneous
-    ["Scorpion Journal Entry"] = 117,
-    ["Bee Journal Entry"] = 118,
-    ["Queen Bee Journal Entry"] = 119,
-    ["Scarab Journal Entry"] = 120,
-    ["Golden Monkey Journal Entry"] = 121,
-    ["Leprechaun Journal Entry"] = 122,
-    ["Monty Journal Entry"] = 123,
-    ["Percy Journal Entry"] = 124,
-    ["Poochi Journal Entry"] = 125,
-    ["Ghist Journal Entry"] = 126,
-    ["Ghost Journal Entry"] = 127,
-    ["Cave Turkey Journal Entry"] = 128,
-    ["Rock Dog Journal Entry"] = 129,
-    ["Axolotl Journal Entry"] = 130,
-    ["Qilin Journal Entry"] = 131,
-    ["Mech Rider Journal Entry"] = 132,
-
-    -- Item Entries
-    ["Rope Pile Journal Entry"] = 133,
-    ["Bomb Bag Journal Entry"] = 134,
-    ["Bomb Box Journal Entry"] = 135,
-    ["Paste Journal Entry"] = 136,
-    ["Spectacles Journal Entry"] = 137,
-    ["Climbing Gloves Journal Entry"] = 138,
-    ["Pitcher's Mitt Journal Entry"] = 139,
-    ["Spring Shoes Journal Entry"] = 140,
-    ["Spike Shoes Journal Entry"] = 141,
-    ["Compass Journal Entry"] = 142,
-    ["Alien Compass Journal Entry"] = 143,
-    ["Parachute Journal Entry"] = 144,
-    ["Udjat Eye Journal Entry"] = 145,
-    ["Kapala Journal Entry"] = 146,
-    ["Hedjet Journal Entry"] = 147,
-    ["Crown Journal Entry"] = 148,
-    ["Eggplant Crown Journal Entry"] = 149,
-    ["True Crown Journal Entry"] = 150,
-    ["Ankh Journal Entry"] = 151,
-    ["Tablet of Destiny Journal Entry"] = 152,
-    ["Skeleton Key Journal Entry"] = 153,
-    ["Royal Jelly Journal Entry"] = 154,
-    ["Cape Journal Entry"] = 155,
-    ["Vlad's Cape Journal Entry"] = 156,
-    ["Jetpack Journal Entry"] = 157,
-    ["Telepack Journal Entry"] = 158,
-    ["Hoverpack Journal Entry"] = 159,
-    ["Powerpack Journal Entry"] = 160,
-    ["Webgun Journal Entry"] = 161,
-    ["Shotgun Journal Entry"] = 162,
-    ["Freeze Ray Journal Entry"] = 163,
-    ["Clone Gun Journal Entry"] = 164,
-    ["Crossbow Journal Entry"] = 165,
-    ["Camera Journal Entry"] = 166,
-    ["Teleporter Journal Entry"] = 167,
-    ["Mattock Journal Entry"] = 168,
-    ["Boomerang Journal Entry"] = 169,
-    ["Machete Journal Entry"] = 170,
-    ["Excalibur Journal Entry"] = 171,
-    ["Broken Sword Journal Entry"] = 172,
-    ["Plasma Cannon Journal Entry"] = 173,
-    ["Scepter Journal Entry"] = 174,
-    ["Hou Yi's Bow Journal Entry"] = 175,
-    ["Arrow of Light Journal Entry"] = 176,
-    ["Wooden Shield Journal Entry"] = 177,
-    ["Metal Shield Journal Entry"] = 178,
-    ["Idol Journal Entry"] = 179,
-    ["The Tusk Idol Journal Entry"] = 180,
-    ["Curse Pot Journal Entry"] = 181,
-    ["Ushabti Journal Entry"] = 182,
-    ["Eggplant Journal Entry"] = 183,
-    ["Cooked Turkey Journal Entry"] = 184,
-    ["Elixir Journal Entry"] = 185,
-    ["Four-Leaf Clover Journal Entry"] = 186,
-
-    -- Trap Entries
-    ["Spikes Journal Entry"] = 187,
-    ["Arrow Trap Journal Entry"] = 188,
-    ["Totem Trap Journal Entry"] = 189,
-    ["Log Trap Journal Entry"] = 190,
-    ["Spear Trap Journal Entry"] = 191,
-    ["Thorny Vine Journal Entry"] = 192,
-    ["Bear Trap Journal Entry"] = 193,
-    ["Powder Box Journal Entry"] = 194,
-    ["Falling Platform Journal Entry"] = 195,
-    ["Spikeball Journal Entry"] = 196,
-    ["Lion Trap Journal Entry"] = 197,
-    ["Giant Clam Journal Entry"] = 198,
-    ["Sliding Wall Journal Entry"] = 199,
-    ["Crush Trap Journal Entry"] = 200,
-    ["Giant Crush Trap Journal Entry"] = 201,
-    ["Boulder Journal Entry"] = 202,
-    ["Spring Trap Journal Entry"] = 203,
-    ["Landmine Journal Entry"] = 204,
-    ["Laser Trap Journal Entry"] = 205,
-    ["Spark Trap Journal Entry"] = 206,
-    ["Frog Trap Journal Entry"] = 207,
-    ["Sticky Trap Journal Entry"] = 208,
-    ["Bone Drop Journal Entry"] = 209,
-    ["Egg Sac Journal Entry"] = 210
+theme_to_world_unlock_id = {
+    [THEME.JUNGLE]       = Spel2AP.world_unlocks.Jungle,
+    [THEME.VOLCANA]      = Spel2AP.world_unlocks.Volcana,
+    [THEME.OLMEC]        = Spel2AP.world_unlocks.Olmecs_Lair,
+    [THEME.TIDE_POOL]    = Spel2AP.world_unlocks.Tide_Pool,
+    [THEME.TEMPLE]       = Spel2AP.world_unlocks.Temple,
+    [THEME.ICE_CAVES]    = Spel2AP.world_unlocks.Ice_Caves,
+    [THEME.NEO_BABYLON]  = Spel2AP.world_unlocks.Neo_Babylon,
+    [THEME.SUNKEN_CITY]  = Spel2AP.world_unlocks.Sunken_City,
+    [THEME.COSMIC_OCEAN] = Spel2AP.world_unlocks.Cosmic_Ocean,
 }
 
 item_ids = {
-    [1] = {
-        type = ENT_TYPE.ITEM_PICKUP_ROPEPILE,
+    [Spel2AP.filler_items.Rope_Pile] = {
+        type = Spel2AP.filler_items,
         name = "Rope Pile",
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 0,
         TileX = 0,
-        TileY = 0
     },
-    [2] = {
-        type = ENT_TYPE.ITEM_PICKUP_BOMBBAG,
+    [Spel2AP.filler_items.Bomb_Bag] = {
+        type = Spel2AP.filler_items,
         name = "Bomb Bag",
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 0,
         TileX = 1,
-        TileY = 0
     },
-    [3] = {
-        type = ENT_TYPE.ITEM_PICKUP_BOMBBOX,
+    [Spel2AP.filler_items.Bomb_Box] = {
+        type = Spel2AP.filler_items,
         name = "Bomb Box",
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 0,
         TileX = 2,
-        TileY = 0
     },
-    [4] = {
-        type = ENT_TYPE.ITEM_PICKUP_COOKEDTURKEY,
+    [Spel2AP.filler_items.Cooked_Turkey] = {
+        type = Spel2AP.filler_items,
         name = "Cooked Turkey",
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 3,
         TileX = 5,
-        TileY = 3
     },
-    [5] = {
-        type = ENT_TYPE.ITEM_PICKUP_ROYALJELLY,
+    [Spel2AP.filler_items.Royal_Jelly] = {
+        type = Spel2AP.filler_items,
         name = "Royal Jelly",
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 1,
         TileX = 6,
-        TileY = 1
     },
-    [6] = {
-        type = ENT_TYPE.ITEM_GOLDBAR,
+    [Spel2AP.filler_items.Gold_Bar] = {
+        type = Spel2AP.filler_items,
         name = "Gold Bar",
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileY = 8,
         TileX = 12,
-        TileY = 8
     },
-    [7] = {
-        type = ENT_TYPE.CHAR_ANA_SPELUNKY,
+    [Spel2AP.filler_items.Emerald_Gem] = {
+        type = Spel2AP.filler_items,
+        name = "Emerald",
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileY = 0,
+        TileX = 3,
+    },
+    [Spel2AP.filler_items.Sapphire_Gem] = {
+        type = Spel2AP.filler_items,
+        name = "Sapphire",
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileY = 0,
+        TileX = 4,
+    },
+    [Spel2AP.filler_items.Ruby_Gem] = {
+        type = Spel2AP.filler_items,
+        name = "Ruby",
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileY = 0,
+        TileX = 5,
+    },
+    [Spel2AP.filler_items.Diamond_Gem] = {
+        type = Spel2AP.filler_items,
+        name = "Diamond",
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileY = 0,
+        TileX = 6,
+    },
+    [Spel2AP.characters.Ana_Spelunky] = {
+        type = Spel2AP.characters,
         name = get_character_name(ENT_TYPE.CHAR_ANA_SPELUNKY),
         display = TEXTURE.DATA_TEXTURES_CHAR_YELLOW_0,
+        TileY = 0,
         TileX = 0,
-        TileY = 0
     },
-    [8] = {
-        type = ENT_TYPE.CHAR_MARGARET_TUNNEL,
+    [Spel2AP.characters.Margaret_Tunnel] = {
+        type = Spel2AP.characters,
         name = get_character_name(ENT_TYPE.CHAR_MARGARET_TUNNEL),
         display = TEXTURE.DATA_TEXTURES_CHAR_MAGENTA_0,
+        TileY = 0,
         TileX = 0,
-        TileY = 0
     },
-    [9] = {
-        type = ENT_TYPE.CHAR_COLIN_NORTHWARD,
+    [Spel2AP.characters.Colin_Northward] = {
+        type = Spel2AP.characters,
         name = get_character_name(ENT_TYPE.CHAR_COLIN_NORTHWARD),
         display = TEXTURE.DATA_TEXTURES_CHAR_CYAN_0,
+        TileY = 0,
         TileX = 0,
-        TileY = 0
     },
-    [10] = {
-        type = ENT_TYPE.CHAR_ROFFY_D_SLOTH,
+    [Spel2AP.characters.Roffy_D_Sloth] = {
+        type = Spel2AP.characters,
         name = get_character_name(ENT_TYPE.CHAR_ROFFY_D_SLOTH),
         display = TEXTURE.DATA_TEXTURES_CHAR_BLACK_0,
+        TileY = 0,
         TileX = 0,
-        TileY = 0
     },
-    [11] = {
-        type = ENT_TYPE.CHAR_BANDA,
+    [Spel2AP.characters.Alto_Singh] = {
+        type = Spel2AP.characters,
         name = get_character_name(ENT_TYPE.CHAR_BANDA),
         display = TEXTURE.DATA_TEXTURES_CHAR_CINNABAR_0,
+        TileY = 0,
         TileX = 0,
-        TileY = 0
     },
-    [12] = {
-        type = ENT_TYPE.CHAR_GREEN_GIRL,
+    [Spel2AP.characters.Liz_Mutton] = {
+        type = Spel2AP.characters,
         name = get_character_name(ENT_TYPE.CHAR_GREEN_GIRL),
         display = TEXTURE.DATA_TEXTURES_CHAR_GREEN_0,
+        TileY = 0,
         TileX = 0,
-        TileY = 0
     },
-    [13] = {
-        type = ENT_TYPE.CHAR_AMAZON,
+    [Spel2AP.characters.Nekka_the_Eagle] = {
+        type = Spel2AP.characters,
         name = get_character_name(ENT_TYPE.CHAR_AMAZON),
         display = TEXTURE.DATA_TEXTURES_CHAR_OLIVE_0,
+        TileY = 0,
         TileX = 0,
-        TileY = 0
     },
-    [14] = {
-        type = ENT_TYPE.CHAR_LISE_SYSTEM,
+    [Spel2AP.characters.LISE_Project] = {
+        type = Spel2AP.characters,
         name = get_character_name(ENT_TYPE.CHAR_LISE_SYSTEM),
         display = TEXTURE.DATA_TEXTURES_CHAR_WHITE_0,
+        TileY = 0,
         TileX = 0,
-        TileY = 0
     },
-    [15] = {
-        type = ENT_TYPE.CHAR_COCO_VON_DIAMONDS,
+    [Spel2AP.characters.Coco_Von_Diamonds] = {
+        type = Spel2AP.characters,
         name = get_character_name(ENT_TYPE.CHAR_COCO_VON_DIAMONDS),
         display = TEXTURE.DATA_TEXTURES_CHAR_CERULEAN_0,
+        TileY = 0,
         TileX = 0,
-        TileY = 0
     },
-    [16] = {
-        type = ENT_TYPE.CHAR_MANFRED_TUNNEL,
+    [Spel2AP.characters.Manfred_Tunnel] = {
+        type = Spel2AP.characters,
         name = get_character_name(ENT_TYPE.CHAR_MANFRED_TUNNEL),
         display = TEXTURE.DATA_TEXTURES_CHAR_BLUE_0,
+        TileY = 0,
         TileX = 0,
-        TileY = 0
     },
-    [17] = {
-        type = ENT_TYPE.CHAR_OTAKU,
+    [Spel2AP.characters.Little_Jay] = {
+        type = Spel2AP.characters,
         name = get_character_name(ENT_TYPE.CHAR_OTAKU),
         display = TEXTURE.DATA_TEXTURES_CHAR_LIME_0,
+        TileY = 0,
         TileX = 0,
-        TileY = 0
     },
-    [18] = {
-        type = ENT_TYPE.CHAR_TINA_FLAN,
+    [Spel2AP.characters.Tina_Flan] = {
+        type = Spel2AP.characters,
         name = get_character_name(ENT_TYPE.CHAR_TINA_FLAN),
         display = TEXTURE.DATA_TEXTURES_CHAR_LEMON_0,
+        TileY = 0,
         TileX = 0,
-        TileY = 0
     },
-    [19] = {
-        type = ENT_TYPE.CHAR_VALERIE_CRUMP,
+    [Spel2AP.characters.Valerie_Crump] = {
+        type = Spel2AP.characters,
         name = get_character_name(ENT_TYPE.CHAR_VALERIE_CRUMP),
         display = TEXTURE.DATA_TEXTURES_CHAR_IRIS_0,
+        TileY = 0,
         TileX = 0,
-        TileY = 0
     },
-    [20] = {
-        type = ENT_TYPE.CHAR_AU,
+    [Spel2AP.characters.Au] = {
+        type = Spel2AP.characters,
         name = get_character_name(ENT_TYPE.CHAR_AU),
         display = TEXTURE.DATA_TEXTURES_CHAR_GOLD_0,
+        TileY = 0,
         TileX = 0,
-        TileY = 0
     },
-    [21] = {
-        type = ENT_TYPE.CHAR_DEMI_VON_DIAMONDS,
+    [Spel2AP.characters.Demi_Von_Diamonds] = {
+        type = Spel2AP.characters,
         name = get_character_name(ENT_TYPE.CHAR_DEMI_VON_DIAMONDS),
         display = TEXTURE.DATA_TEXTURES_CHAR_RED_0,
+        TileY = 0,
         TileX = 0,
-        TileY = 0
     },
-    [22] = {
-        type = ENT_TYPE.CHAR_PILOT,
+    [Spel2AP.characters.Pilot] = {
+        type = Spel2AP.characters,
         name = get_character_name(ENT_TYPE.CHAR_PILOT),
         display = TEXTURE.DATA_TEXTURES_CHAR_PINK_0,
+        TileY = 0,
         TileX = 0,
-        TileY = 0
     },
-    [23] = {
-        type = ENT_TYPE.CHAR_PRINCESS_AIRYN,
+    [Spel2AP.characters.Princess_Airyn] = {
+        type = Spel2AP.characters,
         name = get_character_name(ENT_TYPE.CHAR_PRINCESS_AIRYN),
         display = TEXTURE.DATA_TEXTURES_CHAR_VIOLET_0,
+        TileY = 0,
         TileX = 0,
-        TileY = 0
     },
-    [24] = {
-        type = ENT_TYPE.CHAR_DIRK_YAMAOKA,
+    [Spel2AP.characters.Dirk_Yamaoka] = {
+        type = Spel2AP.characters,
         name = get_character_name(ENT_TYPE.CHAR_DIRK_YAMAOKA),
         display = TEXTURE.DATA_TEXTURES_CHAR_GRAY_0,
+        TileY = 0,
         TileX = 0,
-        TileY = 0
     },
-    [25] = {
-        type = ENT_TYPE.CHAR_GUY_SPELUNKY,
+    [Spel2AP.characters.Guy_Spelunky] = {
+        type = Spel2AP.characters,
         name = get_character_name(ENT_TYPE.CHAR_GUY_SPELUNKY),
         display = TEXTURE.DATA_TEXTURES_CHAR_KHAKI_0,
+        TileY = 0,
         TileX = 0,
-        TileY = 0
     },
-    [26] = {
-        type = ENT_TYPE.CHAR_CLASSIC_GUY,
+    [Spel2AP.characters.Classic_Guy] = {
+        type = Spel2AP.characters,
         name = get_character_name(ENT_TYPE.CHAR_CLASSIC_GUY),
         display = TEXTURE.DATA_TEXTURES_CHAR_ORANGE_0,
+        TileY = 0,
         TileX = 0,
-        TileY = 0
     },
-    [27] = {
-        type = ENT_TYPE.ITEM_PICKUP_UDJATEYE,
-        name = "Udjat Eye",
+    [Spel2AP.locked_items.Alien_Compass] = {
+        type = Spel2AP.locked_items,
+        name = "Alien Compass Unlocked",
+        lock_name = "Alien Compass",
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
-        TileX = 1,
-        TileY = 1
+        TileY = 4,
+        TileX = 8,
     },
-    [28] = {
-        type = ENT_TYPE.ITEM_PICKUP_HEDJET,
-        name = "Hedjet",
+    [Spel2AP.locked_items.Ankh] = {
+        type = Spel2AP.locked_items,
+        name = "Ankh Unlocked",
+        lock_name = "Ankh",
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
-        TileX = 3,
-        TileY = 1
-    },
-    [29] = {
-        type = ENT_TYPE.ITEM_PICKUP_CROWN,
-        name = "Crown",
-        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
-        TileX = 4,
-        TileY = 1
-    },
-    [30] = {
-        type = ENT_TYPE.ITEM_PICKUP_ANKH,
-        name = "Ankh",
-        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 1,
         TileX = 5,
-        TileY = 1
     },
-    [31] = {
-        type = ENT_TYPE.ITEM_PICKUP_TABLETOFDESTINY,
-        name = "Tablet of Destiny",
+    [Spel2AP.locked_items.Arrow_of_Light] = {
+        type = Spel2AP.locked_items,
+        name = "Arrow of Light Unlocked",
+        lock_name = "Arrow of Light",
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
-        TileX = 9,
-        TileY = 3
+        TileY = 5,
+        TileX = 1,
     },
-    [32] = {
-        type = ENT_TYPE.ITEM_EXCALIBUR,
-        name = "Excalibur",
+    [Spel2AP.locked_items.Camera] = {
+        type = Spel2AP.locked_items,
+        name = "Camera Unlocked",
+        lock_name = "Camera",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 2,
+        TileX = 4,
+    },
+    [Spel2AP.locked_items.Cape] = {
+        type = Spel2AP.locked_items,
+        name = "Cape Unlocked",
+        lock_name = "Cape",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 1,
+        TileX = 7,
+    },
+    [Spel2AP.locked_items.Climbing_Gloves] = {
+        type = Spel2AP.locked_items,
+        name = "Climbing Gloves Unlocked",
+        lock_name = "Climbing Gloves",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 0,
+        TileX = 5,
+    },
+    [Spel2AP.locked_items.Clone_Gun] = {
+        type = Spel2AP.locked_items,
+        name = "Clone Gun Unlocked",
+        lock_name = "Clone Gun",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 3,
+        TileX = 7,
+    },
+    [Spel2AP.locked_items.Compass] = {
+        type = Spel2AP.locked_items,
+        name = "Compass Unlocked",
+        lock_name = "Compass",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 0,
+        TileX = 9,
+    },
+    [Spel2AP.locked_items.Crown] = {
+        type = Spel2AP.locked_items,
+        name = "Crown Unlocked",
+        lock_name = "Crown",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 1,
+        TileX = 4,
+    },
+    [Spel2AP.locked_items.Eggplant] = {
+        type = Spel2AP.locked_items,
+        name = "Eggplant Unlocked",
+        lock_name = "Eggplant",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 3,
+        TileX = 4,
+    },
+    [Spel2AP.locked_items.Eggplant_Crown] = {
+        type = Spel2AP.locked_items,
+        name = "Eggplant Crown Unlocked",
+        lock_name = "Eggplant Crown",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 5,
+        TileX = 3,
+    },
+    [Spel2AP.locked_items.Elixir] = {
+        type = Spel2AP.locked_items,
+        name = "Elixir Unlocked",
+        lock_name = "Elixir",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 4,
+        TileX = 6,
+    },
+    [Spel2AP.locked_items.Excalibur] = {
+        type = Spel2AP.locked_items,
+        name = "Excalibur Unlocked",
+        lock_name = "Excalibur",
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
         TileX = 2,
         TileY = 10
     },
-    [33] = {
-        type = ENT_TYPE.ITEM_SCEPTER,
-        name = "Scepter",
+    [Spel2AP.locked_items.Four_Leaf_Clover] = {
+        type = Spel2AP.locked_items,
+        name = "Four-Leaf Clover Unlocked",
+        lock_name = "Four-Leaf Clover",
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
-        TileX = 1,
-        TileY = 3
-    },
-    [34] = {
-        type = ENT_TYPE.ITEM_HOUYIBOW,
-        name = "Hou Yi's Bow",
-        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
-        TileX = 0,
-        TileY = 5
-    },
-    [35] = {
-        type = ENT_TYPE.ITEM_LIGHT_ARROW,
-        name = "Arrow of Light",
-        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
-        TileX = 1,
-        TileY = 5
-    },
-    [36] = {
-        type = ENT_TYPE.ITEM_USHABTI,
-        name = "Ushabti",
-        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
-        TileX = 3,
-        TileY = 3
-    },
-    [37] = {
-        type = "health",
-        name = "Starting Health Upgrade",
-        display = TEXTURE.DATA_TEXTURES_FX_SMALL_0,
-        TileX = 0,
-        TileY = 0
-    },
-    [38] = {
-        type = "bombs",
-        name = "Starting Bombs Upgrade",
-        display = TEXTURE.DATA_TEXTURES_CHAR_YELLOW_0,
-        TileX = 1,
-        TileY = 11
-    },
-    [39] = {
-        type = "ropes",
-        name = "Starting Ropes Upgrade",
-        display = TEXTURE.DATA_TEXTURES_CHAR_YELLOW_0,
-        TileX = 4,
-        TileY = 12
-    },
-    [40] = {
-        type = "paste",
-        name = "Paste",
-        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
-        TileX = 3,
-        TileY = 0
-    },
-    [41] = {
-        type = "clover",
-        name = "Permanant Four-Leaf Clover",
-        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 4,
         TileX = 2,
-        TileY = 4
     },
-    [42] = {
-        type = "compass",
-        name = "Progressive Compass",
+    [Spel2AP.locked_items.Freeze_Ray] = {
+        type = Spel2AP.locked_items,
+        name = "Freeze Ray Unlocked",
+        lock_name = "Freeze Ray",
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
-        TileX = 9,
-        TileY = 0
+        TileY = 2,
+        TileX = 2,
     },
-    [43] = {
-        type = "eggplant",
-        name = "Eggplant",
+    [Spel2AP.locked_items.Hedjet] = {
+        type = Spel2AP.locked_items,
+        name = "Hedjet Unlocked",
+        lock_name = "Hedjet",
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 1,
+        TileX = 3,
+    },
+    [Spel2AP.locked_items.Hoverpack] = {
+        type = Spel2AP.locked_items,
+        name = "Hoverpack Unlocked",
+        lock_name = "Hoverpack",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 3,
+        TileX = 6,
+    },
+    [Spel2AP.locked_items.Hou_Yis_Bow] = {
+        type = Spel2AP.locked_items,
+        name = "Hou Yi's Bow Unlocked",
+        lock_name = "Hou Yi's Bow",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 5,
+        TileX = 0,
+    },
+    [Spel2AP.locked_items.Jetpack] = {
+        type = Spel2AP.locked_items,
+        name = "Jetpack Unlocked",
+        lock_name = "Jetpack",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 1,
+        TileX = 8,
+    },
+    [Spel2AP.locked_items.Kapala] = {
+        type = Spel2AP.locked_items,
+        name = "Kapala Unlocked",
+        lock_name = "Kapala",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 1,
+        TileX = 2,
+    },
+    [Spel2AP.locked_items.Machete] = {
+        type = Spel2AP.locked_items,
+        name = "Machete Unlocked",
+        lock_name = "Machete",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 2,
+        TileX = 8,
+    },
+    [Spel2AP.locked_items.Mattock] = {
+        type = Spel2AP.locked_items,
+        name = "Mattock Unlocked",
+        lock_name = "Mattock",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 2,
+        TileX = 6,
+    },
+    [Spel2AP.locked_items.Paste] = {
+        type = Spel2AP.locked_items,
+        name = "Paste Unlocked",
+        lock_name = "Paste",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 0,
+        TileX = 3,
+    },
+    [Spel2AP.locked_items.Pitchers_Mitt] = {
+        type = Spel2AP.locked_items,
+        name = "Pitcher's Mitt Unlocked",
+        lock_name = "Pitcher's Mitt",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 0,
+        TileX = 6,
+    },
+    [Spel2AP.locked_items.Plasma_Cannon] = {
+        type = Spel2AP.locked_items,
+        name = "Plasma Cannon Unlocked",
+        lock_name = "Plasma Cannon",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 3,
+        TileX = 0,
+    },
+    [Spel2AP.locked_items.Powerpack] = {
+        type = Spel2AP.locked_items,
+        name = "Powerpack Unlocked",
+        lock_name = "Powerpack",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 4,
         TileX = 4,
-        TileY = 3
     },
-    [44] = {
-        type = "checkpoints",
+    [Spel2AP.locked_items.Scepter] = {
+        type = Spel2AP.locked_items,
+        name = "Scepter Unlocked",
+        lock_name = "Scepter",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 3,
+        TileX = 1,
+    },
+    [Spel2AP.locked_items.Shield] = {
+        type = Spel2AP.locked_items,
+        name = "Shield Unlocked",
+        lock_name = "Shield",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 4,
+        TileX = 1,
+    },
+    [Spel2AP.locked_items.Skeleton_Key] = {
+        type = Spel2AP.locked_items,
+        name = "Skeleton Key Unlocked",
+        lock_name = "Skeleton Key",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 3,
+        TileX = 8,
+    },
+    [Spel2AP.locked_items.Spectacles] = {
+        type = Spel2AP.locked_items,
+        name = "Spectacles Unlocked",
+        lock_name = "Spectacles",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 0,
+        TileX = 4,
+    },
+    [Spel2AP.locked_items.Spike_Shoes] = {
+        type = Spel2AP.locked_items,
+        name = "Spike Shoes Unlocked",
+        lock_name = "Spike Shoes",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 0,
+        TileX = 8,
+    },
+    [Spel2AP.locked_items.Spring_Shoes] = {
+        type = Spel2AP.locked_items,
+        name = "Spring Shoes Unlocked",
+        lock_name = "Spring Shoes",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 0,
+        TileX = 7,
+    },
+    [Spel2AP.locked_items.Tablet_of_Destiny] = {
+        type = Spel2AP.locked_items,
+        name = "Tablet of Destiny Unlocked",
+        lock_name = "Tablet of Destiny",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 3,
+        TileX = 9,
+    },
+    [Spel2AP.locked_items.Telepack] = {
+        type = Spel2AP.locked_items,
+        name = "Telepack Unlocked",
+        lock_name = "Telepack",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 1,
+        TileX = 9,
+    },
+    [Spel2AP.locked_items.Teleporter] = {
+        type = Spel2AP.locked_items,
+        name = "Teleporter Unlocked",
+        lock_name = "Teleporter",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 2,
+        TileX = 5,
+    },
+    [Spel2AP.locked_items.True_Crown] = {
+        type = Spel2AP.locked_items,
+        name = "True Crown Unlocked",
+        lock_name = "True Crown",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 4,
+        TileX = 3,
+    },
+    [Spel2AP.locked_items.Udjat_Eye] = {
+        type = Spel2AP.locked_items,
+        name = "Udjat Eye Unlocked",
+        lock_name = "Udjat Eye",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 1,
+        TileX = 1,
+    },
+    [Spel2AP.locked_items.Ushabti] = {
+        type = Spel2AP.locked_items,
+        name = "Ushabti Unlocked",
+        lock_name = "Ushabti",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 3,
+        TileX = 3,
+    },
+    [Spel2AP.locked_items.Vlads_Cape] = {
+        type = Spel2AP.locked_items,
+        name = "Vlad's Cape Unlocked",
+        lock_name = "Vlad's Cape",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 4,
+        TileX = 5,
+    },
+    [Spel2AP.locked_items.Webgun] = {
+        type = Spel2AP.locked_items,
+        name = "Webgun Unlocked",
+        lock_name = "Webgun",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 2,
+        TileX = 0,
+    },
+    [Spel2AP.upgrades.Alien_Compass] = {
+        type = Spel2AP.upgrades,
+        name = "Alien Compass Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 1,
+        TileX = 5,
+    },
+    [Spel2AP.upgrades.Ankh] = {
+        type = Spel2AP.upgrades,
+        name = "Ankh Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 1,
+        TileX = 5,
+    },
+    [Spel2AP.upgrades.Arrow_of_Light] = {
+        type = Spel2AP.upgrades,
+        name = "Arrow of Light Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 5,
+        TileX = 1,
+    },
+    [Spel2AP.upgrades.Camera] = {
+        type = Spel2AP.upgrades,
+        name = "Camera Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 2,
+        TileX = 4,
+    },
+    [Spel2AP.upgrades.Cape] = {
+        type = Spel2AP.upgrades,
+        name = "Cape Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 1,
+        TileX = 7,
+    },
+    [Spel2AP.upgrades.Climbing_Gloves] = {
+        type = Spel2AP.upgrades,
+        name = "Climbing Gloves Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 0,
+        TileX = 5,
+    },
+    [Spel2AP.upgrades.Clone_Gun] = {
+        type = Spel2AP.upgrades,
+        name = "Clone Gun Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 3,
+        TileX = 7,
+    },
+    [Spel2AP.upgrades.Compass] = {
+        type = Spel2AP.upgrades,
+        name = "Compass Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 0,
+        TileX = 9,
+    },
+    [Spel2AP.upgrades.Crown] = {
+        type = Spel2AP.upgrades,
+        name = "Crown Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 1,
+        TileX = 4,
+    },
+    [Spel2AP.upgrades.Eggplant] = {
+        type = Spel2AP.upgrades,
+        name = "Eggplant Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 3,
+        TileX = 4,
+    },
+    [Spel2AP.upgrades.Eggplant_Crown] = {
+        type = Spel2AP.upgrades,
+        name = "Eggplant Crown Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 5,
+        TileX = 3,
+    },
+    [Spel2AP.upgrades.Elixir] = {
+        type = Spel2AP.upgrades,
+        name = "Elixir Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 4,
+        TileX = 6,
+    },
+    [Spel2AP.upgrades.Excalibur] = {
+        type = Spel2AP.upgrades,
+        name = "Excalibur Upgrade",
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileX = 2,
+        TileY = 10
+    },
+    [Spel2AP.upgrades.Four_Leaf_Clover] = {
+        type = Spel2AP.upgrades,
+        name = "Four-Leaf Clover Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 4,
+        TileX = 2,
+    },
+    [Spel2AP.upgrades.Freeze_Ray] = {
+        type = Spel2AP.upgrades,
+        name = "Freeze Ray Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 2,
+        TileX = 2,
+    },
+    [Spel2AP.upgrades.Hedjet] = {
+        type = Spel2AP.upgrades,
+        name = "Hedjet Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 0,
+        TileX = 3,
+    },
+    [Spel2AP.upgrades.Hoverpack] = {
+        type = Spel2AP.upgrades,
+        name = "Hoverpack Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 3,
+        TileX = 6,
+    },
+    [Spel2AP.upgrades.Hou_Yis_Bow] = {
+        type = Spel2AP.upgrades,
+        name = "Hou Yi's Bow Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 5,
+        TileX = 0,
+    },
+    [Spel2AP.upgrades.Jetpack] = {
+        type = Spel2AP.upgrades,
+        name = "Jetpack Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 1,
+        TileX = 8,
+    },
+    [Spel2AP.upgrades.Kapala] = {
+        type = Spel2AP.upgrades,
+        name = "Kapala Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 1,
+        TileX = 2,
+    },
+    [Spel2AP.upgrades.Machete] = {
+        type = Spel2AP.upgrades,
+        name = "Machete Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 2,
+        TileX = 8,
+    },
+    [Spel2AP.upgrades.Mattock] = {
+        type = Spel2AP.upgrades,
+        name = "Mattock Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 2,
+        TileX = 6,
+    },
+    [Spel2AP.upgrades.Paste] = {
+        type = Spel2AP.upgrades,
+        name = "Paste Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 0,
+        TileX = 3,
+    },
+    [Spel2AP.upgrades.Pitchers_Mitt] = {
+        type = Spel2AP.upgrades,
+        name = "Pitcher's Mitt Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 0,
+        TileX = 6,
+    },
+    [Spel2AP.upgrades.Plasma_Cannon] = {
+        type = Spel2AP.upgrades,
+        name = "Plasma Cannon Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 3,
+        TileX = 0,
+    },
+    [Spel2AP.upgrades.Powerpack] = {
+        type = Spel2AP.upgrades,
+        name = "Powerpack Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 4,
+        TileX = 4,
+    },
+    [Spel2AP.upgrades.Scepter] = {
+        type = Spel2AP.upgrades,
+        name = "Scepter Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 3,
+        TileX = 1,
+    },
+    [Spel2AP.upgrades.Shield] = {
+        type = Spel2AP.upgrades,
+        name = "Shield Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 4,
+        TileX = 1,
+    },
+    [Spel2AP.upgrades.Skeleton_Key] = {
+        type = Spel2AP.upgrades,
+        name = "Skeleton Key Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 3,
+        TileX = 8,
+    },
+    [Spel2AP.upgrades.Spectacles] = {
+        type = Spel2AP.upgrades,
+        name = "Spectacles Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 0,
+        TileX = 4,
+    },
+    [Spel2AP.upgrades.Spike_Shoes] = {
+        type = Spel2AP.upgrades,
+        name = "Spike Shoes Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 0,
+        TileX = 8,
+    },
+    [Spel2AP.upgrades.Spring_Shoes] = {
+        type = Spel2AP.upgrades,
+        name = "Spring Shoes Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 0,
+        TileX = 7,
+    },
+    [Spel2AP.upgrades.Tablet_of_Destiny] = {
+        type = Spel2AP.upgrades,
+        name = "Tablet of Destiny Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 3,
+        TileX = 9,
+    },
+    [Spel2AP.upgrades.Telepack] = {
+        type = Spel2AP.upgrades,
+        name = "Telepack Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 1,
+        TileX = 9,
+    },
+    [Spel2AP.upgrades.Teleporter] = {
+        type = Spel2AP.upgrades,
+        name = "Teleporter Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 2,
+        TileX = 5,
+    },
+    [Spel2AP.upgrades.True_Crown] = {
+        type = Spel2AP.upgrades,
+        name = "True Crown Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 4,
+        TileX = 3,
+    },
+    [Spel2AP.upgrades.Udjat_Eye] = {
+        type = Spel2AP.upgrades,
+        name = "Udjat Eye Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 1,
+        TileX = 1,
+    },
+    [Spel2AP.upgrades.Ushabti] = {
+        type = Spel2AP.upgrades,
+        name = "Ushabti Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 3,
+        TileX = 3,
+    },
+    [Spel2AP.upgrades.Vlads_Cape] = {
+        type = Spel2AP.upgrades,
+        name = "Vlad's Cape Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 4,
+        TileX = 5,
+    },
+    [Spel2AP.upgrades.Webgun] = {
+        type = Spel2AP.upgrades,
+        name = "Webgun Upgrade",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
+        TileY = 2,
+        TileX = 0,
+    },
+    [Spel2AP.permanent_upgrades.Health] = {
+        type = Spel2AP.permanent_upgrades,
+        name = "Health Upgrade",
+        display = TEXTURE.DATA_TEXTURES_FX_SMALL_0,
+        TileY = 7,
+        TileX = 7,
+    },
+    [Spel2AP.permanent_upgrades.Bomb] = {
+        type = Spel2AP.permanent_upgrades,
+        name = "Bomb Upgrade",
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileY = 5,
+        TileX = 0,
+    },
+    [Spel2AP.permanent_upgrades.Rope] = {
+        type = Spel2AP.permanent_upgrades,
+        name = "Rope Upgrade",
+        display = TEXTURE.DATA_TEXTURES_CHAR_YELLOW_0,
+        TileY = 12,
+        TileX = 4,
+    },
+    [Spel2AP.permanent_upgrades.Cosmic_Ocean_Checkpoint] = {
+        type = Spel2AP.permanent_upgrades,
         name = "Cosmic Ocean Checkpoint",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_BG_0,
+        TileX = 1,
+        TileY = 2
+    },
+    [Spel2AP.world_unlocks.Progressive_World] = {
+        type = Spel2AP.world_unlocks,
+        name = "Progress World Unlocked",
+        display = TEXTURE.DATA_TEXTURES_FX_SMALL3_0,
+        TileY = 6,
+        TileX = 6,
+    },
+    [Spel2AP.world_unlocks.Jungle] = {
+        type = Spel2AP.world_unlocks,
+        name = "Jungle Unlocked",
+        display = TEXTURE.DATA_TEXTURES_MENU_DEATHMATCH5_0,
+        TileY = 0,
+        TileX = 1,
+    },
+    [Spel2AP.world_unlocks.Volcana] = {
+        type = Spel2AP.world_unlocks,
+        name = "Volcana Unlocked",
+        display = TEXTURE.DATA_TEXTURES_MENU_DEATHMATCH5_0,
+        TileY = 0,
+        TileX = 2,
+    },
+    [Spel2AP.world_unlocks.Olmecs_Lair] = {
+        type = Spel2AP.world_unlocks,
+        name = "Olmec's Lair Unlocked",
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_MONS_BIG_0,
+        TileY = 0,
+        TileX = 1,
+    },
+    [Spel2AP.world_unlocks.Tide_Pool] = {
+        type = Spel2AP.world_unlocks,
+        name = "Tide Pool Unlocked",
+        display = TEXTURE.DATA_TEXTURES_MENU_DEATHMATCH5_0,
+        TileY = 0,
+        TileX = 3,
+    },
+    [Spel2AP.world_unlocks.Temple] = {
+        type = Spel2AP.world_unlocks,
+        name = "Temple Unlocked",
+        display = TEXTURE.DATA_TEXTURES_MENU_DEATHMATCH5_0,
+        TileY = 1,
+        TileX = 0,
+    },
+    [Spel2AP.world_unlocks.Ice_Caves] = {
+        type = Spel2AP.world_unlocks,
+        name = "Ice Caves Unlocked",
+        display = TEXTURE.DATA_TEXTURES_MENU_DEATHMATCH5_0,
+        TileY = 1,
+        TileX = 1,
+    },
+    [Spel2AP.world_unlocks.Neo_Babylon] = {
+        type = Spel2AP.world_unlocks,
+        name = "Neo Babylon Unlocked",
+        display = TEXTURE.DATA_TEXTURES_MENU_DEATHMATCH5_0,
+        TileY = 1,
+        TileX = 2,
+    },
+    [Spel2AP.world_unlocks.Sunken_City] = {
+        type = Spel2AP.world_unlocks,
+        name = "Sunken City Unlocked",
+        display = TEXTURE.DATA_TEXTURES_MENU_DEATHMATCH5_0,
+        TileY = 1,
+        TileX = 3,
+    },
+    [Spel2AP.world_unlocks.Cosmic_Ocean] = {
+        type = Spel2AP.world_unlocks,
+        name = "Cosmic Ocean Unlocked",
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
         TileX = 0,
         TileY = 0
     },
-    [45] = {
-        type = "progressive_shortcut",
-        name = "Progressive Shortcut",
+    [Spel2AP.shortcuts.Jungle] = {
+        type = Spel2AP.shortcuts,
+        name = "Jungle Shortcut",
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
         TileX = 0,
         TileY = 0
     },
-    [46] = {
-        type = "dwelling_shortcut",
-        name = "Dwelling Shortcut",
+    [Spel2AP.shortcuts.Volcana] = {
+        type = Spel2AP.shortcuts,
+        name = "Volcana Shortcut",
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
         TileX = 0,
         TileY = 0
     },
-    [47] = {
-        type = "olmec_shortcut",
+    [Spel2AP.shortcuts.Olmecs_Lair] = {
+        type = Spel2AP.shortcuts,
         name = "Olmec's Lair Shortcut",
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
         TileX = 0,
         TileY = 0
     },
-    [48] = {
-        type = "ice_caves_shortcut",
+    [Spel2AP.shortcuts.Tide_Pool] = {
+        type = Spel2AP.shortcuts,
+        name = "Tide Pool Shortcut",
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileX = 0,
+        TileY = 0
+    },
+    [Spel2AP.shortcuts.Temple] = {
+        type = Spel2AP.shortcuts,
+        name = "Temple Shortcut",
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileX = 0,
+        TileY = 0
+    },
+    [Spel2AP.shortcuts.Ice_Caves] = {
+        type = Spel2AP.shortcuts,
         name = "Ice Caves Shortcut",
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
         TileX = 0,
         TileY = 0
     },
-    [49] = {
-        type = "max_world",
-        name = "Progressive World Unlock",
-        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
-        TileX = 11,
-        TileY = 14
-    },
-    [50] = {
-        type = "jungle",
-        name = "Jungle",
+    [Spel2AP.shortcuts.Neo_Babylon] = {
+        type = Spel2AP.shortcuts,
+        name = "Neo Babylon Shortcut",
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
         TileX = 0,
         TileY = 0
     },
-    [51] = {
-        type = "volcana",
-        name = "Volcana",
+    [Spel2AP.shortcuts.Sunken_City] = {
+        type = Spel2AP.shortcuts,
+        name = "Sunken City Shortcut",
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
         TileX = 0,
         TileY = 0
     },
-    [52] = {
-        type = "olmec",
-        name = "Olmec's Lair",
-        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
-        TileX = 0,
-        TileY = 0
-    },
-    [53] = {
-        type = "tide_pool",
-        name = "Tide Pool",
-        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
-        TileX = 0,
-        TileY = 0
-    },
-    [54] = {
-        type = "temple",
-        name = "Temple",
-        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
-        TileX = 0,
-        TileY = 0
-    },
-    [55] = {
-        type = "ice_caves",
-        name = "Ice Caves",
-        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
-        TileX = 0,
-        TileY = 0
-    },
-    [56] = {
-        type = "neo_babylon",
-        name = "Neo Babylon",
-        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
-        TileX = 0,
-        TileY = 0
-    },
-    [57] = {
-        type = "sunken_city",
-        name = "Sunken City",
-        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
-        TileX = 0,
-        TileY = 0
-    },
-    [58] = {
-        type = "cosmic_ocean",
-        name = "Cosmic Ocean",
-        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
-        TileX = 0,
-        TileY = 0
-    },
-    [59] = {
-        type = "poison",
+    [Spel2AP.traps.Poison] = {
+        type = Spel2AP.traps,
         name = "Poison Trap",
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
-        TileX = 0,
-        TileY = 0
+        TileY = 14,
+        TileX = 3,
     },
-    [60] = {
-        type = "curse",
+    [Spel2AP.traps.Curse] = {
+        type = Spel2AP.traps,
         name = "Curse Trap",
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
-        TileX = 0,
-        TileY = 0
+        TileY = 15,
+        TileX = 4,
     },
-    [61] = {
-        type = "ghost",
+    [Spel2AP.traps.Ghost] = {
+        type = Spel2AP.traps,
         name = "Ghost Trap",
-        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
-        TileX = 0,
-        TileY = 0
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_PEOPLE_0,
+        TileY = 3,
+        TileX = 3,
     },
-    [62] = {
-        type = "stun",
+    [Spel2AP.traps.Stun] = {
+        type = Spel2AP.traps,
         name = "Stun Trap",
-        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
-        TileX = 0,
-        TileY = 0
+        display = TEXTURE.DATA_TEXTURES_CHAR_YELLOW_0,
+        TileY = 13,
+        TileX = 4,
     },
-    [63] = {
-        type = "loose bombs",
+    [Spel2AP.traps.Loose_Bombs] = {
+        type = Spel2AP.traps,
         name = "Loose Bombs Trap",
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
-        TileX = 0,
-        TileY = 0
+        TileY = 6,
+        TileX = 2,
     },
-    [64] = {
-        type = "blind",
-        name = "Blindess Trap",
-        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+    [Spel2AP.traps.Blindness] = {
+        type = Spel2AP.traps,
+        name = "Blindness Trap",
+        display = TEXTURE.DATA_TEXTURES_FX_SMALL3_0,
+        TileY = 6,
         TileX = 0,
-        TileY = 0
     },
-    [65] = {
-        type = "amnesia",
+    [Spel2AP.traps.Amnesia] = {
+        type = Spel2AP.traps,
         name = "Amnesia Trap",
-        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
-        TileX = 0,
-        TileY = 0
+        display = TEXTURE.DATA_TEXTURES_FX_SMALL_0,
+        TileY = 3,
+        TileX = 3,
     },
-    [66] = {
-        type = "angry",
+    [Spel2AP.traps.Angry_Shopkeepers] = {
+        type = Spel2AP.traps,
         name = "Angry Shopkeepers Trap",
-        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
-        TileX = 0,
-        TileY = 0
+        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_PEOPLE_0,
+        TileY = 2,
+        TileX = 2,
     },
-    [67] = {
-        type = "punish",
+    [Spel2AP.traps.Punish_Ball] = {
+        type = Spel2AP.traps,
         name = "Punish Ball Trap",
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
-        TileX = 0,
-        TileY = 0
+        TileY = 6,
+        TileX = 11,
     }
 }
 
-item_categories = {
-    filler_items = {
-        ENT_TYPE.ITEM_PICKUP_ROPEPILE,
-        ENT_TYPE.ITEM_PICKUP_BOMBBAG,
-        ENT_TYPE.ITEM_PICKUP_BOMBBOX,
-        ENT_TYPE.ITEM_PICKUP_COOKEDTURKEY,
-        ENT_TYPE.ITEM_PICKUP_ROYALJELLY,
-        ENT_TYPE.ITEM_GOLDBAR
-    },
-    
-    key_items = {
-        ENT_TYPE.ITEM_PICKUP_UDJATEYE,
-        ENT_TYPE.ITEM_PICKUP_HEDJET,
-        ENT_TYPE.ITEM_PICKUP_CROWN,
-        ENT_TYPE.ITEM_PICKUP_ANKH,
-        ENT_TYPE.ITEM_PICKUP_TABLETOFDESTINY,
-        ENT_TYPE.ITEM_EXCALIBUR,
-        ENT_TYPE.ITEM_SCEPTER,
-        ENT_TYPE.ITEM_HOUYIBOW,
-        ENT_TYPE.ITEM_LIGHT_ARROW,
-        ENT_TYPE.ITEM_USHABTI
-    },
-    
-    permanent_upgrades = {
-        "health",
-        "bombs",
-        "ropes",
-        "paste",
-        "clover",
-        "compass",
-        "eggplant",
-        "shortcuts",
-        "checkpoints"
-    },
-    
-    worlds = {
-        "jungle",
-        "volcana",
-        "olmec",
-        "tide_pool",
-        "temple",
-        "ice_caves",
-        "neo_babylon",
-        "sunken_city",
-        "cosmic_ocean"
-    },
-
-    shortcuts = {
-        "progressive_shortcut",
-        "dwelling_shortcut",
-        "olmec_shortcut",
-        "ice_caves_shortcut"
-    },
-    
-    traps = {
-        "poison",
-        "curse",
-        "ghost",
-        "stun",
-        "loose bombs",
-        "blind",
-        "amnesia",
-        "angry",
-        "punish"
-    }
+AP_Goal = {
+    EASY = 0,
+    HARD = 1,
+    CO = 2
 }
+
+ItemCode_to_Index = {
+    [Spel2AP.upgrades.Ankh]             = 19, [Spel2AP.locked_items.Ankh]             = 19,
+    [Spel2AP.upgrades.Camera]           = 34, [Spel2AP.locked_items.Camera]           = 34,
+    [Spel2AP.upgrades.Cape]             = 23, [Spel2AP.locked_items.Cape]             = 23,
+    [Spel2AP.upgrades.Climbing_Gloves]  = 6,  [Spel2AP.locked_items.Climbing_Gloves]  = 6,
+    [Spel2AP.upgrades.Clone_Gun]        = 32, [Spel2AP.locked_items.Clone_Gun]        = 32,
+    [Spel2AP.upgrades.Compass]          = 10, [Spel2AP.locked_items.Compass]          = 10,
+    [Spel2AP.upgrades.Eggplant]         = 51, [Spel2AP.locked_items.Eggplant]         = 51,
+    [Spel2AP.upgrades.Eggplant_Crown]   = 17, [Spel2AP.locked_items.Eggplant_Crown]   = 17,
+    [Spel2AP.upgrades.Elixir]           = 53, [Spel2AP.locked_items.Elixir]           = 53,
+    [Spel2AP.upgrades.Four_Leaf_Clover] = 54, [Spel2AP.locked_items.Four_Leaf_Clover] = 54,
+    [Spel2AP.upgrades.Freeze_Ray]       = 31, [Spel2AP.locked_items.Freeze_Ray]       = 31,
+    [Spel2AP.upgrades.Hoverpack]        = 27, [Spel2AP.locked_items.Hoverpack]        = 27,
+    [Spel2AP.upgrades.Jetpack]          = 25, [Spel2AP.locked_items.Jetpack]          = 25,
+    [Spel2AP.upgrades.Kapala]           = 14, [Spel2AP.locked_items.Kapala]           = 14,
+    [Spel2AP.upgrades.Machete]          = 38, [Spel2AP.locked_items.Machete]          = 38,
+    [Spel2AP.upgrades.Mattock]          = 36, [Spel2AP.locked_items.Mattock]          = 36,
+    [Spel2AP.upgrades.Paste]            = 4,  [Spel2AP.locked_items.Paste]            = 4,
+    [Spel2AP.upgrades.Pitchers_Mitt]    = 7,  [Spel2AP.locked_items.Pitchers_Mitt]    = 7,
+    [Spel2AP.upgrades.Plasma_Cannon]    = 41, [Spel2AP.locked_items.Plasma_Cannon]    = 41,
+    [Spel2AP.upgrades.Powerpack]        = 28, [Spel2AP.locked_items.Powerpack]        = 28,
+    [Spel2AP.upgrades.Shield]           = 46, [Spel2AP.locked_items.Shield]           = 46,
+    [Spel2AP.upgrades.Skeleton_Key]     = 21, [Spel2AP.locked_items.Skeleton_Key]     = 21,
+    [Spel2AP.upgrades.Spectacles]       = 5,  [Spel2AP.locked_items.Spectacles]       = 5,
+    [Spel2AP.upgrades.Spike_Shoes]      = 9,  [Spel2AP.locked_items.Spike_Shoes]      = 9,
+    [Spel2AP.upgrades.Spring_Shoes]     = 8,  [Spel2AP.locked_items.Spring_Shoes]     = 8,
+    [Spel2AP.upgrades.Telepack]         = 26, [Spel2AP.locked_items.Telepack]         = 26,
+    [Spel2AP.upgrades.Teleporter]       = 35, [Spel2AP.locked_items.Teleporter]       = 35,
+    [Spel2AP.upgrades.True_Crown]       = 18, [Spel2AP.locked_items.True_Crown]       = 18,
+    [Spel2AP.upgrades.Vlads_Cape]       = 24, [Spel2AP.locked_items.Vlads_Cape]       = 24,
+    [Spel2AP.upgrades.Webgun]           = 29, [Spel2AP.locked_items.Webgun]           = 29,
+
+    [Spel2AP.upgrades.Alien_Compass]     = 11, [Spel2AP.locked_items.Alien_Compass]     = 11,
+    [Spel2AP.upgrades.Arrow_of_Light]    = 44, [Spel2AP.locked_items.Arrow_of_Light]    = 44,
+    [Spel2AP.upgrades.Crown]             = 16, [Spel2AP.locked_items.Crown]             = 16,
+    [Spel2AP.upgrades.Excalibur]         = 39, [Spel2AP.locked_items.Excalibur]         = 39,
+    [Spel2AP.upgrades.Hedjet]            = 15, [Spel2AP.locked_items.Hedjet]            = 15,
+    [Spel2AP.upgrades.Hou_Yis_Bow]       = 43, [Spel2AP.locked_items.Hou_Yis_Bow]       = 43,
+    [Spel2AP.upgrades.Scepter]           = 42, [Spel2AP.locked_items.Scepter]           = 42,
+    [Spel2AP.upgrades.Tablet_of_Destiny] = 20, [Spel2AP.locked_items.Tablet_of_Destiny] = 20,
+    [Spel2AP.upgrades.Udjat_Eye]         = 13, [Spel2AP.locked_items.Udjat_Eye]         = 13,
+    [Spel2AP.upgrades.Ushabti]           = 50, [Spel2AP.locked_items.Ushabti]           = 50,
+}
+
+Journal_to_ItemEnt = {
+    [4]  = { type = ENT_TYPE.ITEM_PICKUP_PASTE,                     lock = Spel2AP.locked_items.Paste,              powerup = ENT_TYPE.ITEM_POWERUP_PASTE },
+    [5]  = { type = ENT_TYPE.ITEM_PICKUP_SPECTACLES,                lock = Spel2AP.locked_items.Spectacles,         powerup = ENT_TYPE.ITEM_POWERUP_SPECTACLES },
+    [6]  = { type = ENT_TYPE.ITEM_PICKUP_CLIMBINGGLOVES,            lock = Spel2AP.locked_items.Climbing_Gloves,    powerup = ENT_TYPE.ITEM_POWERUP_CLIMBING_GLOVES },
+    [7]  = { type = ENT_TYPE.ITEM_PICKUP_PITCHERSMITT,              lock = Spel2AP.locked_items.Pitchers_Mitt,      powerup = ENT_TYPE.ITEM_POWERUP_PITCHERSMITT },
+    [8]  = { type = ENT_TYPE.ITEM_PICKUP_SPRINGSHOES,               lock = Spel2AP.locked_items.Spring_Shoes,       powerup = ENT_TYPE.ITEM_POWERUP_SPRING_SHOES },
+    [9]  = { type = ENT_TYPE.ITEM_PICKUP_SPIKESHOES,                lock = Spel2AP.locked_items.Spike_Shoes,        powerup = ENT_TYPE.ITEM_POWERUP_SPIKE_SHOES },
+    [10] = { type = ENT_TYPE.ITEM_PICKUP_COMPASS,                   lock = Spel2AP.locked_items.Compass,            powerup = ENT_TYPE.ITEM_POWERUP_COMPASS },
+    [11] = { type = ENT_TYPE.ITEM_PICKUP_SPECIALCOMPASS,            lock = Spel2AP.locked_items.Alien_Compass,      powerup = ENT_TYPE.ITEM_POWERUP_SPECIALCOMPASS },
+    [13] = { type = ENT_TYPE.ITEM_PICKUP_UDJATEYE,                  lock = Spel2AP.locked_items.Udjat_Eye,          powerup = ENT_TYPE.ITEM_POWERUP_UDJATEYE },
+    [14] = { type = ENT_TYPE.ITEM_PICKUP_KAPALA,                    lock = Spel2AP.locked_items.Kapala,             powerup = ENT_TYPE.ITEM_POWERUP_KAPALA },
+    [15] = { type = ENT_TYPE.ITEM_PICKUP_HEDJET,                    lock = Spel2AP.locked_items.Hedjet,             powerup = ENT_TYPE.ITEM_POWERUP_HEDJET },
+    [16] = { type = ENT_TYPE.ITEM_PICKUP_CROWN,                     lock = Spel2AP.locked_items.Crown,              powerup = ENT_TYPE.ITEM_POWERUP_CROWN },
+    [17] = { type = ENT_TYPE.ITEM_PICKUP_EGGPLANTCROWN,             lock = Spel2AP.locked_items.Eggplant_Crown,     powerup = ENT_TYPE.ITEM_POWERUP_EGGPLANTCROWN },
+    [18] = { type = ENT_TYPE.ITEM_PICKUP_TRUECROWN,                 lock = Spel2AP.locked_items.True_Crown,         powerup = ENT_TYPE.ITEM_POWERUP_TRUECROWN },
+    [19] = { type = ENT_TYPE.ITEM_PICKUP_ANKH,                      lock = Spel2AP.locked_items.Ankh,               powerup = ENT_TYPE.ITEM_POWERUP_ANKH },
+    [20] = { type = ENT_TYPE.ITEM_PICKUP_TABLETOFDESTINY,           lock = Spel2AP.locked_items.Tablet_of_Destiny,  powerup = ENT_TYPE.ITEM_POWERUP_TABLETOFDESTINY },
+    [21] = { type = ENT_TYPE.ITEM_PICKUP_SKELETON_KEY,              lock = Spel2AP.locked_items.Skeleton_Key,       powerup = ENT_TYPE.ITEM_POWERUP_SKELETON_KEY },
+    [23] = { type = ENT_TYPE.ITEM_CAPE,                             lock = Spel2AP.locked_items.Cape },
+    [24] = { type = ENT_TYPE.ITEM_VLADS_CAPE,                       lock = Spel2AP.locked_items.Vlads_Cape },
+    [25] = { type = ENT_TYPE.ITEM_JETPACK,                          lock = Spel2AP.locked_items.Jetpack },
+    [26] = { type = ENT_TYPE.ITEM_TELEPORTER_BACKPACK,              lock = Spel2AP.locked_items.Telepack },
+    [27] = { type = ENT_TYPE.ITEM_HOVERPACK,                        lock = Spel2AP.locked_items.Hoverpack },
+    [28] = { type = ENT_TYPE.ITEM_POWERPACK,                        lock = Spel2AP.locked_items.Powerpack },
+    [29] = { type = ENT_TYPE.ITEM_WEBGUN,                           lock = Spel2AP.locked_items.Webgun },
+    [31] = { type = ENT_TYPE.ITEM_FREEZERAY,                        lock = Spel2AP.locked_items.Freeze_Ray },
+    [32] = { type = ENT_TYPE.ITEM_CLONEGUN,                         lock = Spel2AP.locked_items.Clone_Gun },
+    [34] = { type = ENT_TYPE.ITEM_CAMERA,                           lock = Spel2AP.locked_items.Camera },
+    [35] = { type = ENT_TYPE.ITEM_TELEPORTER,                       lock = Spel2AP.locked_items.Teleporter },
+    [36] = { type = ENT_TYPE.ITEM_MATTOCK,                          lock = Spel2AP.locked_items.Mattock },
+    [38] = { type = ENT_TYPE.ITEM_MACHETE,                          lock = Spel2AP.locked_items.Machete },
+    [39] = { type = ENT_TYPE.ITEM_EXCALIBUR,                        lock = Spel2AP.locked_items.Excalibur },
+    [41] = { type = ENT_TYPE.ITEM_PLASMACANNON,                     lock = Spel2AP.locked_items.Plasma_Cannon },
+    [42] = { type = ENT_TYPE.ITEM_SCEPTER,                          lock = Spel2AP.locked_items.Scepter },
+    [43] = { type = ENT_TYPE.ITEM_HOUYIBOW,                         lock = Spel2AP.locked_items.Hou_Yis_Bow },
+    [44] = { type = ENT_TYPE.ITEM_LIGHT_ARROW,                      lock = Spel2AP.locked_items.Arrow_of_Light },
+    [46] = { type = ENT_TYPE.ITEM_METAL_SHIELD,                     lock = Spel2AP.locked_items.Shield },
+    [50] = { type = ENT_TYPE.ITEM_USHABTI,                          lock = Spel2AP.locked_items.Ushabti },
+    [51] = { type = ENT_TYPE.ITEM_EGGPLANT,                         lock = Spel2AP.locked_items.Eggplant },
+    [53] = { type = ENT_TYPE.ITEM_PICKUP_ELIXIR,                    lock = Spel2AP.locked_items.Elixir },
+    [54] = { type = ENT_TYPE.ITEM_PICKUP_CLOVER,                    lock = Spel2AP.locked_items.Four_Leaf_Clover },
+    [123] = { type = ENT_TYPE.ITEM_PURCHASABLE_CAPE,                lock = Spel2AP.locked_items.Cape },
+    [126] = { type = ENT_TYPE.ITEM_PURCHASABLE_TELEPORTER_BACKPACK, lock = Spel2AP.locked_items.Telepack },
+    [127] = { type = ENT_TYPE.ITEM_PURCHASABLE_HOVERPACK,           lock = Spel2AP.locked_items.Hoverpack },
+    [128] = { type = ENT_TYPE.ITEM_PURCHASABLE_POWERPACK,           lock = Spel2AP.locked_items.Powerpack },
+    [125] = { type = ENT_TYPE.ITEM_PURCHASABLE_JETPACK,             lock = Spel2AP.locked_items.Jetpack },
+}
+
+default_dice_prizes = {
+    ENT_TYPE.ITEM_PICKUP_BOMBBAG,
+    ENT_TYPE.ITEM_PICKUP_BOMBBOX,
+    ENT_TYPE.ITEM_PICKUP_ROPEPILE,
+    ENT_TYPE.ITEM_PICKUP_COMPASS,
+    ENT_TYPE.ITEM_PICKUP_PASTE,
+    ENT_TYPE.ITEM_PICKUP_PARACHUTE,
+    ENT_TYPE.ITEM_PURCHASABLE_CAPE,
+    ENT_TYPE.ITEM_PICKUP_SPECTACLES,
+    ENT_TYPE.ITEM_PICKUP_CLIMBINGGLOVES,
+    ENT_TYPE.ITEM_PICKUP_PITCHERSMITT,
+    ENT_TYPE.ITEM_PICKUP_SPIKESHOES,
+    ENT_TYPE.ITEM_PICKUP_SPRINGSHOES,
+    ENT_TYPE.ITEM_MACHETE,
+    ENT_TYPE.ITEM_BOOMERANG,
+    ENT_TYPE.ITEM_CROSSBOW,
+    ENT_TYPE.ITEM_SHOTGUN,
+    ENT_TYPE.ITEM_FREEZERAY,
+    ENT_TYPE.ITEM_WEBGUN,
+    ENT_TYPE.ITEM_CAMERA,
+    ENT_TYPE.ITEM_MATTOCK,
+    ENT_TYPE.ITEM_PURCHASABLE_JETPACK,
+    ENT_TYPE.ITEM_PURCHASABLE_HOVERPACK,
+    ENT_TYPE.ITEM_TELEPORTER,
+    ENT_TYPE.ITEM_PURCHASABLE_TELEPORTER_BACKPACK,
+    ENT_TYPE.ITEM_PURCHASABLE_POWERPACK
+}
+
+obnoxious_journal_entries = become_lookup_table
+({
+    Spel2AP.locations.bestiary.Magmar,
+    Spel2AP.locations.bestiary.Lavamander,
+    Spel2AP.locations.bestiary.Mech_Rider,
+    Spel2AP.locations.bestiary.Scorpion,
+    Spel2AP.locations.item.True_Crown,
+})
+
+hard_journal_entries = become_lookup_table
+({
+    Spel2AP.locations.place.Tiamats_Throne,
+    Spel2AP.locations.place.Sunken_City,
+    Spel2AP.locations.place.Eggplant_World,
+    Spel2AP.locations.place.HunDunsHideaway,
+    Spel2AP.locations.people.Dirk_Yamaoka,
+    Spel2AP.locations.people.Guy_Spelunky,
+    Spel2AP.locations.people.Eggplant_King,
+    Spel2AP.locations.bestiary.Tiamat,
+    Spel2AP.locations.bestiary.Tadpole,
+    Spel2AP.locations.bestiary.Frog,
+    Spel2AP.locations.bestiary.Fire_Frog,
+    Spel2AP.locations.bestiary.Goliath_Frog,
+    Spel2AP.locations.bestiary.Grub,
+    Spel2AP.locations.bestiary.Giant_Fly,
+    Spel2AP.locations.bestiary.Hundun,
+    Spel2AP.locations.bestiary.Eggplant_Minister,
+    Spel2AP.locations.bestiary.Eggplup,
+    Spel2AP.locations.trap.Frog_Trap,
+    Spel2AP.locations.trap.Sticky_Trap,
+    Spel2AP.locations.trap.Bone_Drop,
+    Spel2AP.locations.trap.Egg_Sac,
+})
+
+co_journal_entries = become_lookup_table
+({
+    Spel2AP.locations.place.Cosmic_Ocean,
+    Spel2AP.locations.people.Classic_Guy,
+    Spel2AP.locations.bestiary.Celestial_Jelly,
+})
+
+unrestricted_items = become_lookup_table
+({
+    ENT_TYPE.ITEM_PICKUP_ROPEPILE,
+    ENT_TYPE.ITEM_PICKUP_BOMBBAG,
+    ENT_TYPE.ITEM_PICKUP_BOMBBOX,
+    ENT_TYPE.ITEM_PICKUP_PARACHUTE,
+    ENT_TYPE.ITEM_SHOTGUN,
+    ENT_TYPE.ITEM_CROSSBOW,
+    ENT_TYPE.ITEM_BOOMERANG,
+    ENT_TYPE.ITEM_PICKUP_ROYALJELLY,
+    ENT_TYPE.ITEM_WOODEN_SHIELD,
+})

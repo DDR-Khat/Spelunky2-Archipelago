@@ -12,13 +12,12 @@ end
 local ap = nil
 
 -- Various variables to run the client
-local tls_failed = false
 local item_queue = {}
 local send_item_queue = {}
 local ready_for_item = true
 local caused_by_death_link = false
 local goal_completed = false
-local id = nil
+local id
 ourSlot = nil
 ourTeam = nil
 apSlots = {}
@@ -48,6 +47,7 @@ game_info = {
     ap_client_version = {0, 5, 1}
 }
 
+secure_connect_only = false
 save_password = false
 local show_login_data = false
 local show_connect_button = true
@@ -57,13 +57,18 @@ player_options = {
     seed = "BACKUP",
     goal = 0,
     goal_level = 30,
+    increase_wallet = false,
     progressive_worlds = true,
     starting_characters = {"Ana Spelunky", "Margaret Tunnel", "Colin Northward", "Roffy D. Sloth"},
     starting_health = 4,
     starting_bombs = 4,
     starting_ropes = 4,
+    starter_upgrades = {},
+    waddler_upgrades = {},
     death_link = false,
-    bypass_ankh = false
+    bypass_ankh = false,
+    include_hard_locations = false,
+    journal_entry_required = true
 }
 
 if read_last_login() then
@@ -89,6 +94,7 @@ set_callback(function()
                 end
             end
             show_login_data = ctx:win_check("Show login details",show_login_data)
+            secure_connect_only = ctx:win_check("Secure connection only", secure_connect_only)
 
             if show_login_data then
                 ctx:win_text("Slot Name")
@@ -100,13 +106,13 @@ set_callback(function()
                 ctx:win_text("Password")
                 game_info.password = ctx:win_input_text(" ##Password", game_info.password)
 
-                save_password = ctx:win_check("Remember Password",save_password)
+                save_password = ctx:win_check("Remember Password", save_password)
             end
             ctx:win_separator()
 
             if show_connect_button then
                 if ctx:win_button("Connect") then
-                    prinspect("Connecting to the server...")
+                    print("Connecting to the server...")
                     id = set_callback(function()
                         return true
                     end, ON.PRE_PROCESS_INPUT)
@@ -115,9 +121,8 @@ set_callback(function()
             else
                 if ctx:win_button("Disconnect") then
                     show_connect_button = true
-                    prinspect("Disconnecting from the server...")
+                    print("Disconnecting from the server...")
                     ap = nil
-                    tls_failed = false
                     collectgarbage("collect")
                 end
             end
@@ -136,13 +141,16 @@ end, ON.GUIFRAME)
 
 function connect(server, slot, password)
     function on_socket_connected()
-        local connectType = tls_failed and "Fallback" or "Secure"
-        print(f"[{connectionType}] Socket connected")
+        print(f"Socket connected")
     end
 
     function on_socket_error(msg)
-        if string.match(msg, "TLS handshake failed") then
-            tls_failed = true
+        if string.match(msg, "TLS handshake failed") and secure_connect_only ~= true then
+            return
+        elseif string.match(msg, "Invalid HTTP status") then
+            print("Fatal connection failure. Please reboot Spelunky 2")
+            clear_callback(id)
+            return
         else
             print("Socket error: " .. msg)
         end
@@ -164,8 +172,7 @@ function connect(server, slot, password)
     end
 
     function on_slot_connected(slot_data)
-        local connectType = tls_failed and "Fallback" or "Secure"
-        print(f"[{connectType}] Slot connected")
+        print(f"Slot connected")
 
         show_connect_button = false
         clear_callback(id)
@@ -180,11 +187,16 @@ function connect(server, slot, password)
         player_options.goal = slot_data.goal
         player_options.goal_level = slot_data.goal_level
         -- player_options.starting_characters = slot_data.starting_characters
+        player_options.increase_wallet = slot_data.increase_starting_wallet
         player_options.progressive_worlds = slot_data.progressive_worlds
         player_options.starting_health = slot_data.starting_health
         player_options.starting_bombs = slot_data.starting_bombs
         player_options.starting_ropes = slot_data.starting_ropes
+        player_options.starter_upgrades = become_lookup_table(slot_data.item_upgrades)
+        player_options.waddler_upgrades = become_lookup_table(slot_data.waddler_upgrades)
         player_options.death_link = slot_data.death_link
+        player_options.include_hard_locations = slot_data.include_hard_locations
+        player_options.journal_entry_required = slot_data.journal_entry_required
         ap:Set(f"{ourSlot}_{ourTeam}_worldTab", "Entire map", false, { { operation = "add", value = "Entire map" } }, nil)
 
         if player_options.death_link then
@@ -207,12 +219,26 @@ function connect(server, slot, password)
         show_login_data = false
         set_ap_callbacks()
         initialize_save()
+        local restricted_lookup = {}
+        for _, name in pairs(slot_data.restricted_items or {}) do
+            restricted_lookup[name] = true
+        end
+
+        for code, entry in pairs(item_ids) do
+            if entry.type == Spel2AP.locked_items then
+                if restricted_lookup[entry.lock_name] then
+                    ap_save.item_unlocks[code] = false
+                else
+                    ap_save.item_unlocks[code] = true
+                end
+            end
+        end
         read_save()
+        savegame.players[1] = ap_save.last_character
     end
 
     function on_slot_refused(reasons)
         print("Slot refused: " .. table.concat(reasons, ", "))
-        tls_failed = false
         clear_callback(id)
     end
 
@@ -231,7 +257,10 @@ function connect(server, slot, password)
                 else
                     sender = "you"
                 end
-                table.insert(item_queue, #item_queue + 1, {item = data.item,player = sender})
+                item_handler(data.item, false)
+                if IsInGame() then
+                    table.insert(item_queue, #item_queue + 1, {item = data.item,player = sender})
+                end
             end
         end
     end
@@ -268,7 +297,9 @@ function connect(server, slot, password)
                         item_name = result_item
                     end
 
-                    table.insert(send_item_queue, #send_item_queue + 1, {item = item_name, target = player_name, classification = flags})
+                    if IsInGame() then
+                        table.insert(send_item_queue, #send_item_queue + 1, {item = item_name, target = player_name, classification = flags})
+                    end
 
                     debug_print(string.format(
                             "Item: %s (ID: %d), Owner: %s (Slot: %d), Game: %s, Flags: %s",
@@ -286,9 +317,33 @@ function connect(server, slot, password)
     end
 
     function on_location_checked(locations)
-        debug_print("Locations checked:" .. table.concat(locations, ", "))
-        debug_print("Checked locations: " .. table.concat(ap.checked_locations, ", "))
+        debug_print("Server reported checked locations: " .. table.concat(locations, ", "))
+
+        for _, location_id in ipairs(locations) do
+            for _, checked_id in ipairs(ap_save.checked_locations) do
+                if checked_id == location_id then
+                    goto continue
+                end
+            end
+
+            for _, chapter in ipairs(journal.chapters) do
+                local locinfo = journal_lookup[location_id]
+                if locinfo and locinfo.chapter == chapter then
+                    update_journal(chapter, location_id, false)
+                    goto continue
+                end
+            end
+
+            debug_print(f"Warning: Received unknown location ID {location_id} from server.")
+
+            ::continue::
+        end
+
+        write_save()
+        update_characters(false)
     end
+
+
 
     function on_data_package_changed(data_package)
         debug_print("Data package changed:")
@@ -342,7 +397,11 @@ function connect(server, slot, password)
         end
     end
 
-    ap = AP(slot, game_info.game, server);
+    if secure_connect_only then
+        ap = AP(slot, game_info.game, "wss://"..server);
+    else
+        ap = AP(slot, game_info.game, server);
+    end
 
     --ap:set_socket_connected_handler(on_socket_connected)
     ap:set_socket_error_handler(on_socket_error)
@@ -352,7 +411,7 @@ function connect(server, slot, password)
     ap:set_slot_refused_handler(on_slot_refused)
     ap:set_items_received_handler(on_items_received)
     ap:set_location_info_handler(on_location_info)
-    --ap:set_location_checked_handler(on_location_checked)
+    ap:set_location_checked_handler(on_location_checked)
     --ap:set_data_package_changed_handler(on_data_package_changed)
     --ap:set_print_handler(on_print)
     --ap:set_print_json_handler(on_print_json)
@@ -364,55 +423,75 @@ end
 function set_ap_callbacks()
     set_callback(function()
         local popupFrames = math.ceil(options.popup_time*60)
-        if state.screen == SCREEN.LEVEL and ready_for_item then
-            local item
-            local display = generalItem
-            local msgTitle
-            local msgDesc
-            if IsType(item_queue,"table") and #item_queue > 0 then
-                local player = item_queue[1].player
-                item = item_ids[item_queue[1].item]
-                display = item.display
-                item_handler(item.type)
-                msgTitle = (player == "you" and "You found an item!") or f"Item received from {player}"
-                msgDesc = (player == "you" and f"{item.name}") or f"Received {item.name}"
-                table.remove(item_queue, 1)
-                ap_save.last_index = ap_save.last_index + 1
-                write_save()
-            elseif IsType(send_item_queue, "table") and #send_item_queue >0 then
-                item = (type(send_item_queue[1].item) == "string" and send_item_queue[1].item) or "<Error>"
-                if #item > 31 then
-                    item = item:sub(1, 29) .. "..."
-                end
-                local target = send_item_queue[1].target or "<Unknown>"
-                local classification = send_item_queue[1].classification
-                if classification == 1 then
-                    display = trapItem
-                elseif classification == 2 then
-                    display = progressionItem
-                end
-                msgTitle = f"Found {target}'s Item from another world!"
-                if #msgTitle > 39 then
-                    msgTitle = f"Found {target}'s Item!"
-                    if #msgTitle > 39 then
-                        local truncated_target = target:sub(1, 22)
-                        msgTitle = f"Found {truncated_target}...'s Item!"
-                    end
-                end
-                msgDesc = f"Sent \"{item}\""
-                table.remove(send_item_queue, 1)
-            else
+        local currentPlayer = get_player(1)
+        if currentPlayer == nil then
+            goto continue
+        end
+        local playerState = currentPlayer.state
+        local isInDoor = playerState == CHAR_STATE.ENTERING or playerState == CHAR_STATE.EXITING
+        local isDead = test_flag(currentPlayer.flags, ENT_FLAG.DEAD)
+        local inPipe = false
+        if currentPlayer.overlay then
+            inPipe = currentPlayer.overlay.type.id == ENT_TYPE.FLOOR_PIPE
+        end
+        if isInDoor or inPipe or isDead then
+            goto continue
+        end
+        if state.screen ~= SCREEN.LEVEL or not ready_for_item then
+            goto continue
+        end
+        local item
+        local display = generalItem
+        local msgTitle
+        local msgDesc
+        if IsType(item_queue,"table") and #item_queue > 0 then
+            local player = item_queue[1].player
+            item = item_ids[item_queue[1].item]
+            if item == nil or item.display == nil then
+                debug_print(f"{item_queue[1].item} does not have a display?!")
                 return
             end
-
-            ready_for_item = false
-            set_interval(function()
-                ready_for_item = true
-                return false
-            end, popupFrames)
-
-            ShowFeatBox(display, msgTitle, msgDesc, popupFrames, item.TileX, item.TileY)
+            display = item.display
+            item_handler(item_queue[1].item, true)
+            msgTitle = (player == "you" and "You found an item!") or f"Item received from {player}"
+            msgDesc = (player == "you" and f"{item.name}") or f"Received {item.name}"
+            table.remove(item_queue, 1)
+            ap_save.last_index = ap_save.last_index + 1
+            write_save()
+        elseif IsType(send_item_queue, "table") and #send_item_queue >0 then
+            item = (type(send_item_queue[1].item) == "string" and send_item_queue[1].item) or "<Error>"
+            if #item > 31 then
+                item = item:sub(1, 29) .. "..."
+            end
+            local target = send_item_queue[1].target or "<Unknown>"
+            local classification = send_item_queue[1].classification
+            if classification == 1 then
+                display = trapItem
+            elseif classification == 2 then
+                display = progressionItem
+            end
+            msgTitle = f"Found {target}'s Item from another world!"
+            if #msgTitle > 39 then
+                msgTitle = f"Found {target}'s Item!"
+                if #msgTitle > 39 then
+                    local truncated_target = target:sub(1, 22)
+                    msgTitle = f"Found {truncated_target}...'s Item!"
+                end
+            end
+            msgDesc = f"Sent \"{item}\""
+            table.remove(send_item_queue, 1)
+        else
+            return
         end
+
+        ready_for_item = false
+        set_interval(function()
+            ready_for_item = true
+            return false
+        end, popupFrames)
+
+        ShowFeatBox(display, msgTitle, msgDesc, popupFrames, item.TileX, item.TileY)
+        ::continue::
     end, ON.GAMEFRAME)
 
     set_callback(function()
@@ -430,20 +509,14 @@ function set_ap_callbacks()
     end, ON.RESET)
 
     set_callback(function()
-        if player_options.goal == 2 and state.world == 8 and state.level == player_options.goal_level - 1 then
-            state.win_state = 3
-            state.level_next = 99
-        end
-    end, ON.LEVEL)
-
-    set_callback(function()
-        if (player_options.goal == 0 and state.win_state == 1) or (player_options.goal == 1 and state.win_state == 2) then
+        if (player_options.goal == AP_Goal.EASY and state.win_state == WIN_STATE.TIAMAT_WIN)
+                or (player_options.goal == AP_Goal.HARD and state.win_state == WIN_STATE.HUNDUN_WIN) then
             complete_goal()
         end
     end, ON.WIN)
 
     set_callback(function()
-        if player_options.goal == 2 and state.win_state == 3 then
+        if player_options.goal == AP_Goal.CO and state.win_state == WIN_STATE.COSMIC_OCEAN_WIN then
             complete_goal()
         end
     end, ON.CONSTELLATION)
@@ -455,9 +528,10 @@ function complete_goal()
     toast("You have completed your goal!")
 
     while #item_queue > 0 do
-        local item = item_ids[item_queue[1]]
-        item_handler(item.type)
-
+        local data = item_queue[1]
+        if data and data.item then
+            item_handler(data.item, false)
+        end
         table.remove(item_queue, 1)
         ap_save.last_index = ap_save.last_index + 1
 
@@ -465,67 +539,64 @@ function complete_goal()
     end
 end
 
-function item_handler(type)
-    local was_item_processed = false
-
-    if not goal_completed then
-        for _, item_type in ipairs(item_categories.filler_items) do
-            if type == item_type then
-                give_item(type)
-                was_item_processed = true
+function item_handler(itemID, isQueued)
+    local item_info = item_ids[itemID]
+    if not item_info then
+        return false
+    end
+    local category = item_info.type
+    if category == Spel2AP.filler_items and isQueued then
+        give_item(itemID)
+        return true
+    elseif category == Spel2AP.characters and not isQueued then
+        ap_save.character_unlocks[itemID] = true
+        update_characters(false)
+        write_save()
+        return true
+    elseif category == Spel2AP.locked_items and not isQueued then
+        ap_save.item_unlocks[itemID] = true
+        write_save()
+        return true
+    elseif category == Spel2AP.upgrades and not isQueued then
+        if player_options.waddler_upgrades[itemID] then
+            if itemID == Spel2AP.upgrades.Compass then
+                ap_save.waddler_item_unlocks[itemID] = (ap_save.waddler_item_unlocks[itemID] or 0) + 1
+            else
+                ap_save.waddler_item_unlocks[itemID] = true
+            end
+        else
+            if itemID == Spel2AP.upgrades.Compass then
+                ap_save.permanent_item_upgrades[itemID] = (ap_save.permanent_item_upgrades[itemID] or 0) + 1
+            else
+                ap_save.permanent_item_upgrades[itemID] = true
             end
         end
-
-
-        for _, trap in ipairs(item_categories.traps) do
-            if type == trap then
-                give_trap(type)
-                was_item_processed = true
+        write_save()
+        return true
+    elseif category == Spel2AP.permanent_upgrades and not isQueued then
+        ap_save.stat_upgrades[itemID] = (ap_save.stat_upgrades[itemID] or 0) + 1
+        write_save()
+        return true
+    elseif category == Spel2AP.world_unlocks and not isQueued then
+        if player_options.progressive_worlds then
+            if itemID == Spel2AP.world_unlocks.Progressive_World then
+                ap_save.max_world = ap_save.max_world + 1
             end
+        else
+            ap_save.world_unlocks[itemID] = true
         end
+        write_save()
+        return true
+    elseif category == Spel2AP.shortcuts and not isQueued then
+        ap_save.shortcut_unlocks[itemID] = true
+        write_save()
+        return true
+    elseif category == Spel2AP.traps and isQueued then
+        give_trap(itemID)
+        return true
+    else
+        return false
     end
-
-    for index, character_type in ipairs(character_data.types) do
-        if type == character_type and not ap_save.unlocked_characters[index] then
-            ap_save.unlocked_characters[index] = true
-            was_item_processed = true
-        end
-    end
-
-    for index, key_item_type in ipairs(item_categories.key_items) do
-        if type == key_item_type then
-            ap_save.unlocked_key_items[index] = true
-            was_item_processed = true
-        end
-    end
-
-    for _, upgrade in ipairs(item_categories.permanent_upgrades) do
-        if type == upgrade then
-            ap_save.permanent_upgrades[upgrade] = ap_save.permanent_upgrades[upgrade] + 1
-            was_item_processed = true
-        end
-    end
-
-    if type == "max_world" then
-        ap_save.max_world = ap_save.max_world + 1
-        was_item_processed = true
-    end
-
-    for _, world in ipairs(item_categories.worlds) do
-        if type == world then
-            ap_save.unlocked_worlds[world] = true
-            was_item_processed = true
-        end
-    end
-
-    for _, shortcut in ipairs(item_categories.shortcuts) do
-        if type == shortcut then
-            ap_save.unlocked_shortcuts[shortcut] = ap_save.unlocked_shortcuts[shortcut] + 1
-            was_item_processed = true
-        end
-    end
-
-    return was_item_processed
 end
 
 function queue_death_link()
@@ -550,6 +621,7 @@ function send_location(location_id)
     if givingItem then
         return
     end
+
     local success_checked, checked = pcall(function()
         return ap:LocationChecks({location_id})
     end)

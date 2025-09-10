@@ -1,0 +1,40 @@
+name: Build and attach release zips
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Prepare APworld
+        run: |
+          mkdir spelunky2
+          cp -r .spelunky2/* spelunky2/
+          zip -r spelunky2.apworld spelunky2
+
+      - name: Prepare APClient
+        run: |
+          mkdir client
+          shopt -s extglob
+          cp -r !(.spelunky2|spelunky2|.git|.github|client|README.md|spelunky2.apworld) client/
+          cd client
+          zip -r ../Spelunky2-Archipelago.zip .
+
+      - name: Upload APworld to release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: spelunky2.apworld
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload APClient to release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: Spelunky2-Archipelago.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
