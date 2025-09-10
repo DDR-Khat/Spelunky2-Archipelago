@@ -2,7 +2,7 @@ name: Build and attach release zips
 
 on:
   release:
-    types: [created]
+    types: [published, edited]
 
 jobs:
   build-and-upload:
