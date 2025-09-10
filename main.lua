@@ -138,12 +138,12 @@ set_callback(function()
     debug_print("LOADING")
 
     if state.screen_next == SCREEN.CHARACTER_SELECT then
-        update_characters()
+        update_characters(true)
     end
 
     if state.screen_next == SCREEN.CAMP then
         ap_save.last_character = savegame.players[1]
-        update_characters()
+        update_characters(false)
         set_shortcut_progress(get_shortcut_level())
     end
 end, ON.LOADING)
@@ -307,24 +307,6 @@ set_callback(function()
         end)
     end
 end, ON.LEVEL)
-
-set_callback(function()
-    debug_print("POST_LEVEL_GENERATION")
-
-    local coffin_uids = get_entities_by(ENT_TYPE.ITEM_COFFIN, MASK.ITEM, LAYER.BOTH)
-
-    for _, uid in ipairs(coffin_uids) do
-        local coffin = get_entity(uid)
-
-        for _, data in pairs(character_data) do
-            -- data.location is the Spel2AP.locations.people.* code for this character
-            if checked_characters[data.location] and coffin.inside == data.ent then
-                set_contents(coffin.uid, ENT_TYPE.CHAR_HIREDHAND)
-                break
-            end
-        end
-    end
-end, ON.POST_LEVEL_GENERATION)
 
 
 set_post_entity_spawn(function(crate)

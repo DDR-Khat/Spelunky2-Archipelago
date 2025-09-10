@@ -304,7 +304,7 @@ function initialize_save()
     ]]--
 
     -- savegame.players[1] = character_data.name_to_index[player_options.starting_characters[1]] - 1
-    update_characters()
+    update_characters(false)
     savegame.players[1] = 0 -- Default to Ana
 end
 
@@ -315,18 +315,28 @@ function update_game_save()
     end
 end
 
-function update_characters()
+function update_characters(characterSelect)
     local flags = 0
-    for item_code, is_unlocked in pairs(ap_save.character_unlocks) do
-        local entry = character_data[item_code]
-        if entry then
-            if is_unlocked then
-                flags = set_flag(flags, entry.index)
+    if characterSelect then
+        for item_code, is_unlocked in pairs(ap_save.character_unlocks) do
+            local entry = character_data[item_code]
+            if entry then
+                if is_unlocked then
+                    flags = set_flag(flags, entry.index)
+                else
+                    flags = clr_flag(flags, entry.index)
+                end
             else
-                flags = clr_flag(flags, entry.index)
+                debug_print(f"update_characters: no character_data for item_code {tostring(item_code)}}")
             end
-        else
-            debug_print(f"update_characters: no character_data for item_code {tostring(item_code)}}")
+        end
+    else
+        for char_index, is_unlocked in pairs(ap_save.people) do
+            if is_unlocked then
+                flags = set_flag(flags, char_index)
+            else
+                flags = clr_flag(flags, char_index)
+            end
         end
     end
     savegame.characters = flags
@@ -475,7 +485,7 @@ function read_save()
 
     -- Sync the merged data to the game's own save structure
     update_game_save() -- Syncs journal
-    update_characters() -- Syncs character unlocks
+    update_characters(false) -- Syncs character unlocks
 
     debug_print(f"Loaded data from {filename}")
 end

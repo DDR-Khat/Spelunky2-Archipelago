@@ -340,7 +340,7 @@ function connect(server, slot, password)
         end
 
         write_save()
-        update_characters()
+        update_characters(false)
     end
 
 
@@ -550,7 +550,7 @@ function item_handler(itemID, isQueued)
         return true
     elseif category == Spel2AP.characters and not isQueued then
         ap_save.character_unlocks[itemID] = true
-        update_characters()
+        update_characters(false)
         write_save()
         return true
     elseif category == Spel2AP.locked_items and not isQueued then
