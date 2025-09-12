@@ -66,6 +66,7 @@ safe_require("client")
 
 ENT_MORE_FLAG.FINISHED_SPAWNING = 7 -- Manually define this missing flag. So we don't have a "Magic number" in code.
 ENT_FLAG.CLOVER_FLAG = 23 -- Add level flag not in ent_flag list. So we don't have a "Magic number" in code.
+AP_USHABTI = 65535 -- Just our own magical value, so it doesn't become qilin in Waddler.
 generalItem = makeTexture("assets/item.png", 128, 128)
 trapItem = makeTexture("assets/trap.png", 128, 128)
 progressionItem = makeTexture("assets/progression.png", 128, 128)
@@ -230,7 +231,11 @@ set_callback(function()
             player:give_powerup(ent)
         else
             local playerX, playerY, playerLayer = get_position(player.uid)
-            spawn_entity_snapped_to_floor(ent, playerX, playerY, playerLayer)
+            local spawnItem = spawn_entity_snapped_to_floor(ent, playerX, playerY, playerLayer)
+            local spawnEntity = get_entity(spawnItem)
+            if item_code == Spel2AP.upgrades.Ushabti then
+                spawnEntity.animation_frame = state:get_correct_ushabti()
+            end
         end
         ::continue::
     end
@@ -261,6 +266,9 @@ set_callback(function()
             local itemSlot = waddler_store_entity(ent)
             if item_code == Spel2AP.upgrades.Four_Leaf_Clover then
                 waddler_set_entity_meta(itemSlot, Spel2AP.upgrades.Four_Leaf_Clover)
+            end
+            if item_code == Spel2AP.upgrades.Ushabti then
+                waddler_set_entity_meta(itemSlot, AP_USHABTI)
             end
             ::continue::
         end
@@ -355,7 +363,7 @@ set_post_entity_spawn(function (door)
     end
     local isHunDunWorld = IsHundunLevel()
     local isCosmicOcean = state.level > 4
-    if player_options.goal == AP_Goal.CO and isCosmicOcean and state.level < player_options.goal_level then
+    if player_options.goal == AP_Goal.CO and isCosmicOcean and state.level < player_options.goal_level - 1 then
         return
     end
     door:set_pre_enter(function()
@@ -394,6 +402,27 @@ set_post_entity_spawn(function(clover)
         end)
     end)
 end, SPAWN_TYPE.ANY, MASK.ITEM, ENT_TYPE.ITEM_PICKUP_CLOVER)
+
+set_post_entity_spawn(function(ushabti)
+    if ap_save.waddler_item_unlocks[Spel2AP.upgrades.Ushabti] ~= true then
+        return
+    end
+    local isAPUshabti = 1
+    ushabti:set_pre_apply_metadata(function(_, meta)
+        if meta == AP_USHABTI then
+            isAPUshabti = true
+        end
+    end)
+    ushabti:set_pre_update_state_machine(function (_)
+        if not test_flag(ushabti.more_flags, ENT_MORE_FLAG.FINISHED_SPAWNING) then
+            return
+        end
+        clear_callback()
+        if isAPUshabti then
+            ushabti.animation_frame = state:get_correct_ushabti()
+        end
+    end)
+end, SPAWN_TYPE.ANY, MASK.ITEM, ENT_TYPE.USHABTI)
 
 set_callback(function()
     if not IsInGame() then
