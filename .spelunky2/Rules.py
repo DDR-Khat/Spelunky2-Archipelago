@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 from . import powerup_options, locked_items
-from .enums import WorldName, RuleNames, ItemName, LocationName, JournalName
+from .enums import WorldName, RuleNames, ItemName, LocationName, JournalName, UPGRADE_SUFFIX
 
 from BaseClasses import CollectionState
 from worlds.generic.Rules import set_rule
@@ -235,10 +235,6 @@ def can_access_cosmic_ocean(
     )
 
 
-def get_upgrade_item_name(item_name: str) -> str:
-    return f"{item_name} Upgrade"
-
-
 def set_starter_upgrade_rules(world: "Spelunky2World", player: int):
     """Ensure starter upgrades require their locked/quest counterpart first."""
 
@@ -246,7 +242,7 @@ def set_starter_upgrade_rules(world: "Spelunky2World", player: int):
     all_upgrades_selected = world.options.waddler_upgrades.value | world.options.item_upgrades.value
 
     for item_name in all_upgrades_selected:
-        upgrade_name = get_upgrade_item_name(item_name)
+        upgrade_name = f"{item_name}{UPGRADE_SUFFIX}"
         try:
             loc = world.get_location(upgrade_name)
             # All upgrades require their base item counterpart

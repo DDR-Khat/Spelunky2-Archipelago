@@ -15,8 +15,6 @@ end
 
 ap_save = {}
 
-checked_characters = {}
-
 function initialize_save()
     debug_print("Initialising save to defaults")
 
@@ -387,12 +385,6 @@ function update_journal(chapter, location, sendLocation)
     -- Track in checked_locations
     table.insert(ap_save.checked_locations, location)
 
-    -- If the location is a character, mark in checked_characters
-    if location >= Spel2AP.locations.people.Ana_Spelunky
-            and location <= Spel2AP.locations.people.Classic_Guy then
-        checked_characters[location] = true
-    end
-
     -- Skip sending if excluded by player options, because it won't exist in the multiworld
     if not player_options.include_hard_locations
             and obnoxious_journal_entries[location] then
@@ -487,15 +479,6 @@ function read_save()
     local loaded_data = restore_number_keys(data)
 
     ap_save = deep_merge(ap_save, loaded_data)
-
-    checked_characters = {}
-    if ap_save.checked_locations then
-        for _, location in pairs(ap_save.checked_locations) do
-            if location >= Spel2AP.locations.people.Ana_Spelunky and location <= Spel2AP.locations.people.Classic_Guy then
-                checked_characters[location] = true
-            end
-        end
-    end
 
     -- Sync the merged data to the game's own save structure
     update_game_save() -- Syncs journal
