@@ -11,20 +11,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Pre-clean: remove repo-only files/folders we never want in zips
+      - name: Pre-clean workspace
+        run: |
+          rm -rf .git .github README.md
+
+      # Step 1: Prepare APworld
       - name: Prepare APworld
         run: |
-          mkdir spelunky2
-          cp -r .spelunky2/* spelunky2/
+          mv .spelunky2 spelunky2
           zip -r spelunky2.apworld spelunky2
+          rm -rf spelunky2
 
-      - name: Prepare APClient
-        run: |
-          mkdir client
-          shopt -s extglob
-          cp -r !(.spelunky2|spelunky2|.git|.github|client|README.md|spelunky2.apworld) client/
-          cd client
-          zip -r ../Spelunky2-Archipelago.zip .
-
+      # Step 2: Upload APworld to release
       - name: Upload APworld to release
         uses: softprops/action-gh-release@v1
         with:
@@ -32,6 +31,17 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # Step 3: Remove APworld file so it can't leak into APClient
+      - name: Cleanup APworld artifact
+        run: |
+          rm -f spelunky2.apworld
+
+      # Step 4: Prepare APClient
+      - name: Prepare APClient
+        run: |
+          zip -r Spelunky2-Archipelago.zip .
+
+      # Step 5: Upload APClient to release
       - name: Upload APClient to release
         uses: softprops/action-gh-release@v1
         with:

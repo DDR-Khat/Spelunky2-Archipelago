@@ -23,7 +23,12 @@ function initialize_save()
     ap_save = {
         last_character = 0,
         last_index = -1, -- Stores AP item data sent from the server
-        checked_locations = {},
+        checked_locations = become_lookup_table({
+            Spel2AP.locations.people.Ana_Spelunky,
+            Spel2AP.locations.people.Margaret_Tunnel,
+            Spel2AP.locations.people.Colin_Northward,
+            Spel2AP.locations.people.Roffy_D_Sloth
+        }),
 
         max_world = 1,
         shortcut_progress = 0,
@@ -331,11 +336,20 @@ function update_characters(characterSelect)
             end
         end
     else
-        for char_index, is_unlocked in pairs(ap_save.people) do
+        local characters_in_journal = {}
+        for _, location in pairs(ap_save.checked_locations) do
+            characters_in_journal[location] = true
+        end
+        for _, data in pairs(character_data) do
+            local character_index = data.index
+            local location = data.location
+
+            local is_unlocked = characters_in_journal[location] == true
+
             if is_unlocked then
-                flags = set_flag(flags, char_index)
+                flags = set_flag(flags, character_index)
             else
-                flags = clr_flag(flags, char_index)
+                flags = clr_flag(flags, character_index)
             end
         end
     end
