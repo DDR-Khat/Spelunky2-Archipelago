@@ -7,6 +7,7 @@ VICTORY_STRING = "Victory"
 WORLD_2_STRING = "Any World 2"
 MAIN_MENU_STRING = "Menu"
 
+
 class Spelunky2Goal(IntEnum):
     EASY = 0
     HARD = 1
@@ -145,7 +146,6 @@ class ItemName(StrEnum):
     COCO_VON_DIAMONDS = "Coco Von Diamonds"
     MANFRED_TUNNEL = "Manfred Tunnel"
     LITTLE_JAY = "Little Jay"
-    TIJERINA_SPINK = "Tijerina Spink"
     VALERIE_CRUMP = "Valerie Crump"
     AU = "Au"
     DIRK_YAMAOKA = "Dirk Yamaoka"

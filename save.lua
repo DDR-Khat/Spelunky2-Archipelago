@@ -283,13 +283,18 @@ function initialize_save()
         }
     }
 
-    -- Clearing game save state
+    -- Adjust savegame data
     savegame.tutorial_state = 4
     savegame.shortcuts = 0
     savegame.wins_normal = math.max(savegame.wins_normal, 1)
     savegame.wins_hard = math.max(savegame.wins_hard, 1)
     savegame.wins_special = math.max(savegame.wins_special, 1)
     savegame.deaths = math.max(savegame.deaths, 100)
+    savegame.completed_normal = true
+    savegame.completed_hard = true
+    savegame.completed_ironman = true
+    savegame.deepest_area = 8
+    savegame.deepest_level = 99
 
     for _, chapter in ipairs(journal.chapters) do
         clear_journal(savegame[chapter])
@@ -356,7 +361,7 @@ end
 
 function update_journal(chapter, location, sendLocation)
     local locationInfo = journal_lookup[location]
-    local entry = nil
+    local entry
     if locationInfo and locationInfo.chapter == chapter then
         entry = journal[chapter][locationInfo.index]
     else
@@ -506,10 +511,10 @@ function read_last_login()
     if loginFile == nil then
         return false
     else
-        local loginData = loginFile:read("*all")
+        local saveData = loginFile:read("*all")
         loginFile:close()
-        if loginData and loginData ~= "" then
-            local success, loginData = pcall(json.decode,loginData)
+        if saveData and saveData ~= "" then
+            local success, loginData = pcall(json.decode, saveData)
             if success then
                 if (loginData and loginData ~= "") and (type(loginData) == "table" and next(loginData) ~= nil) then
                     game_info.host = loginData.host

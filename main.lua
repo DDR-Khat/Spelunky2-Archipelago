@@ -2,7 +2,7 @@ meta = {
     name = "Spelunky 2 Archipelago",
     description = "Adds Archipelago Multiworld Randomizer support!",
     author = "DDRKhat\nOriginal: Eszenn",
-    version = "0.3.1",
+    version = "0.3.2",
     unsafe = true
 }
 register_option_float('popup_time', 'Popup Timer', 'How long the "You received" or "You sent"! popup lingers.\n(Note: Higher values makes receiving items take longer)\nTime in seconds', 3.5, 0.5, 10)
@@ -66,7 +66,6 @@ safe_require("client")
 
 ENT_MORE_FLAG.FINISHED_SPAWNING = 7 -- Manually define this missing flag. So we don't have a "Magic number" in code.
 ENT_FLAG.CLOVER_FLAG = 23 -- Add level flag not in ent_flag list. So we don't have a "Magic number" in code.
-AP_USHABTI = 65535 -- Just our own magical value, so it doesn't become qilin in Waddler.
 generalItem = makeTexture("assets/item.png", 128, 128)
 trapItem = makeTexture("assets/trap.png", 128, 128)
 progressionItem = makeTexture("assets/progression.png", 128, 128)
@@ -103,6 +102,10 @@ end
 
 function IsHundunLevel()
     return state.theme_info:get_theme_id() == THEME.HUNDUN
+end
+
+function IsWaddlerLevel()
+    return state.world == 3 or state.world == 5 or state.world == 7
 end
 
 function get_shortcut_level()
@@ -205,7 +208,7 @@ set_callback(function()
         end
         local journal_index = -1
         if item_code == Spel2AP.upgrades.Compass then
-            journal_index = (value == 1) and 10 or 11
+            journal_index = (value == 2 and savegame.items[10]) and 11 or 10
         else
             journal_index = ItemCode_to_Index[item_code]
         end
@@ -266,9 +269,6 @@ set_callback(function()
             local itemSlot = waddler_store_entity(ent)
             if item_code == Spel2AP.upgrades.Four_Leaf_Clover then
                 waddler_set_entity_meta(itemSlot, Spel2AP.upgrades.Four_Leaf_Clover)
-            end
-            if item_code == Spel2AP.upgrades.Ushabti then
-                waddler_set_entity_meta(itemSlot, AP_USHABTI)
             end
             ::continue::
         end
@@ -369,10 +369,10 @@ set_post_entity_spawn(function (door)
     door:set_pre_enter(function()
         if isTiamatWorld -- Send Guy Spelunky if we go in. Because we normally would.
                 and not ap_save.checked_locations[Spel2AP.locations.people.Guy_Spelunky] then
-            update_journal(journal.chapters["people"], character_data[Spel2AP.locations.people.Guy_Spelunky].index)
+            update_journal(journal.chapters["people"], character_data[Spel2AP.locations.people.Guy_Spelunky].index, true)
         elseif isHunDunWorld -- Classic Guy, same reason.
                 and not ap_save.checked_locations[Spel2AP.locations.people.Classic_Guy] then
-            update_journal(journal.chapters["people"], character_data[Spel2AP.locations.people.Classic_Guy].index)
+            update_journal(journal.chapters["people"], character_data[Spel2AP.locations.people.Classic_Guy].index, true)
         end
         if isTiamatWorld or isHunDunWorld then
             usedBossDoor = true
@@ -403,24 +403,25 @@ set_post_entity_spawn(function(clover)
     end)
 end, SPAWN_TYPE.ANY, MASK.ITEM, ENT_TYPE.ITEM_PICKUP_CLOVER)
 
+local replacingUshabti = false
 set_post_entity_spawn(function(ushabti)
-    if ap_save.waddler_item_unlocks[Spel2AP.upgrades.Ushabti] ~= true then
+    if ap_save.waddler_item_unlocks[Spel2AP.upgrades.Ushabti] ~= true or not IsWaddlerLevel() then
         return
     end
-    local isAPUshabti = 1
-    ushabti:set_pre_apply_metadata(function(_, meta)
-        if meta == AP_USHABTI then
-            isAPUshabti = true
-        end
-    end)
-    ushabti:set_pre_update_state_machine(function (_)
+    if replacingUshabti then
+        replacingUshabti = false
+        return
+    end
+    ushabti:set_pre_update_state_machine(function()
         if not test_flag(ushabti.more_flags, ENT_MORE_FLAG.FINISHED_SPAWNING) then
             return
         end
         clear_callback()
-        if isAPUshabti then
-            ushabti.animation_frame = state:get_correct_ushabti()
-        end
+        replacingUshabti = true
+        local spawnItem = spawn_entity_snapped_to_floor(ENT_TYPE.ITEM_USHABTI, ushabti.x, ushabti.y, ushabti.layer)
+        local spawnEntity = get_entity(spawnItem)
+        spawnEntity.animation_frame = state:get_correct_ushabti()
+        ushabti:destroy()
     end)
 end, SPAWN_TYPE.ANY, MASK.ITEM, ENT_TYPE.USHABTI)
 
@@ -491,7 +492,7 @@ set_callback(function()
     end
 end, ON.TRANSITION)
 
-local purchasables_list = {
+local purchasable_list = {
     [ENT_TYPE.ITEM_PURCHASABLE_JETPACK] = true,
     [ENT_TYPE.ITEM_PURCHASABLE_POWERPACK] = true,
     [ENT_TYPE.ITEM_PURCHASABLE_HOVERPACK] = true,
@@ -543,7 +544,7 @@ for _, data in pairs(Journal_to_ItemEnt) do
                         debug_print("Something went wrong replacing a shop item.")
                     end
                 end
-                if purchasables_list[entity.type.id] then
+                if purchasable_list[entity.type.id] then
                     entity:set_pre_destroy(function()
                         local liberatedItems = get_entities_at(purchasable_counterpart[entity.type.id], MASK.ANY, entity.x, entity.y, entity.layer, 1)
                         for _, liberatedItem in ipairs(liberatedItems) do
@@ -595,25 +596,24 @@ local item_definitions = {
     [Spel2AP.filler_items.Diamond_Gem]   = { ent = ENT_TYPE.ITEM_DIAMOND,    value = 5000 },
 }
 
-function give_item(itemID)
+function give_item(itemID, inLevel)
+    local def = item_definitions[itemID] or item_definitions[Spel2AP.filler_items.Diamond_Gem]
+    local goldValue = def.value or -1
     local player = get_player(1, false)
-    if player ~= nil then
-        local def = item_definitions[itemID] or item_definitions[Spel2AP.filler_items.Diamond_Gem]
+    if goldValue ~= -1 and inLevel ~= true and player_options.increase_wallet then
+        ap_save.starting_wallet = ap_save.starting_wallet + goldValue
+    end
+    if player ~= nil and inLevel then
         local journalEntry = def.journal or -1
         local entID = def.ent or ENT_TYPE.ITEM_DIAMOND
-        local goldValue = def.value or -1
-        give_entity(player, entID, journalEntry, goldValue)
+        give_entity(player, entID, journalEntry)
     end
 end
 
-function give_entity(player, ent, journalEntry, goldValue)
+function give_entity(player, ent, journalEntry)
     local hideJournal = journalEntry ~= -1 and savegame.items[journalEntry] == false
     local playerX, playerY, playerLayer = get_position(player.uid)
     local newItem = get_entity(spawn_entity(ent, playerX, playerY, playerLayer, 0, 0))
-    if goldValue ~= -1 and player_options.increase_wallet then
-        ap_save.starting_wallet = ap_save.starting_wallet + goldValue
-    end
-    newItem.stand_counter = 25
     local firstRun = false
     set_callback(function()
         if firstRun then
@@ -629,10 +629,11 @@ function give_entity(player, ent, journalEntry, goldValue)
             givingItem = true
         end
     end, ON.PRE_UPDATE)
+    newItem.stand_counter = 25
 end
 
 local trap_effects = {
-    [Spel2AP.traps.Ghost] = function(player)
+    [Spel2AP.traps.Ghost] = function()
         set_ghost_spawn_times(0, 0)
         set_interval(function()
             set_ghost_spawn_times(10800, 9000)

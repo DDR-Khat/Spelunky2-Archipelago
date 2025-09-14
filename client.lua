@@ -9,14 +9,13 @@ if not AP then
 end
 
 ---@type APClient
-local ap = nil
+local ap
 
 -- Various variables to run the client
 local item_queue = {}
 local send_item_queue = {}
 local ready_for_item = true
 local caused_by_death_link = false
-local goal_completed = false
 local id
 ourSlot = nil
 ourTeam = nil
@@ -327,8 +326,8 @@ function connect(server, slot, password)
             end
 
             for _, chapter in ipairs(journal.chapters) do
-                local locinfo = journal_lookup[location_id]
-                if locinfo and locinfo.chapter == chapter then
+                local locationInfo = journal_lookup[location_id]
+                if locationInfo and locationInfo.chapter == chapter then
                     update_journal(chapter, location_id, false)
                     goto continue
                 end
@@ -354,7 +353,7 @@ function connect(server, slot, password)
         debug_print(msg)
     end
 
-    function on_print_json(msg, extra)
+    function on_print_json(_, extra)
         if (extra.type == "ItemSend") and extra.receiving ~= ourSlot then
             if extra.item and type(extra.item) == "table" and extra.item.player == ourSlot then
                 local receiver = apSlots[extra.receiving].name
@@ -390,8 +389,8 @@ function connect(server, slot, password)
         for key, value in pairs(message) do
             debug_print("  " .. key .. ": " .. tostring(value))
             if key == "value" and type(value) == "table" then
-                for subkey, subvalue in pairs(value) do
-                    debug_print("    " .. subkey .. ": " .. tostring(subvalue))
+                for subKey, subValue in pairs(value) do
+                    debug_print("    " .. subKey .. ": " .. tostring(subValue))
                 end
             end
         end
@@ -475,6 +474,7 @@ function set_ap_callbacks()
                 msgTitle = f"Found {target}'s Item!"
                 if #msgTitle > 39 then
                     local truncated_target = target:sub(1, 22)
+                    _ = truncated_target -- Shut up, EmmyLua. this IS used.
                     msgTitle = f"Found {truncated_target}...'s Item!"
                 end
             end
@@ -545,8 +545,8 @@ function item_handler(itemID, isQueued)
         return false
     end
     local category = item_info.type
-    if category == Spel2AP.filler_items and isQueued then
-        give_item(itemID)
+    if category == Spel2AP.filler_items then
+        give_item(itemID, isQueued)
         return true
     elseif category == Spel2AP.characters and not isQueued then
         ap_save.character_unlocks[itemID] = true
