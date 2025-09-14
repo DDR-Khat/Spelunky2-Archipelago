@@ -146,7 +146,7 @@ Options (any selected here override options in item_upgrades):
 {locked_items_text}"""  # noqa: E128
     display_name = "Waddler Items"
     valid_keys = locked_items
-    default = equip_options - {ItemName.TRUE_CROWN.value, ItemName.EGGPLANT_CROWN.value}
+    default = equip_options - {ItemName.TRUE_CROWN.value, ItemName.EGGPLANT_CROWN.value, ItemName.PASTE.value}
 
 
 class DeathLinkBypassesAnkh(Toggle):
