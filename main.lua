@@ -407,7 +407,7 @@ set_post_entity_spawn(function(ushabti)
     if ap_save.waddler_item_unlocks[Spel2AP.upgrades.Ushabti] ~= true then
         return
     end
-    local isAPUshabti = 1
+    local isAPUshabti = false
     ushabti:set_pre_apply_metadata(function(_, meta)
         if meta == AP_USHABTI then
             isAPUshabti = true
