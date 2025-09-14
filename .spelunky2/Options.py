@@ -131,7 +131,7 @@ Options:
 
 class ItemUpgrades(ItemSet):
     __doc__ = f"""Add the following useful items in the multi-world item pool which are kept on death,
-     AFTER obtaining it's journal entry if 'Journal Entry Required' is true.
+AFTER obtaining it's journal entry if 'Journal Entry Required' is true.
 Options: 
 {item_options_text}"""  # noqa: E128
     display_name = "Item Upgrades"
@@ -141,7 +141,7 @@ Options:
 
 class WaddlerUpgrades(ItemSet):
     __doc__ = f"""Add the following useful items in the multi-world item pool which are added to Waddler's storage between runs, 
-    AFTER obtaining it's journal entry if 'Journal Entry Required' is true.
+AFTER obtaining it's journal entry if 'Journal Entry Required' is true.
 Options (any selected here override options in item_upgrades):
 {locked_items_text}"""  # noqa: E128
     display_name = "Waddler Items"
