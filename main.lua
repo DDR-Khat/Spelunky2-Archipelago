@@ -596,25 +596,24 @@ local item_definitions = {
     [Spel2AP.filler_items.Diamond_Gem]   = { ent = ENT_TYPE.ITEM_DIAMOND,    value = 5000 },
 }
 
-function give_item(itemID)
+function give_item(itemID, inLevel)
+    local def = item_definitions[itemID] or item_definitions[Spel2AP.filler_items.Diamond_Gem]
+    local goldValue = def.value or -1
     local player = get_player(1, false)
-    if player ~= nil then
-        local def = item_definitions[itemID] or item_definitions[Spel2AP.filler_items.Diamond_Gem]
+    if goldValue ~= -1 and inLevel ~= true and player_options.increase_wallet then
+        ap_save.starting_wallet = ap_save.starting_wallet + goldValue
+    end
+    if player ~= nil and inLevel then
         local journalEntry = def.journal or -1
         local entID = def.ent or ENT_TYPE.ITEM_DIAMOND
-        local goldValue = def.value or -1
-        give_entity(player, entID, journalEntry, goldValue)
+        give_entity(player, entID, journalEntry)
     end
 end
 
-function give_entity(player, ent, journalEntry, goldValue)
+function give_entity(player, ent, journalEntry)
     local hideJournal = journalEntry ~= -1 and savegame.items[journalEntry] == false
     local playerX, playerY, playerLayer = get_position(player.uid)
     local newItem = get_entity(spawn_entity(ent, playerX, playerY, playerLayer, 0, 0))
-    if goldValue ~= -1 and player_options.increase_wallet then
-        ap_save.starting_wallet = ap_save.starting_wallet + goldValue
-    end
-    newItem.stand_counter = 25
     local firstRun = false
     set_callback(function()
         if firstRun then
@@ -630,6 +629,7 @@ function give_entity(player, ent, journalEntry, goldValue)
             givingItem = true
         end
     end, ON.PRE_UPDATE)
+    newItem.stand_counter = 25
 end
 
 local trap_effects = {

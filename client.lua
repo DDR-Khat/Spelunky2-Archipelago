@@ -545,8 +545,8 @@ function item_handler(itemID, isQueued)
         return false
     end
     local category = item_info.type
-    if category == Spel2AP.filler_items and isQueued then
-        give_item(itemID)
+    if category == Spel2AP.filler_items then
+        give_item(itemID, isQueued)
         return true
     elseif category == Spel2AP.characters and not isQueued then
         ap_save.character_unlocks[itemID] = true
