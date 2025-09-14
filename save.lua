@@ -356,7 +356,7 @@ end
 
 function update_journal(chapter, location, sendLocation)
     local locationInfo = journal_lookup[location]
-    local entry = nil
+    local entry
     if locationInfo and locationInfo.chapter == chapter then
         entry = journal[chapter][locationInfo.index]
     else
@@ -506,10 +506,10 @@ function read_last_login()
     if loginFile == nil then
         return false
     else
-        local loginData = loginFile:read("*all")
+        local saveData = loginFile:read("*all")
         loginFile:close()
-        if loginData and loginData ~= "" then
-            local success, loginData = pcall(json.decode,loginData)
+        if saveData and saveData ~= "" then
+            local success, loginData = pcall(json.decode, saveData)
             if success then
                 if (loginData and loginData ~= "") and (type(loginData) == "table" and next(loginData) ~= nil) then
                     game_info.host = loginData.host

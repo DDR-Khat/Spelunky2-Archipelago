@@ -369,10 +369,10 @@ set_post_entity_spawn(function (door)
     door:set_pre_enter(function()
         if isTiamatWorld -- Send Guy Spelunky if we go in. Because we normally would.
                 and not ap_save.checked_locations[Spel2AP.locations.people.Guy_Spelunky] then
-            update_journal(journal.chapters["people"], character_data[Spel2AP.locations.people.Guy_Spelunky].index)
+            update_journal(journal.chapters["people"], character_data[Spel2AP.locations.people.Guy_Spelunky].index, true)
         elseif isHunDunWorld -- Classic Guy, same reason.
                 and not ap_save.checked_locations[Spel2AP.locations.people.Classic_Guy] then
-            update_journal(journal.chapters["people"], character_data[Spel2AP.locations.people.Classic_Guy].index)
+            update_journal(journal.chapters["people"], character_data[Spel2AP.locations.people.Classic_Guy].index, true)
         end
         if isTiamatWorld or isHunDunWorld then
             usedBossDoor = true
@@ -491,7 +491,7 @@ set_callback(function()
     end
 end, ON.TRANSITION)
 
-local purchasables_list = {
+local purchasable_list = {
     [ENT_TYPE.ITEM_PURCHASABLE_JETPACK] = true,
     [ENT_TYPE.ITEM_PURCHASABLE_POWERPACK] = true,
     [ENT_TYPE.ITEM_PURCHASABLE_HOVERPACK] = true,
@@ -543,7 +543,7 @@ for _, data in pairs(Journal_to_ItemEnt) do
                         debug_print("Something went wrong replacing a shop item.")
                     end
                 end
-                if purchasables_list[entity.type.id] then
+                if purchasable_list[entity.type.id] then
                     entity:set_pre_destroy(function()
                         local liberatedItems = get_entities_at(purchasable_counterpart[entity.type.id], MASK.ANY, entity.x, entity.y, entity.layer, 1)
                         for _, liberatedItem in ipairs(liberatedItems) do
@@ -632,7 +632,7 @@ function give_entity(player, ent, journalEntry, goldValue)
 end
 
 local trap_effects = {
-    [Spel2AP.traps.Ghost] = function(player)
+    [Spel2AP.traps.Ghost] = function()
         set_ghost_spawn_times(0, 0)
         set_interval(function()
             set_ghost_spawn_times(10800, 9000)
