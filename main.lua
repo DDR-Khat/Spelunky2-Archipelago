@@ -205,7 +205,7 @@ set_callback(function()
         end
         local journal_index = -1
         if item_code == Spel2AP.upgrades.Compass then
-            journal_index = (value == 1) and 10 or 11
+            journal_index = (value == 2 and savegame.items[10]) and 11 or 10
         else
             journal_index = ItemCode_to_Index[item_code]
         end
