@@ -283,13 +283,18 @@ function initialize_save()
         }
     }
 
-    -- Clearing game save state
+    -- Adjust savegame data
     savegame.tutorial_state = 4
     savegame.shortcuts = 0
     savegame.wins_normal = math.max(savegame.wins_normal, 1)
     savegame.wins_hard = math.max(savegame.wins_hard, 1)
     savegame.wins_special = math.max(savegame.wins_special, 1)
     savegame.deaths = math.max(savegame.deaths, 100)
+    savegame.completed_normal = true
+    savegame.completed_hard = true
+    savegame.completed_ironman = true
+    savegame.deepest_area = 8
+    savegame.deepest_level = 99
 
     for _, chapter in ipairs(journal.chapters) do
         clear_journal(savegame[chapter])
