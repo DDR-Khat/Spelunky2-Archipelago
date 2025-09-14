@@ -1,7 +1,27 @@
 from typing import Optional, NamedTuple
 from BaseClasses import Item, ItemClassification
-from . import locked_items, item_options
 from .enums import ItemName, ShortcutName, WorldName
+
+# Master Item List
+powerup_options = frozenset({ItemName.ANKH.value, ItemName.CLIMBING_GLOVES.value, ItemName.COMPASS.value,
+    ItemName.EGGPLANT_CROWN.value, ItemName.ELIXIR.value, ItemName.FOUR_LEAF_CLOVER.value, ItemName.KAPALA.value,
+    ItemName.PASTE.value, ItemName.PITCHERS_MITT.value, ItemName.SKELETON_KEY.value, ItemName.SPECTACLES.value,
+    ItemName.SPIKE_SHOES.value, ItemName.SPRING_SHOES.value, ItemName.TRUE_CROWN.value})  # noqa: E128
+
+equip_options = frozenset({ItemName.CAMERA.value, ItemName.CAPE.value, ItemName.CLONE_GUN.value,
+    ItemName.EGGPLANT.value, ItemName.FREEZE_RAY.value, ItemName.HOVERPACK.value, ItemName.JETPACK.value,
+    ItemName.MACHETE.value, ItemName.MATTOCK.value, ItemName.PASTE.value, ItemName.PLASMA_CANNON.value,
+    ItemName.POWERPACK.value, ItemName.SHIELD.value, ItemName.TELEPACK.value, ItemName.TELEPORTER.value,
+    ItemName.VLADS_CAPE.value, ItemName.WEBGUN.value})  # noqa: E128
+
+quest_items = frozenset({ItemName.ALIEN_COMPASS.value, ItemName.ARROW_OF_LIGHT.value, ItemName.CROWN.value,
+    ItemName.EXCALIBUR.value, ItemName.HEDJET.value, ItemName.HOU_YI_BOW.value, ItemName.SCEPTER.value,
+    ItemName.TABLET_OF_DESTINY.value, ItemName.UDJAT_EYE.value, ItemName.USHABTI.value})  # noqa: E128
+
+item_options = sorted(powerup_options | equip_options)
+locked_items = sorted(powerup_options | equip_options | quest_items)
+# End of Master Item List
+
 
 class Spelunky2Item(Item):
     game = "Spelunky 2"
@@ -66,7 +86,7 @@ permanent_upgrades = {
     ItemName.HEALTH_UPGRADE.value:           Spelunky2ItemData(401, ItemClassification.useful, 0),
     ItemName.BOMB_UPGRADE.value:             Spelunky2ItemData(402, ItemClassification.useful, 0),
     ItemName.ROPE_UPGRADE.value:             Spelunky2ItemData(403, ItemClassification.useful, 0),
-    ItemName.COSMIC_OCEAN_CP.value:          Spelunky2ItemData(404, ItemClassification.useful, 0),  # Count set by player settings
+    ItemName.COSMIC_OCEAN_CP.value:          Spelunky2ItemData(404, ItemClassification.useful, 0),
 }
 
 shortcuts = {  # TODO: Maybe add more shortcuts by editing the Camp to allow specific world selection from camp
@@ -78,8 +98,8 @@ shortcuts = {  # TODO: Maybe add more shortcuts by editing the Camp to allow spe
     # ShortcutName.TIDE_POOL.value:        Spelunky2ItemData(506, ItemClassification.helpful),
     # ShortcutName.TEMPLE.value:           Spelunky2ItemData(507, ItemClassification.helpful),
     # ShortcutName.ICE_CAVES.value:        Spelunky2ItemData(508, ItemClassification.helpful),
-    # ShortcutName.NEO_BABYLON.value:      Spelunky2ItemData(509, ItemClassification.helpful),  # literal "Neo Babylon" vs enum is "Neo Babylon Shortcut"
-    # ShortcutName.SUNKEN_CITY.value:      Spelunky2ItemData(510, ItemClassification.helpful),  # literal "Sunken City" vs enum is "Sunken City Shortcut"
+    # ShortcutName.NEO_BABYLON.value:      Spelunky2ItemData(509, ItemClassification.helpful),
+    # ShortcutName.SUNKEN_CITY.value:      Spelunky2ItemData(510, ItemClassification.helpful),
 }
 
 world_unlocks = {
@@ -120,16 +140,16 @@ item_data_table = {
 }
 
 filler_weights = {
-    ItemName.ROPE_PILE.value:    0,
-    ItemName.BOMB_BAG.value:     0,
-    ItemName.BOMB_BOX.value:     0,
-    ItemName.COOKED_TURKEY.value:0,
-    ItemName.ROYAL_JELLY.value:  0,
-    ItemName.GOLD_BAR.value:     0,
-    ItemName.EMERALD_GEM.value:  0,
-    ItemName.SAPPHIRE_GEM.value: 0,
-    ItemName.RUBY_GEM.value:     0,
-    ItemName.DIAMOND_GEM.value:  0,
+    ItemName.ROPE_PILE.value:     0,
+    ItemName.BOMB_BAG.value:      0,
+    ItemName.BOMB_BOX.value:      0,
+    ItemName.COOKED_TURKEY.value: 0,
+    ItemName.ROYAL_JELLY.value:   0,
+    ItemName.GOLD_BAR.value:      0,
+    ItemName.EMERALD_GEM.value:   0,
+    ItemName.SAPPHIRE_GEM.value:  0,
+    ItemName.RUBY_GEM.value:      0,
+    ItemName.DIAMOND_GEM.value:   0,
 }
 
 trap_weights = {
