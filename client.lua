@@ -618,10 +618,6 @@ function queue_death_link()
 end
 
 function send_location(location_id)
-    if givingItem then
-        return
-    end
-
     local success_checked, checked = pcall(function()
         return ap:LocationChecks({location_id})
     end)

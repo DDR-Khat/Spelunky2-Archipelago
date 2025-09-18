@@ -7,6 +7,16 @@ meta = {
 }
 register_option_float('popup_time', 'Popup Timer', 'How long the "You received" or "You sent"! popup lingers.\n(Note: Higher values makes receiving items take longer)\nTime in seconds', 3.5, 0.5, 10)
 
+local function normalizeData(container, key, max)
+    local data = container[key]
+    if type(data) ~= "number"
+       or data < -1 -- Some things use -1 as a valid state on C's side.
+       or data >= 0xFFFF0000
+       or (max and data > max) then
+        container[key] = 0
+    end
+end
+
 _G.safe_require = function(name)
     local info = debug.getinfo(2, "Sln")
     local caller = info and (info.short_src or info.source or "unknown source") or "unknown source"
@@ -64,6 +74,8 @@ safe_require("data")
 safe_require("save")
 safe_require("client")
 
+normalizeData(game_manager.save_related.journal_popup_ui,"chapter_to_show",10)
+normalizeData(game_manager.save_related.journal_popup_ui,"timer", 300)
 ENT_MORE_FLAG.FINISHED_SPAWNING = 7 -- Manually define this missing flag. So we don't have a "Magic number" in code.
 ENT_FLAG.CLOVER_FLAG = 23 -- Add level flag not in ent_flag list. So we don't have a "Magic number" in code.
 generalItem = makeTexture("assets/item.png", 128, 128)
@@ -71,7 +83,7 @@ trapItem = makeTexture("assets/trap.png", 128, 128)
 progressionItem = makeTexture("assets/progression.png", 128, 128)
 
 debugging = false
-givingItem = false
+givingItem = nil
 waddlerClover = false
 usedBossDoor = false
 local bombOrRope = false
@@ -170,23 +182,27 @@ function get_filtered_dice_prizes()
 end
 
 function remove_from_shop(entity)
-    if not entity or not entity.uid then return end
-    if not state.room_owners or not state.room_owners.owned_items then return end
-
-    local owner_uid = entity.last_owner_uid
-    if not owner_uid or owner_uid == -1 then return end
-
-    for uid, entry in pairs(state.room_owners.owned_items) do
-        if uid == entity.uid and entry.owner_uid == owner_uid then
-            debug_print(f"Removed entity UID {uid} from shop owned by UID {owner_uid}")
-            state.room_owners.owned_items:erase(uid)
-            entity.last_owner_uid = -1
-            return owner_uid
-        end
+    if not entity or not entity.uid then
+        return
     end
-
-    debug_print(f"Entity UID {entity.uid} not found in owned_items for owner UID {owner_uid}")
-    return -1
+    if not state.room_owners or not state.room_owners.owned_items then
+        return
+    end
+    local owner_uid = entity.last_owner_uid
+    if not owner_uid or owner_uid == -1 then
+        return
+    end
+    for uid, entry in pairs(state.room_owners.owned_items) do
+        if uid ~= entity.uid or entry.owner_uid ~= owner_uid then
+            goto continue
+        end
+        debug_print(f"Removed entity UID {uid} from shop owned by UID {owner_uid}")
+        state.room_owners.owned_items:erase(uid)
+        entity.last_owner_uid = -1
+        break;
+        ::continue::
+    end
+    return owner_uid
 end
 
 -- This handles all of the permanent upgrades to give the player at the start of every run
@@ -283,7 +299,8 @@ end, ON.RESET)
 
 set_callback(function()
     debug_print("LEVEL")
-    if state.level >= 10 and state.level <= ap_save.stat_upgrades[Spel2AP.permanent_upgrades.Cosmic_Ocean_Checkpoint] * 10 then
+    if state.level >= 10
+       and state.level <= ap_save.stat_upgrades[Spel2AP.permanent_upgrades.Cosmic_Ocean_Checkpoint] * 10 then
         state.world_start = 7
         state.theme_start = THEME.COSMIC_OCEAN
         state.level_start = math.floor(state.level / 10) * 10
@@ -298,7 +315,7 @@ set_callback(function()
         clear_callback()
         if (ap_save.permanent_item_upgrades[Spel2AP.upgrades.Four_Leaf_Clover] or waddlerClover)
             and
-            (savegame.items[ItemCode_to_Index[Spel2AP.upgrades.Four_Leaf_Clover]] or not player_options.journal_entry_required)
+           (savegame.items[ItemCode_to_Index[Spel2AP.upgrades.Four_Leaf_Clover]] or not player_options.journal_entry_required)
         then
             local level_flags = get_level_flags()
             level_flags = set_flag(level_flags, ENT_FLAG.CLOVER_FLAG)
@@ -307,7 +324,8 @@ set_callback(function()
     end, ON.PRE_UPDATE)
 
     if (IsTiamatLevel() and player_options.goal ~= AP_Goal.EASY)
-            or (IsHundunLevel() and player_options.goal ~= AP_Goal.HARD) then
+       or
+       (IsHundunLevel() and player_options.goal ~= AP_Goal.HARD) then
         state.theme_info:set_post_virtual(THEME_OVERRIDE.PRE_TRANSITION, function()
             if state.win_state ~= WIN_STATE.NO_WIN then
                 state.win_state = WIN_STATE.NO_WIN
@@ -429,6 +447,16 @@ set_callback(function()
     if not IsInGame() then
         return
     end
+    local popupUI = game_manager.save_related.journal_popup_ui
+    if popupUI.timer > 0 and popupUI.chapter_to_show == 6 then
+        debug_print(f"[ON.GAMEFRAME::popupCheck] Timer > 0 + Chapter 6 [Items]")
+        local save_entries = savegame.items
+        local journalID = popupUI.entry_to_show + 1
+        if save_entries and save_entries[journalID] == false then
+            debug_print(f"[ON.GAMEFRAME::lockedItem] Setting popup timer to 0")
+            popupUI.timer = 0
+        end
+    end
     for _, chapter in ipairs(journal.chapters) do
         local save_entries = savegame[chapter]  -- numeric array from game save
         local ap_entries   = ap_save[chapter]   -- numeric array from AP
@@ -440,7 +468,15 @@ set_callback(function()
             end
             for _, entry in ipairs(journal[chapter]) do
                 if entry.index == save_index then
-                    update_journal(chapter, entry.id, true)
+                    if givingItem ~= nil then
+                        debug_print(f"[ON.GAMEFRAME::check_journal::giveItemCheck] giveItem is NOT nil. Set Entry to false")
+                        save_entries[save_index] = false
+                        ap_entries[save_index] = false
+                        givingItem = nil
+                    else
+                        debug_print(f"[ON.GAMEFRAME::check_journal::giveItemCheck] giveItem is nil. send check.")
+                        update_journal(chapter, entry.id, true)
+                    end
                     break
                 end
             end
@@ -448,7 +484,6 @@ set_callback(function()
         end
     end
 end, ON.GAMEFRAME)
-
 
 set_callback(function()
     debug_print("TRANSITION")
@@ -464,7 +499,6 @@ set_callback(function()
         state.kali_gifts = 0
         state.quest_flags = QUEST_FLAG.RESET
     end
-
 
     change_diceshop_prizes(get_filtered_dice_prizes())
 
@@ -487,7 +521,6 @@ set_callback(function()
         state.world_next = state.world_start
         state.level_next = state.level_start
         state.theme_next = state.theme_start
-
         run_reset()
     end
 end, ON.TRANSITION)
@@ -611,24 +644,19 @@ function give_item(itemID, inLevel)
 end
 
 function give_entity(player, ent, journalEntry)
-    local hideJournal = journalEntry ~= -1 and savegame.items[journalEntry] == false
+    givingItem = savegame.items[journalEntry]
+    local hideJournal = journalEntry ~= -1 and not givingItem
     local playerX, playerY, playerLayer = get_position(player.uid)
     local newItem = get_entity(spawn_entity(ent, playerX, playerY, playerLayer, 0, 0))
-    local firstRun = false
-    set_callback(function()
-        if firstRun then
-            if hideJournal then
-                game_manager.save_related.journal_popup_ui.timer = 0
-                savegame.items[journalEntry] = false
-                ap_save.items[journalEntry] = false
-            end
-            givingItem = false
-            clear_callback()
-        else
-            firstRun = true
-            givingItem = true
-        end
-    end, ON.PRE_UPDATE)
+    debug_print(f"[give_entity::hideJournal-check] hideJournal: {hideJournal}")
+    if not hideJournal then
+        debug_print(f"[give_entity::hideJournal-check::false] hideJournal: {hideJournal}")
+        givingItem = nil
+    else
+        debug_print(f"[give_entity::hideJournal-check::true] hideJournal: {hideJournal}")
+        savegame.items[journalEntry] = false
+        ap_save.items[journalEntry] = false
+    end
     newItem.stand_counter = 25
 end
 
