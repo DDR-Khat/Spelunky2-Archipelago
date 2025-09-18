@@ -1,0 +1,43 @@
+name: Sync dev with main
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: write
+
+jobs:
+  merge-main-into-dev:
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout dev branch
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+      - name: Fetch main
+        run: git fetch origin main
+
+      - name: Attempt merge (check for conflicts)
+        id: merge
+        run: |
+          set +e
+          git merge origin/main --no-edit
+          MERGE_EXIT=$?
+          if [ $MERGE_EXIT -ne 0 ]; then
+            echo "Merge conflict detected — please resolve manually."
+            git merge --abort
+            exit 1
+          fi
+
+      - name: Push updated dev
+        if: success()
+        run: git push origin dev
