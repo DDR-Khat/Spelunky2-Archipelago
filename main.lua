@@ -82,6 +82,7 @@ generalItem = makeTexture("assets/item.png", 128, 128)
 trapItem = makeTexture("assets/trap.png", 128, 128)
 progressionItem = makeTexture("assets/progression.png", 128, 128)
 
+apPlayer = nil
 debugging = false
 givingItem = nil
 waddlerClover = false
@@ -284,10 +285,12 @@ set_callback(function()
 
     done8Favour = false
     done16Favour = false
-    local player = get_player(1, false)
-    player.health = player_options.starting_health + ap_save.stat_upgrades[Spel2AP.permanent_upgrades.Health]
-    player.inventory.bombs = player_options.starting_bombs + ap_save.stat_upgrades[Spel2AP.permanent_upgrades.Bomb]
-    player.inventory.ropes = player_options.starting_ropes + ap_save.stat_upgrades[Spel2AP.permanent_upgrades.Rope]
+    if apPlayer == nil then
+        apPlayer = get_player(1)
+    end
+    apPlayer.health = player_options.starting_health + ap_save.stat_upgrades[Spel2AP.permanent_upgrades.Health]
+    apPlayer.inventory.bombs = player_options.starting_bombs + ap_save.stat_upgrades[Spel2AP.permanent_upgrades.Bomb]
+    apPlayer.inventory.ropes = player_options.starting_ropes + ap_save.stat_upgrades[Spel2AP.permanent_upgrades.Rope]
     if player_options.increase_wallet then
         add_money_slot(ap_save.starting_wallet, 1, 0)
     end
@@ -309,22 +312,22 @@ set_callback(function()
             goto continue -- Not something we care about, stop doing stuff with it.
         end
         if item_code == Spel2AP.upgrades.Elixir then
-            player:set_pre_update_state_machine(function()
-                if not test_flag(player.more_flags, ENT_MORE_FLAG.FINISHED_SPAWNING) then
+            apPlayer:set_pre_update_state_machine(function()
+                if not test_flag(apPlayer.more_flags, ENT_MORE_FLAG.FINISHED_SPAWNING) then
                     return
                 end
                 clear_callback()
-                local flags = get_entity_flags2(player.uid)
+                local flags = get_entity_flags2(apPlayer.uid)
                 flags = set_flag(flags, ENT_MORE_FLAG.ELIXIR_BUFF)
-                set_entity_flags2(player.uid, flags)
+                set_entity_flags2(apPlayer.uid, flags)
             end)
             goto continue -- We've done a special handling.
         end
         local ent, isPowerup = SpawnJournalIndex(journal_index, true)
         if isPowerup then
-            player:give_powerup(ent)
+            apPlayer:give_powerup(ent)
         else
-            local playerX, playerY, playerLayer = get_position(player.uid)
+            local playerX, playerY, playerLayer = get_position(apPlayer.uid)
             local spawnItem = spawn_entity_snapped_to_floor(ent, playerX, playerY, playerLayer)
             local spawnEntity = get_entity(spawnItem)
             if item_code == Spel2AP.upgrades.Ushabti then
@@ -407,6 +410,7 @@ set_callback(function()
             end
         end)
     end
+    apPlayer = get_player(1)
 end, ON.LEVEL)
 
 
@@ -520,6 +524,9 @@ end, SPAWN_TYPE.ANY, MASK.ITEM, ENT_TYPE.USHABTI)
 
 set_callback(function()
     if not IsInGame() then
+        if apPlayer ~= nil then
+            apPlayer = nil
+        end
         return
     end
     local popupUI = game_manager.save_related.journal_popup_ui
@@ -670,7 +677,7 @@ local function process_potential_kali_item(entity, isUnlocked, entEnumName)
             if not powerupID then
                 goto continue
             end
-            if ap_save.item_unlocks[entryJournalID] and not get_player(1):has_powerup(powerupID) then
+            if ap_save.item_unlocks[entryJournalID] and not apPlayer:has_powerup(powerupID) then
                 debug_print(f"[processKaliItem::shouldReplace] Found and spawning {enum_get_name(ENT_TYPE,entry.type.id)} as a replacement")
                 foundReplacement = true
                 spawn_entity_snapped_to_floor(entry, entity.x, entity.y, entity.layer)
@@ -711,12 +718,28 @@ local function process_potential_shop_item(entity, entEnumName)
         end
     end
 end
-
 for _, data in pairs(Journal_to_ItemEnt) do
     set_post_entity_spawn(function(entity, _)
         entity:set_pre_update_state_machine(function (_)
             if not test_flag(entity.more_flags, ENT_MORE_FLAG.FINISHED_SPAWNING) then
                 return
+            end
+            local entType = entity.type.id
+            if (entType == ENT_TYPE.ITEM_PICKUP_CROWN
+               or entType == ENT_TYPE.ITEM_PICKUP_HEDJET) then
+                if apPlayer.layer ~= entity.layer then
+                    return
+                end
+                if distance(apPlayer.uid, entity.uid) > 9 then
+                    return
+                end
+                if entType == ENT_TYPE.ITEM_PICKUP_CROWN then
+                    clear_callback()
+                    local crownX, crownY, crownL = get_position(entity.uid)
+                    spawn_entity(getBombOrRope(), crownX, crownY, crownL, 0, 0)
+                    entity:destroy()
+                    return
+                end
             end
             clear_callback()
             local isUnlocked = ap_save.item_unlocks[data.lock]
@@ -731,7 +754,7 @@ for _, data in pairs(Journal_to_ItemEnt) do
                 heldEnt:destroy()
             end
 
-            if entity.type.id == ENT_TYPE.ITEM_PICKUP_UDJATEYE then
+            if entType == ENT_TYPE.ITEM_PICKUP_UDJATEYE then
                 local entVelX, entVelY = get_velocity(entity.uid)
                 spawn_entity(getBombOrRope(), entity.x, entity.y, entity.layer, entVelX, entVelY)
             end
@@ -775,14 +798,13 @@ local item_definitions = {
 function give_item(itemID, inLevel)
     local def = item_definitions[itemID] or item_definitions[Spel2AP.filler_items.Diamond_Gem]
     local goldValue = def.value or -1
-    local player = get_player(1, false)
     if goldValue ~= -1 and inLevel ~= true and player_options.increase_wallet then
         ap_save.starting_wallet = ap_save.starting_wallet + goldValue
     end
-    if player ~= nil and inLevel then
+    if apPlayer ~= nil and inLevel then
         local journalEntry = def.journal or -1
         local entID = def.ent or ENT_TYPE.ITEM_DIAMOND
-        give_entity(player, entID, journalEntry)
+        give_entity(apPlayer, entID, journalEntry)
     end
 end
 
@@ -893,8 +915,7 @@ local trap_effects = {
 }
 
 function give_trap(type)
-    local player = get_player(1, false)
-    if player ~= nil and trap_effects[type] then
-        trap_effects[type](player)
+    if apPlayer ~= nil and trap_effects[type] then
+        trap_effects[type](apPlayer)
     end
 end
