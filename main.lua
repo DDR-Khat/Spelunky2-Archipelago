@@ -730,6 +730,11 @@ for _, data in pairs(Journal_to_ItemEnt) do
             if heldEnt ~= nil then
                 heldEnt:destroy()
             end
+
+            if entity.type.id == ENT_TYPE.ITEM_PICKUP_UDJATEYE then
+                local entVelX, entVelY = get_velocity(entity.uid)
+                spawn_entity(getBombOrRope(), entity.x, entity.y, entity.layer, entVelX, entVelY)
+            end
             entity:destroy()
         end)
     end, SPAWN_TYPE.ANY, MASK.ITEM, data.type)
