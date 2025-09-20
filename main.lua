@@ -86,6 +86,8 @@ debugging = false
 givingItem = nil
 waddlerClover = false
 usedBossDoor = false
+done8Favour = false
+done16Favour = false
 local bombOrRope = false
 function getBombOrRope()
     bombOrRope = not bombOrRope
@@ -95,6 +97,79 @@ function getBombOrRope()
         return ENT_TYPE.ITEM_PICKUP_ROPEPILE
     end
 end
+
+KALI_REWARDS = {
+    ['8FAVOUR'] = become_lookup_table({
+        ENT_TYPE.ITEM_PICKUP_COMPASS,
+        ENT_TYPE.ITEM_PICKUP_SPECTACLES,
+        ENT_TYPE.ITEM_PICKUP_SPRINGSHOES,
+        ENT_TYPE.ITEM_PICKUP_SPIKESHOES,
+        ENT_TYPE.ITEM_PICKUP_CLIMBINGGLOVES,
+        ENT_TYPE.ITEM_PICKUP_PITCHERSMITT,
+        ENT_TYPE.ITEM_CAPE,
+        ENT_TYPE.ITEM_PICKUP_SKELETON_KEY,
+        ENT_TYPE.ITEM_PICKUP_BOMBBAG,
+    }),
+
+    ['16FAVOR'] = become_lookup_table({
+        ENT_TYPE.ITEM_PICKUP_KAPALA,
+    }),
+
+    ['16PLUS'] = become_lookup_table({
+        ENT_TYPE.ITEM_PICKUP_ROYALJELLY,
+    }),
+
+    ['USHABTI'] = become_lookup_table({
+        ENT_TYPE.MONS_VAMPIRE,
+        ENT_TYPE.MONS_CAVEMAN,
+        ENT_TYPE.MOUNT_TURKEY,
+        ENT_TYPE.CHAR_HIREDHAND,
+    }),
+
+    ['DICE'] = become_lookup_table({
+        ENT_TYPE.MONS_SNAKE,
+        ENT_TYPE.ITEM_DIAMOND,
+        ENT_TYPE.ITEM_TELEPORTER_BACKPACK,
+        ENT_TYPE.ITEM_PICKUP_SPECTACLES,
+        ENT_TYPE.ITEM_PICKUP_ROPEPILE,
+        ENT_TYPE.ITEM_MACHETE,
+        ENT_TYPE.ITEM_WEBGUN,
+        ENT_TYPE.ITEM_PICKUP_COOKEDTURKEY,
+        ENT_TYPE.ITEM_PICKUP_CLIMBINGGLOVES,
+        ENT_TYPE.MONS_VAMPIRE,
+        ENT_TYPE.CHAR_HIREDHAND,
+    }),
+    ['JOURNALID'] = {
+        [ENT_TYPE.ITEM_PICKUP_SPECTACLES]     = 5,
+        [ENT_TYPE.ITEM_PICKUP_CLIMBINGGLOVES] = 6,
+        [ENT_TYPE.ITEM_PICKUP_PITCHERSMITT]   = 7,
+        [ENT_TYPE.ITEM_PICKUP_SPRINGSHOES]    = 8,
+        [ENT_TYPE.ITEM_PICKUP_SPIKESHOES]     = 9,
+        [ENT_TYPE.ITEM_PICKUP_COMPASS]        = 10,
+        [ENT_TYPE.ITEM_PICKUP_KAPALA]         = 14,
+        [ENT_TYPE.ITEM_PICKUP_SKELETON_KEY]   = 21,
+        [ENT_TYPE.ITEM_CAPE]                  = 23,
+        [ENT_TYPE.ITEM_TELEPORTER_BACKPACK]   = 26,
+        [ENT_TYPE.ITEM_MACHETE]               = 38,
+        [ENT_TYPE.ITEM_WEBGUN]                = 29,
+    }
+}
+
+local function buildKaliLookup()
+    local all = {}
+    for key, category in pairs(KALI_REWARDS) do
+        if key == "ALL" or key == "JOURNALID" then
+            goto continue
+        end
+        for ent_type, _ in pairs(category) do
+            all[#all+1] = ent_type
+        end
+        ::continue::
+    end
+    KALI_REWARDS.ALL = become_lookup_table(all)
+end
+
+buildKaliLookup()
 
 local shortcut_save_values = {
     [0] = 1,
@@ -120,31 +195,29 @@ function IsWaddlerLevel()
     return state.world == 3 or state.world == 5 or state.world == 7
 end
 
+local shortcut_rules = {
+    {Spel2AP.shortcuts.Ice_Caves,   3, function() return ap_save.max_world > 4 end}, -- world 5
+    {Spel2AP.shortcuts.Olmecs_Lair, 2, function() return ap_save.max_world >= 3 end}, -- world 3
+    {Spel2AP.shortcuts.Jungle,      1, function() return ap_save.max_world >= 2 end}, -- world 2
+    {Spel2AP.shortcuts.Volcana,     1, function() return ap_save.max_world >= 2 end}, -- world 2
+}
+
 function get_shortcut_level()
-    if player_options.progressive_worlds then
-        if ap_save.max_world > 4 then
-            return 3
-        elseif ap_save.max_world >= 3 then
-            return 2
-        elseif ap_save.max_world == 2 then
-            return 1
+    for _, entry in ipairs(shortcut_rules) do
+        local shortcut, level, progressive_condition = entry[1], entry[2], entry[3]
+        if player_options.progressive_worlds then
+            if progressive_condition() then
+                return level
+            end
         else
-            return 0
+            if ap_save.shortcut_unlocks[shortcut] then
+                return level
+            end
         end
-    else
-        local unlocks = ap_save.shortcut_unlocks
-        if unlocks[Spel2AP.shortcuts.Ice_Caves] then
-            return 3
-        end
-        if unlocks[Spel2AP.shortcuts.Olmecs_Lair] then
-            return 2
-        end
-        if unlocks[Spel2AP.shortcuts.Jungle] or unlocks[Spel2AP.shortcuts.Volcana] then
-            return 1
-        end
-        return 0
     end
+    return 0
 end
+
 
 function set_shortcut_progress(level)
     savegame.shortcuts = shortcut_save_values[level] or 1
@@ -209,6 +282,8 @@ end
 set_callback(function()
     debug_print("START")
 
+    done8Favour = false
+    done16Favour = false
     local player = get_player(1, false)
     player.health = player_options.starting_health + ap_save.stat_upgrades[Spel2AP.permanent_upgrades.Health]
     player.inventory.bombs = player_options.starting_bombs + ap_save.stat_upgrades[Spel2AP.permanent_upgrades.Bomb]
@@ -555,44 +630,107 @@ set_callback(function()
     state.logic.tun_moon_challenge.mattock_uid = fakeMattock
 end, ON.SPEECH_BUBBLE)
 
+local function process_potential_kali_item(entity, isUnlocked, entEnumName)
+    debug_print(f"[processKaliItem] Checking if {entEnumName} is in kali list")
+    if not KALI_REWARDS.ALL[entity.type.id] then
+        debug_print("[processKaliItem] Not in the list. Stop working.")
+        return
+    end
+    if (entity.owner_uid and entity.owner_uid ~= -1) or (entity.last_owner_uid and entity.last_owner_uid ~= -1) then
+        debug_print("[processKaliItem] Held by someone. Assuming it's not a Kali item.")
+        return
+    end
+    local altar_entities = get_entities_at(ENT_TYPE.FLOOR_ALTAR, MASK.FLOOR, entity.x, entity.y - 1, entity.layer, 1)
+    if #altar_entities == 0 then
+        debug_print("[processKaliItem] No altars found. Assuming it's not a Kali item.")
+        return
+    end
+    local journalID = KALI_REWARDS.JOURNALID[entity.type.id]
+    local shouldReplace = journalID and not isUnlocked
+    if not done8Favour then
+        if state.kali_favor > 7 then
+            done8Favour = true
+        end
+    else
+        if not done16Favour then
+            if state.kali_favor > 15 then
+                done16Favour = true
+            end
+        end
+    end
+    if shouldReplace then
+        debug_print("[processKaliItem::shouldReplace] Should replace. Figuring one out")
+        local foundReplacement = false
+        for entry, _ in pairs(KALI_REWARDS['8FAVOUR']) do
+            local entryJournalID = KALI_REWARDS.JOURNALID[entry]
+            if not entryJournalID then
+                goto continue
+            end
+            local powerupID = Journal_to_ItemEnt[entryJournalID].powerup
+            if not powerupID then
+                goto continue
+            end
+            if ap_save.item_unlocks[entryJournalID] and not get_player(1):has_powerup(powerupID) then
+                debug_print(f"[processKaliItem::shouldReplace] Found and spawning {enum_get_name(ENT_TYPE,entry.type.id)} as a replacement")
+                foundReplacement = true
+                spawn_entity_snapped_to_floor(entry, entity.x, entity.y, entity.layer)
+                break
+            end
+            ::continue::
+        end
+        if not foundReplacement then
+            debug_print("[processKaliItem::shouldReplace] No replacement, giving a Bomb Bag")
+            spawn_entity_snapped_to_floor(ENT_TYPE.ITEM_PICKUP_BOMBBAG, entity.x, entity.y, entity.layer)
+        end
+    else
+        debug_print("[processKaliItem::shouldReplace] Do not replace.")
+    end
+end
+
+local function process_potential_shop_item(entity, entEnumName)
+    local shopOwner = remove_from_shop(entity)
+    if shopOwner and shopOwner ~= -1 then
+        local spawnItem = getBombOrRope()
+        debug_print(f"[processShopItem] Found {entEnumName} in shop. Replacing with {enum_get_name(ENT_TYPE,spawnItem)})")
+        local newItem = spawn_entity_snapped_to_floor(spawnItem, entity.x, entity.y, entity.layer)
+        if state.shoppie_aggro < 1 and state.shoppie_aggro_next < 1 then
+            if newItem and newItem ~= -1 then
+                add_item_to_shop(newItem, shopOwner)
+            else
+                debug_print("[processShopItem] Something went wrong replacing a shop item.")
+            end
+        end
+        if purchasable_list[entity.type.id] then
+            entity:set_pre_destroy(function()
+                local liberatedItems = get_entities_at(purchasable_counterpart[entity.type.id], MASK.ANY, entity.x, entity.y, entity.layer, 1)
+                for _, liberatedItem in ipairs(liberatedItems) do
+                    local liberatedEntity = get_entity(liberatedItem)
+                    liberatedEntity:destroy()
+                end
+            end)
+        end
+    end
+end
+
 for _, data in pairs(Journal_to_ItemEnt) do
     set_post_entity_spawn(function(entity, _)
         entity:set_pre_update_state_machine(function (_)
             if not test_flag(entity.more_flags, ENT_MORE_FLAG.FINISHED_SPAWNING) then
                 return
             end
-            if ap_save.item_unlocks[data.lock] then
-                clear_callback()
+            clear_callback()
+            local isUnlocked = ap_save.item_unlocks[data.lock]
+            local enumName = enum_get_name(ENT_TYPE,entity.type.id)
+            process_potential_kali_item(entity, isUnlocked, enumName)
+            if isUnlocked then
                 return
             end
-            local shopOwner = remove_from_shop(entity)
-            if shopOwner and shopOwner ~= -1 then
-                local spawnItem = getBombOrRope()
-                debug_print(f"Found {enum_get_name(ENT_TYPE,entity.type.id)} in shop. Replacing with {enum_get_name(ENT_TYPE,spawnItem)})")
-                local newItem = spawn_entity_snapped_to_floor(spawnItem, entity.x, entity.y, entity.layer)
-                if state.shoppie_aggro < 1 and state.shoppie_aggro_next < 1 then
-                    if newItem and newItem ~= -1 then
-                        add_item_to_shop(newItem, shopOwner)
-                    else
-                        debug_print("Something went wrong replacing a shop item.")
-                    end
-                end
-                if purchasable_list[entity.type.id] then
-                    entity:set_pre_destroy(function()
-                        local liberatedItems = get_entities_at(purchasable_counterpart[entity.type.id], MASK.ANY, entity.x, entity.y, entity.layer, 1)
-                        for _, liberatedItem in ipairs(liberatedItems) do
-                            local liberatedEntity = get_entity(liberatedItem)
-                            liberatedEntity:destroy()
-                        end
-                    end)
-                end
-            end
+            process_potential_shop_item(entity, enumName)
             local heldEnt = entity:get_held_entity()
             if heldEnt ~= nil then
                 heldEnt:destroy()
             end
             entity:destroy()
-            clear_callback()
         end)
     end, SPAWN_TYPE.ANY, MASK.ITEM, data.type)
 end
