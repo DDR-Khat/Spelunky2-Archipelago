@@ -258,7 +258,16 @@ function connect(server, slot, password)
                 end
                 item_handler(data.item, false)
                 if IsInGame() then
-                    table.insert(item_queue, #item_queue + 1, {item = data.item,player = sender})
+                    local dataEntry = item_ids[data.item]
+                    local priority = (dataEntry and dataEntry.priority) or 0
+                    local insertIndex = #item_queue + 1
+                    for i, queued in ipairs(item_queue) do
+                        if priority > queued.priority then
+                            insertIndex = i
+                            break
+                        end
+                    end
+                    table.insert(item_queue, insertIndex, {item = data.item,player = sender,priority = priority})
                 end
             end
         end
@@ -586,7 +595,7 @@ function item_handler(itemID, isQueued)
             ap_save.world_unlocks[itemID] = true
         end
         write_save()
-        if isInGame() then
+        if IsInGame() then
             update_nextworld_variable()
         end
         return true

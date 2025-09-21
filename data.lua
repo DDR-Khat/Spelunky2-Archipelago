@@ -408,6 +408,19 @@ function get_unlock_world_number()
     end
 end
 
+PRIORITY = {
+    WORLD = 10,
+    SHORTCUT = 9,
+    UNLOCKS = 8,
+    UPGRADES = 7,
+    STATS = 6,
+    TRAP = 5,
+    FILLER_HIGH = 4,
+    FILLER_MED = 3,
+    FILLER_LOW = 2,
+    CHARACTER = 1
+}
+
 item_ids = {
     [Spel2AP.filler_items.Rope_Pile] = {
         type = Spel2AP.filler_items,
@@ -415,6 +428,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 0,
         TileX = 0,
+        priority = PRIORITY.FILLER_MED
     },
     [Spel2AP.filler_items.Bomb_Bag] = {
         type = Spel2AP.filler_items,
@@ -422,6 +436,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 0,
         TileX = 1,
+        priority = PRIORITY.FILLER_MED
     },
     [Spel2AP.filler_items.Bomb_Box] = {
         type = Spel2AP.filler_items,
@@ -429,6 +444,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 0,
         TileX = 2,
+        priority = PRIORITY.FILLER_HIGH
     },
     [Spel2AP.filler_items.Cooked_Turkey] = {
         type = Spel2AP.filler_items,
@@ -436,6 +452,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 3,
         TileX = 5,
+        priority = PRIORITY.FILLER_LOW
     },
     [Spel2AP.filler_items.Royal_Jelly] = {
         type = Spel2AP.filler_items,
@@ -443,6 +460,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 1,
         TileX = 6,
+        priority = PRIORITY.FILLER_HIGH
     },
     [Spel2AP.filler_items.Gold_Bar] = {
         type = Spel2AP.filler_items,
@@ -450,6 +468,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
         TileY = 8,
         TileX = 12,
+        priority = PRIORITY.FILLER_LOW
     },
     [Spel2AP.filler_items.Emerald_Gem] = {
         type = Spel2AP.filler_items,
@@ -457,6 +476,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
         TileY = 0,
         TileX = 3,
+        priority = PRIORITY.FILLER_LOW
     },
     [Spel2AP.filler_items.Sapphire_Gem] = {
         type = Spel2AP.filler_items,
@@ -464,6 +484,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
         TileY = 0,
         TileX = 4,
+        priority = PRIORITY.FILLER_LOW
     },
     [Spel2AP.filler_items.Ruby_Gem] = {
         type = Spel2AP.filler_items,
@@ -471,6 +492,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
         TileY = 0,
         TileX = 5,
+        priority = PRIORITY.FILLER_LOW
     },
     [Spel2AP.filler_items.Diamond_Gem] = {
         type = Spel2AP.filler_items,
@@ -478,6 +500,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
         TileY = 0,
         TileX = 6,
+        priority = PRIORITY.FILLER_HIGH
     },
     [Spel2AP.characters.Ana_Spelunky] = {
         type = Spel2AP.characters,
@@ -485,6 +508,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_CHAR_YELLOW_0,
         TileY = 0,
         TileX = 0,
+        priority = PRIORITY.CHARACTER
     },
     [Spel2AP.characters.Margaret_Tunnel] = {
         type = Spel2AP.characters,
@@ -492,6 +516,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_CHAR_MAGENTA_0,
         TileY = 0,
         TileX = 0,
+        priority = PRIORITY.CHARACTER
     },
     [Spel2AP.characters.Colin_Northward] = {
         type = Spel2AP.characters,
@@ -499,6 +524,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_CHAR_CYAN_0,
         TileY = 0,
         TileX = 0,
+        priority = PRIORITY.CHARACTER
     },
     [Spel2AP.characters.Roffy_D_Sloth] = {
         type = Spel2AP.characters,
@@ -506,6 +532,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_CHAR_BLACK_0,
         TileY = 0,
         TileX = 0,
+        priority = PRIORITY.CHARACTER
     },
     [Spel2AP.characters.Alto_Singh] = {
         type = Spel2AP.characters,
@@ -513,6 +540,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_CHAR_CINNABAR_0,
         TileY = 0,
         TileX = 0,
+        priority = PRIORITY.CHARACTER
     },
     [Spel2AP.characters.Liz_Mutton] = {
         type = Spel2AP.characters,
@@ -520,6 +548,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_CHAR_GREEN_0,
         TileY = 0,
         TileX = 0,
+        priority = PRIORITY.CHARACTER
     },
     [Spel2AP.characters.Nekka_the_Eagle] = {
         type = Spel2AP.characters,
@@ -527,6 +556,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_CHAR_OLIVE_0,
         TileY = 0,
         TileX = 0,
+        priority = PRIORITY.CHARACTER
     },
     [Spel2AP.characters.LISE_Project] = {
         type = Spel2AP.characters,
@@ -534,6 +564,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_CHAR_WHITE_0,
         TileY = 0,
         TileX = 0,
+        priority = PRIORITY.CHARACTER
     },
     [Spel2AP.characters.Coco_Von_Diamonds] = {
         type = Spel2AP.characters,
@@ -541,6 +572,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_CHAR_CERULEAN_0,
         TileY = 0,
         TileX = 0,
+        priority = PRIORITY.CHARACTER
     },
     [Spel2AP.characters.Manfred_Tunnel] = {
         type = Spel2AP.characters,
@@ -548,6 +580,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_CHAR_BLUE_0,
         TileY = 0,
         TileX = 0,
+        priority = PRIORITY.CHARACTER
     },
     [Spel2AP.characters.Little_Jay] = {
         type = Spel2AP.characters,
@@ -555,6 +588,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_CHAR_LIME_0,
         TileY = 0,
         TileX = 0,
+        priority = PRIORITY.CHARACTER
     },
     [Spel2AP.characters.Tina_Flan] = {
         type = Spel2AP.characters,
@@ -562,6 +596,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_CHAR_LEMON_0,
         TileY = 0,
         TileX = 0,
+        priority = PRIORITY.CHARACTER
     },
     [Spel2AP.characters.Valerie_Crump] = {
         type = Spel2AP.characters,
@@ -569,6 +604,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_CHAR_IRIS_0,
         TileY = 0,
         TileX = 0,
+        priority = PRIORITY.CHARACTER
     },
     [Spel2AP.characters.Au] = {
         type = Spel2AP.characters,
@@ -576,6 +612,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_CHAR_GOLD_0,
         TileY = 0,
         TileX = 0,
+        priority = PRIORITY.CHARACTER
     },
     [Spel2AP.characters.Demi_Von_Diamonds] = {
         type = Spel2AP.characters,
@@ -583,6 +620,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_CHAR_RED_0,
         TileY = 0,
         TileX = 0,
+        priority = PRIORITY.CHARACTER
     },
     [Spel2AP.characters.Pilot] = {
         type = Spel2AP.characters,
@@ -590,6 +628,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_CHAR_PINK_0,
         TileY = 0,
         TileX = 0,
+        priority = PRIORITY.CHARACTER
     },
     [Spel2AP.characters.Princess_Airyn] = {
         type = Spel2AP.characters,
@@ -597,6 +636,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_CHAR_VIOLET_0,
         TileY = 0,
         TileX = 0,
+        priority = PRIORITY.CHARACTER
     },
     [Spel2AP.characters.Dirk_Yamaoka] = {
         type = Spel2AP.characters,
@@ -604,6 +644,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_CHAR_GRAY_0,
         TileY = 0,
         TileX = 0,
+        priority = PRIORITY.CHARACTER
     },
     [Spel2AP.characters.Guy_Spelunky] = {
         type = Spel2AP.characters,
@@ -611,6 +652,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_CHAR_KHAKI_0,
         TileY = 0,
         TileX = 0,
+        priority = PRIORITY.CHARACTER
     },
     [Spel2AP.characters.Classic_Guy] = {
         type = Spel2AP.characters,
@@ -618,6 +660,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_CHAR_ORANGE_0,
         TileY = 0,
         TileX = 0,
+        priority = PRIORITY.CHARACTER
     },
     [Spel2AP.locked_items.Alien_Compass] = {
         type = Spel2AP.locked_items,
@@ -626,6 +669,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 4,
         TileX = 8,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Ankh] = {
         type = Spel2AP.locked_items,
@@ -634,6 +678,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 1,
         TileX = 5,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Arrow_of_Light] = {
         type = Spel2AP.locked_items,
@@ -642,6 +687,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 5,
         TileX = 1,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Camera] = {
         type = Spel2AP.locked_items,
@@ -650,6 +696,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 2,
         TileX = 4,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Cape] = {
         type = Spel2AP.locked_items,
@@ -658,6 +705,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 1,
         TileX = 7,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Climbing_Gloves] = {
         type = Spel2AP.locked_items,
@@ -666,6 +714,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 0,
         TileX = 5,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Clone_Gun] = {
         type = Spel2AP.locked_items,
@@ -674,6 +723,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 3,
         TileX = 7,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Compass] = {
         type = Spel2AP.locked_items,
@@ -682,6 +732,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 0,
         TileX = 9,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Crown] = {
         type = Spel2AP.locked_items,
@@ -690,6 +741,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 1,
         TileX = 4,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Eggplant] = {
         type = Spel2AP.locked_items,
@@ -698,6 +750,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 3,
         TileX = 4,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Eggplant_Crown] = {
         type = Spel2AP.locked_items,
@@ -706,6 +759,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 5,
         TileX = 3,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Elixir] = {
         type = Spel2AP.locked_items,
@@ -714,6 +768,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 4,
         TileX = 6,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Excalibur] = {
         type = Spel2AP.locked_items,
@@ -721,7 +776,8 @@ item_ids = {
         lock_name = "Excalibur",
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
         TileX = 2,
-        TileY = 10
+        TileY = 10,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Four_Leaf_Clover] = {
         type = Spel2AP.locked_items,
@@ -730,6 +786,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 4,
         TileX = 2,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Freeze_Ray] = {
         type = Spel2AP.locked_items,
@@ -738,6 +795,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 2,
         TileX = 2,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Hedjet] = {
         type = Spel2AP.locked_items,
@@ -746,6 +804,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 1,
         TileX = 3,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Hoverpack] = {
         type = Spel2AP.locked_items,
@@ -754,6 +813,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 3,
         TileX = 6,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Hou_Yis_Bow] = {
         type = Spel2AP.locked_items,
@@ -762,6 +822,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 5,
         TileX = 0,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Jetpack] = {
         type = Spel2AP.locked_items,
@@ -770,6 +831,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 1,
         TileX = 8,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Kapala] = {
         type = Spel2AP.locked_items,
@@ -778,6 +840,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 1,
         TileX = 2,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Machete] = {
         type = Spel2AP.locked_items,
@@ -786,6 +849,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 2,
         TileX = 8,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Mattock] = {
         type = Spel2AP.locked_items,
@@ -794,6 +858,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 2,
         TileX = 6,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Paste] = {
         type = Spel2AP.locked_items,
@@ -802,6 +867,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 0,
         TileX = 3,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Pitchers_Mitt] = {
         type = Spel2AP.locked_items,
@@ -810,6 +876,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 0,
         TileX = 6,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Plasma_Cannon] = {
         type = Spel2AP.locked_items,
@@ -818,6 +885,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 3,
         TileX = 0,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Powerpack] = {
         type = Spel2AP.locked_items,
@@ -826,6 +894,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 4,
         TileX = 4,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Scepter] = {
         type = Spel2AP.locked_items,
@@ -834,6 +903,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 3,
         TileX = 1,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Shield] = {
         type = Spel2AP.locked_items,
@@ -842,6 +912,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 4,
         TileX = 1,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Skeleton_Key] = {
         type = Spel2AP.locked_items,
@@ -850,6 +921,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 3,
         TileX = 8,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Spectacles] = {
         type = Spel2AP.locked_items,
@@ -858,6 +930,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 0,
         TileX = 4,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Spike_Shoes] = {
         type = Spel2AP.locked_items,
@@ -866,6 +939,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 0,
         TileX = 8,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Spring_Shoes] = {
         type = Spel2AP.locked_items,
@@ -874,6 +948,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 0,
         TileX = 7,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Tablet_of_Destiny] = {
         type = Spel2AP.locked_items,
@@ -882,6 +957,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 3,
         TileX = 9,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Telepack] = {
         type = Spel2AP.locked_items,
@@ -890,6 +966,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 1,
         TileX = 9,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Teleporter] = {
         type = Spel2AP.locked_items,
@@ -898,6 +975,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 2,
         TileX = 5,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.True_Crown] = {
         type = Spel2AP.locked_items,
@@ -906,6 +984,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 4,
         TileX = 3,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Udjat_Eye] = {
         type = Spel2AP.locked_items,
@@ -914,6 +993,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 1,
         TileX = 1,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Ushabti] = {
         type = Spel2AP.locked_items,
@@ -922,6 +1002,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 3,
         TileX = 3,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Vlads_Cape] = {
         type = Spel2AP.locked_items,
@@ -930,6 +1011,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 4,
         TileX = 5,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.locked_items.Webgun] = {
         type = Spel2AP.locked_items,
@@ -938,6 +1020,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 2,
         TileX = 0,
+        priority = PRIORITY.UNLOCKS
     },
     [Spel2AP.upgrades.Alien_Compass] = {
         type = Spel2AP.upgrades,
@@ -945,6 +1028,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 1,
         TileX = 5,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Ankh] = {
         type = Spel2AP.upgrades,
@@ -952,6 +1036,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 1,
         TileX = 5,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Arrow_of_Light] = {
         type = Spel2AP.upgrades,
@@ -959,6 +1044,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 5,
         TileX = 1,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Camera] = {
         type = Spel2AP.upgrades,
@@ -966,6 +1052,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 2,
         TileX = 4,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Cape] = {
         type = Spel2AP.upgrades,
@@ -973,6 +1060,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 1,
         TileX = 7,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Climbing_Gloves] = {
         type = Spel2AP.upgrades,
@@ -980,6 +1068,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 0,
         TileX = 5,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Clone_Gun] = {
         type = Spel2AP.upgrades,
@@ -987,6 +1076,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 3,
         TileX = 7,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Compass] = {
         type = Spel2AP.upgrades,
@@ -994,6 +1084,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 0,
         TileX = 9,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Crown] = {
         type = Spel2AP.upgrades,
@@ -1001,6 +1092,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 1,
         TileX = 4,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Eggplant] = {
         type = Spel2AP.upgrades,
@@ -1008,6 +1100,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 3,
         TileX = 4,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Eggplant_Crown] = {
         type = Spel2AP.upgrades,
@@ -1015,6 +1108,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 5,
         TileX = 3,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Elixir] = {
         type = Spel2AP.upgrades,
@@ -1022,13 +1116,15 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 4,
         TileX = 6,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Excalibur] = {
         type = Spel2AP.upgrades,
         name = "Excalibur Upgrade",
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
         TileX = 2,
-        TileY = 10
+        TileY = 10,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Four_Leaf_Clover] = {
         type = Spel2AP.upgrades,
@@ -1036,6 +1132,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 4,
         TileX = 2,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Freeze_Ray] = {
         type = Spel2AP.upgrades,
@@ -1043,6 +1140,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 2,
         TileX = 2,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Hedjet] = {
         type = Spel2AP.upgrades,
@@ -1050,6 +1148,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 0,
         TileX = 3,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Hoverpack] = {
         type = Spel2AP.upgrades,
@@ -1057,6 +1156,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 3,
         TileX = 6,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Hou_Yis_Bow] = {
         type = Spel2AP.upgrades,
@@ -1064,6 +1164,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 5,
         TileX = 0,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Jetpack] = {
         type = Spel2AP.upgrades,
@@ -1071,6 +1172,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 1,
         TileX = 8,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Kapala] = {
         type = Spel2AP.upgrades,
@@ -1078,6 +1180,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 1,
         TileX = 2,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Machete] = {
         type = Spel2AP.upgrades,
@@ -1085,6 +1188,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 2,
         TileX = 8,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Mattock] = {
         type = Spel2AP.upgrades,
@@ -1092,6 +1196,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 2,
         TileX = 6,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Paste] = {
         type = Spel2AP.upgrades,
@@ -1099,6 +1204,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 0,
         TileX = 3,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Pitchers_Mitt] = {
         type = Spel2AP.upgrades,
@@ -1106,6 +1212,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 0,
         TileX = 6,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Plasma_Cannon] = {
         type = Spel2AP.upgrades,
@@ -1113,6 +1220,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 3,
         TileX = 0,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Powerpack] = {
         type = Spel2AP.upgrades,
@@ -1120,6 +1228,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 4,
         TileX = 4,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Scepter] = {
         type = Spel2AP.upgrades,
@@ -1127,6 +1236,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 3,
         TileX = 1,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Shield] = {
         type = Spel2AP.upgrades,
@@ -1134,6 +1244,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 4,
         TileX = 1,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Skeleton_Key] = {
         type = Spel2AP.upgrades,
@@ -1141,6 +1252,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 3,
         TileX = 8,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Spectacles] = {
         type = Spel2AP.upgrades,
@@ -1148,6 +1260,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 0,
         TileX = 4,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Spike_Shoes] = {
         type = Spel2AP.upgrades,
@@ -1155,6 +1268,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 0,
         TileX = 8,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Spring_Shoes] = {
         type = Spel2AP.upgrades,
@@ -1162,6 +1276,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 0,
         TileX = 7,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Tablet_of_Destiny] = {
         type = Spel2AP.upgrades,
@@ -1169,6 +1284,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 3,
         TileX = 9,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Telepack] = {
         type = Spel2AP.upgrades,
@@ -1176,6 +1292,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 1,
         TileX = 9,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Teleporter] = {
         type = Spel2AP.upgrades,
@@ -1183,6 +1300,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 2,
         TileX = 5,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.True_Crown] = {
         type = Spel2AP.upgrades,
@@ -1190,6 +1308,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 4,
         TileX = 3,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Udjat_Eye] = {
         type = Spel2AP.upgrades,
@@ -1197,6 +1316,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 1,
         TileX = 1,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Ushabti] = {
         type = Spel2AP.upgrades,
@@ -1204,6 +1324,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 3,
         TileX = 3,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Vlads_Cape] = {
         type = Spel2AP.upgrades,
@@ -1211,6 +1332,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 4,
         TileX = 5,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Webgun] = {
         type = Spel2AP.upgrades,
@@ -1218,6 +1340,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
         TileY = 2,
         TileX = 0,
+        priority = PRIORITY.UPGRADES
     },
     [Spel2AP.permanent_upgrades.Health] = {
         type = Spel2AP.permanent_upgrades,
@@ -1225,6 +1348,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_FX_SMALL_0,
         TileY = 7,
         TileX = 7,
+        priority = PRIORITY.STATS
     },
     [Spel2AP.permanent_upgrades.Bomb] = {
         type = Spel2AP.permanent_upgrades,
@@ -1232,6 +1356,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
         TileY = 5,
         TileX = 0,
+        priority = PRIORITY.STATS
     },
     [Spel2AP.permanent_upgrades.Rope] = {
         type = Spel2AP.permanent_upgrades,
@@ -1239,20 +1364,23 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_CHAR_YELLOW_0,
         TileY = 12,
         TileX = 4,
+        priority = PRIORITY.STATS
     },
     [Spel2AP.permanent_upgrades.Cosmic_Ocean_Checkpoint] = {
         type = Spel2AP.permanent_upgrades,
         name = "Cosmic Ocean Checkpoint",
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_BG_0,
         TileX = 1,
-        TileY = 2
+        TileY = 2,
+        priority = PRIORITY.STATS
     },
     [Spel2AP.world_unlocks.Progressive_World] = {
         type = Spel2AP.world_unlocks,
-        name = "Progress World Unlocked",
+        name = "Progressive World Unlocked",
         display = TEXTURE.DATA_TEXTURES_FX_SMALL3_0,
         TileY = 6,
         TileX = 6,
+        priority = PRIORITY.WORLD
     },
     [Spel2AP.world_unlocks.Jungle] = {
         type = Spel2AP.world_unlocks,
@@ -1260,6 +1388,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_MENU_DEATHMATCH5_0,
         TileY = 0,
         TileX = 1,
+        priority = PRIORITY.WORLD
     },
     [Spel2AP.world_unlocks.Volcana] = {
         type = Spel2AP.world_unlocks,
@@ -1267,6 +1396,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_MENU_DEATHMATCH5_0,
         TileY = 0,
         TileX = 2,
+        priority = PRIORITY.WORLD
     },
     [Spel2AP.world_unlocks.Olmecs_Lair] = {
         type = Spel2AP.world_unlocks,
@@ -1274,6 +1404,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_MONS_BIG_0,
         TileY = 0,
         TileX = 1,
+        priority = PRIORITY.WORLD
     },
     [Spel2AP.world_unlocks.Tide_Pool] = {
         type = Spel2AP.world_unlocks,
@@ -1281,6 +1412,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_MENU_DEATHMATCH5_0,
         TileY = 0,
         TileX = 3,
+        priority = PRIORITY.WORLD
     },
     [Spel2AP.world_unlocks.Temple] = {
         type = Spel2AP.world_unlocks,
@@ -1288,6 +1420,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_MENU_DEATHMATCH5_0,
         TileY = 1,
         TileX = 0,
+        priority = PRIORITY.WORLD
     },
     [Spel2AP.world_unlocks.Ice_Caves] = {
         type = Spel2AP.world_unlocks,
@@ -1295,6 +1428,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_MENU_DEATHMATCH5_0,
         TileY = 1,
         TileX = 1,
+        priority = PRIORITY.WORLD
     },
     [Spel2AP.world_unlocks.Neo_Babylon] = {
         type = Spel2AP.world_unlocks,
@@ -1302,6 +1436,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_MENU_DEATHMATCH5_0,
         TileY = 1,
         TileX = 2,
+        priority = PRIORITY.WORLD
     },
     [Spel2AP.world_unlocks.Sunken_City] = {
         type = Spel2AP.world_unlocks,
@@ -1309,69 +1444,79 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_MENU_DEATHMATCH5_0,
         TileY = 1,
         TileX = 3,
+        priority = PRIORITY.WORLD
     },
     [Spel2AP.world_unlocks.Cosmic_Ocean] = {
         type = Spel2AP.world_unlocks,
         name = "Cosmic Ocean Unlocked",
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
         TileX = 0,
-        TileY = 0
+        TileY = 0,
+        priority = PRIORITY.WORLD
     },
     [Spel2AP.shortcuts.Jungle] = {
         type = Spel2AP.shortcuts,
         name = "Jungle Shortcut",
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
         TileX = 0,
-        TileY = 0
+        TileY = 0,
+        priority = PRIORITY.SHORTCUT
     },
     [Spel2AP.shortcuts.Volcana] = {
         type = Spel2AP.shortcuts,
         name = "Volcana Shortcut",
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
         TileX = 0,
-        TileY = 0
+        TileY = 0,
+        priority = PRIORITY.SHORTCUT
     },
     [Spel2AP.shortcuts.Olmecs_Lair] = {
         type = Spel2AP.shortcuts,
         name = "Olmec's Lair Shortcut",
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
         TileX = 0,
-        TileY = 0
+        TileY = 0,
+        priority = PRIORITY.SHORTCUT
     },
     [Spel2AP.shortcuts.Tide_Pool] = {
         type = Spel2AP.shortcuts,
         name = "Tide Pool Shortcut",
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
         TileX = 0,
-        TileY = 0
+        TileY = 0,
+        priority = PRIORITY.SHORTCUT
     },
     [Spel2AP.shortcuts.Temple] = {
         type = Spel2AP.shortcuts,
         name = "Temple Shortcut",
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
         TileX = 0,
-        TileY = 0
+        TileY = 0,
+        priority = PRIORITY.SHORTCUT
     },
     [Spel2AP.shortcuts.Ice_Caves] = {
         type = Spel2AP.shortcuts,
         name = "Ice Caves Shortcut",
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
         TileX = 0,
-        TileY = 0
+        TileY = 0,
+        priority = PRIORITY.SHORTCUT
     },
     [Spel2AP.shortcuts.Neo_Babylon] = {
         type = Spel2AP.shortcuts,
         name = "Neo Babylon Shortcut",
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
         TileX = 0,
-        TileY = 0
+        TileY = 0,
+        priority = PRIORITY.SHORTCUT
     },
     [Spel2AP.shortcuts.Sunken_City] = {
         type = Spel2AP.shortcuts,
         name = "Sunken City Shortcut",
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
         TileX = 0,
-        TileY = 0
+        TileY = 0,
+        priority = PRIORITY.SHORTCUT
     },
     [Spel2AP.traps.Poison] = {
         type = Spel2AP.traps,
@@ -1379,6 +1524,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
         TileY = 14,
         TileX = 3,
+        priority = PRIORITY.TRAP
     },
     [Spel2AP.traps.Curse] = {
         type = Spel2AP.traps,
@@ -1386,6 +1532,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
         TileY = 15,
         TileX = 4,
+        priority = PRIORITY.TRAP
     },
     [Spel2AP.traps.Ghost] = {
         type = Spel2AP.traps,
@@ -1393,6 +1540,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_PEOPLE_0,
         TileY = 3,
         TileX = 3,
+        priority = PRIORITY.TRAP
     },
     [Spel2AP.traps.Stun] = {
         type = Spel2AP.traps,
@@ -1400,6 +1548,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_CHAR_YELLOW_0,
         TileY = 13,
         TileX = 4,
+        priority = PRIORITY.TRAP
     },
     [Spel2AP.traps.Loose_Bombs] = {
         type = Spel2AP.traps,
@@ -1407,6 +1556,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
         TileY = 6,
         TileX = 2,
+        priority = PRIORITY.TRAP
     },
     [Spel2AP.traps.Blindness] = {
         type = Spel2AP.traps,
@@ -1414,6 +1564,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_FX_SMALL3_0,
         TileY = 6,
         TileX = 0,
+        priority = PRIORITY.TRAP
     },
     [Spel2AP.traps.Amnesia] = {
         type = Spel2AP.traps,
@@ -1421,6 +1572,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_FX_SMALL_0,
         TileY = 3,
         TileX = 3,
+        priority = PRIORITY.TRAP
     },
     [Spel2AP.traps.Angry_Shopkeepers] = {
         type = Spel2AP.traps,
@@ -1428,6 +1580,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_PEOPLE_0,
         TileY = 2,
         TileX = 2,
+        priority = PRIORITY.TRAP
     },
     [Spel2AP.traps.Punish_Ball] = {
         type = Spel2AP.traps,
@@ -1435,6 +1588,7 @@ item_ids = {
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
         TileY = 6,
         TileX = 11,
+        priority = PRIORITY.TRAP
     }
 }
 
