@@ -293,9 +293,7 @@ set_callback(function()
 
     done8Favour = false
     done16Favour = false
-    if apPlayer == nil then
-        apPlayer = get_player(1)
-    end
+    apPlayer = get_player(1)
     apPlayer.health = player_options.starting_health + ap_save.stat_upgrades[Spel2AP.permanent_upgrades.Health]
     apPlayer.inventory.bombs = player_options.starting_bombs + ap_save.stat_upgrades[Spel2AP.permanent_upgrades.Bomb]
     apPlayer.inventory.ropes = player_options.starting_ropes + ap_save.stat_upgrades[Spel2AP.permanent_upgrades.Rope]
