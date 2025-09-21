@@ -89,6 +89,10 @@ waddlerClover = false
 usedBossDoor = false
 done8Favour = false
 done16Favour = false
+nextWorldUnlocked = false
+hudLevelIcon = nil
+local hudXOffset    = -0.02
+local hudYOffset    = 0.55
 local bombOrRope = false
 function getBombOrRope()
     bombOrRope = not bombOrRope
@@ -180,8 +184,8 @@ local shortcut_save_values = {
 }
 
 function IsInGame()
-    return state.screen >= SCREEN.CAMP or
-            state.screen >= SCREEN.RECAP
+    return state.screen >= SCREEN.CAMP and
+           state.screen <= SCREEN.RECAP
 end
 
 function IsTiamatLevel()
@@ -196,29 +200,26 @@ function IsWaddlerLevel()
     return state.world == 3 or state.world == 5 or state.world == 7
 end
 
-local shortcut_rules = {
-    {Spel2AP.shortcuts.Ice_Caves,   3, function() return ap_save.max_world > 4 end}, -- world 5
-    {Spel2AP.shortcuts.Olmecs_Lair, 2, function() return ap_save.max_world >= 3 end}, -- world 3
-    {Spel2AP.shortcuts.Jungle,      1, function() return ap_save.max_world >= 2 end}, -- world 2
-    {Spel2AP.shortcuts.Volcana,     1, function() return ap_save.max_world >= 2 end}, -- world 2
+local shortcut_levels = {
+    [2] = 1, -- Jungle/Volcana
+    [3] = 2, -- Olmec
+    [4] = 2, -- ignore Tidepool/Temple, same level as Olmec
+    [5] = 3, -- Ice Caves
+    [6] = 3, -- Neo Babylon
+    [7] = 3, -- Sunken City
+    [8] = 3, -- Cosmic Ocean
 }
 
 function get_shortcut_level()
-    for _, entry in ipairs(shortcut_rules) do
-        local shortcut, level, progressive_condition = entry[1], entry[2], entry[3]
-        if player_options.progressive_worlds then
-            if progressive_condition() then
-                return level
-            end
-        else
-            if ap_save.shortcut_unlocks[shortcut] then
-                return level
-            end
-        end
+    local currentMax
+    if player_options.progressive_worlds then
+        currentMax = ap_save.max_world
+    else
+        currentMax = get_unlock_world_number()
     end
-    return 0
-end
 
+    return shortcut_levels[currentMax] or 0
+end
 
 function set_shortcut_progress(level)
     savegame.shortcuts = shortcut_save_values[level] or 1
@@ -236,6 +237,13 @@ set_callback(function()
         update_characters(false)
         set_shortcut_progress(get_shortcut_level())
     end
+
+    if (state.screen_next == SCREEN.CAMP
+       or state.screen_next == SCREEN.MENU)
+       and apPlayer ~= nil then
+        apPlayer = nil
+    end
+    hudLevelIcon = get_hud().level_icon
 end, ON.LOADING)
 
 function get_filtered_dice_prizes()
@@ -411,6 +419,7 @@ set_callback(function()
         end)
     end
     apPlayer = get_player(1)
+    update_nextworld_variable()
 end, ON.LEVEL)
 
 
@@ -523,12 +532,6 @@ set_post_entity_spawn(function(ushabti)
 end, SPAWN_TYPE.ANY, MASK.ITEM, ENT_TYPE.USHABTI)
 
 set_callback(function()
-    if not IsInGame() then
-        if apPlayer ~= nil then
-            apPlayer = nil
-        end
-        return
-    end
     local popupUI = game_manager.save_related.journal_popup_ui
     if popupUI.timer > 0 and popupUI.chapter_to_show == 6 then
         debug_print(f"[ON.GAMEFRAME::popupCheck] Timer > 0 + Chapter 6 [Items]")
@@ -566,6 +569,35 @@ set_callback(function()
         end
     end
 end, ON.GAMEFRAME)
+
+set_callback(function(ctx, hud)
+    if not IsInGame() then
+        return
+    end
+    local opacity   = hud.data.opacity * hud.opacity
+    if get_setting(GAME_SETTING.HUD_STYLE) == 2 then
+        opacity = opacity / 2
+    end
+    local iconWidth  = hudLevelIcon.destination_top_right_x - hudLevelIcon.destination_top_left_x
+    local iconHeight = hudLevelIcon.destination_top_left_y - hudLevelIcon.destination_bottom_left_y
+    local function draw_scaled(texture, tileX, tileY, scale, yOffset_extra, color)
+        local x_offset = iconWidth * hudXOffset
+        local y_offset = iconHeight * (hudYOffset + yOffset_extra)
+        local left   = (hudLevelIcon.x + x_offset) + (hudLevelIcon.destination_top_left_x    * scale)
+        local right  = (hudLevelIcon.x + x_offset) + (hudLevelIcon.destination_top_right_x   * scale)
+        local top    = (hudLevelIcon.y + y_offset) + (hudLevelIcon.destination_top_left_y    * scale)
+        local bottom = (hudLevelIcon.y + y_offset) + (hudLevelIcon.destination_bottom_left_y * scale)
+        ctx:draw_screen_texture(texture, tileX, tileY, left, top, right, bottom, color)
+    end
+    local showLock = not nextWorldUnlocked
+    local hudColorWorld = Color:new(1, 1, 1, opacity * (showLock and 0.8 or 1.0))
+    local hudColorLock  = Color:new(1, 1, 1, math.min(opacity * 1.2, 1))
+    draw_scaled(TEXTURE.DATA_TEXTURES_MENU_BASIC_2, 6, 7, 1.0, 0, hudColorWorld)
+    if showLock then
+        draw_scaled(TEXTURE.DATA_TEXTURES_ITEMS_0, 13, 3, 0.55, 0.05, hudColorLock)
+    end
+end, ON.RENDER_PRE_HUD)
+
 
 set_callback(function()
     debug_print("TRANSITION")
@@ -605,6 +637,7 @@ set_callback(function()
         state.theme_next = state.theme_start
         run_reset()
     end
+
 end, ON.TRANSITION)
 
 local purchasable_list = {
@@ -718,6 +751,7 @@ local function process_potential_shop_item(entity, entEnumName)
         end
     end
 end
+
 for _, data in pairs(Journal_to_ItemEnt) do
     set_post_entity_spawn(function(entity, _)
         entity:set_pre_update_state_machine(function (_)

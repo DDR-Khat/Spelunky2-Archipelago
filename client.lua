@@ -586,6 +586,9 @@ function item_handler(itemID, isQueued)
             ap_save.world_unlocks[itemID] = true
         end
         write_save()
+        if isInGame() then
+            update_nextworld_variable()
+        end
         return true
     elseif category == Spel2AP.shortcuts and not isQueued then
         ap_save.shortcut_unlocks[itemID] = true

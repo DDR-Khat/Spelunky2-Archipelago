@@ -376,6 +376,38 @@ theme_to_world_unlock_id = {
     [THEME.COSMIC_OCEAN] = Spel2AP.world_unlocks.Cosmic_Ocean,
 }
 
+function update_nextworld_variable()
+    local maxUnlock = 1
+    if player_options.progressive_worlds then
+        maxUnlock = ap_save.max_world
+    else
+        maxUnlock = get_unlock_world_number()
+    end
+    nextWorldUnlocked = maxUnlock >= math.min(state.world_next + 1,8)
+end
+
+function get_unlock_world_number()
+    if ap_save.world_unlocks[Spel2AP.world_unlocks.Cosmic_Ocean] then
+        return 8
+    elseif ap_save.world_unlocks[Spel2AP.world_unlocks.Sunken_City] then
+        return 7
+    elseif ap_save.world_unlocks[Spel2AP.world_unlocks.Neo_Babylon] then
+        return 6
+    elseif ap_save.world_unlocks[Spel2AP.world_unlocks.Ice_Caves] then
+        return 5
+    elseif ap_save.world_unlocks[Spel2AP.world_unlocks.Tide_Pool]
+           or ap_save.world_unlocks[Spel2AP.world_unlocks.Temple] then
+        return 4
+    elseif ap_save.world_unlocks[Spel2AP.world_unlocks.Olmecs_Lair] then
+        return 3
+    elseif ap_save.world_unlocks[Spel2AP.world_unlocks.Jungle]
+            or ap_save.world_unlocks[Spel2AP.world_unlocks.Volcana] then
+        return 2
+    else
+        return 1
+    end
+end
+
 item_ids = {
     [Spel2AP.filler_items.Rope_Pile] = {
         type = Spel2AP.filler_items,
