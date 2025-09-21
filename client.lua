@@ -258,7 +258,16 @@ function connect(server, slot, password)
                 end
                 item_handler(data.item, false)
                 if IsInGame() then
-                    table.insert(item_queue, #item_queue + 1, {item = data.item,player = sender})
+                    local dataEntry = item_ids[data.item]
+                    local priority = (dataEntry and dataEntry.priority) or 0
+                    local insertIndex = #item_queue + 1
+                    for i, queued in ipairs(item_queue) do
+                        if priority > queued.priority then
+                            insertIndex = i
+                            break
+                        end
+                    end
+                    table.insert(item_queue, insertIndex, {item = data.item,player = sender,priority = priority})
                 end
             end
         end
@@ -586,6 +595,9 @@ function item_handler(itemID, isQueued)
             ap_save.world_unlocks[itemID] = true
         end
         write_save()
+        if IsInGame() then
+            update_nextworld_variable()
+        end
         return true
     elseif category == Spel2AP.shortcuts and not isQueued then
         ap_save.shortcut_unlocks[itemID] = true
@@ -618,10 +630,6 @@ function queue_death_link()
 end
 
 function send_location(location_id)
-    if givingItem then
-        return
-    end
-
     local success_checked, checked = pcall(function()
         return ap:LocationChecks({location_id})
     end)
