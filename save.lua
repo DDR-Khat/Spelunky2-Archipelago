@@ -340,7 +340,7 @@ function update_characters(characterSelect)
         end
     else
         local characters_in_journal = {}
-        for _, location in pairs(ap_save.checked_locations) do
+        for location, _ in pairs(ap_save.checked_locations) do
             characters_in_journal[location] = true
         end
         for _, data in pairs(character_data) do
