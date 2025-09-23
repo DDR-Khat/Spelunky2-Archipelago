@@ -22,10 +22,10 @@ function initialize_save()
         last_character = 0,
         last_index = -1, -- Stores AP item data sent from the server
         checked_locations = {
-            [Spel2AP.locations.people.Ana_Spelunky] = -1,
-            [Spel2AP.locations.people.Margaret_Tunnel] = -1,
-            [Spel2AP.locations.people.Colin_Northward] = -1,
-            [Spel2AP.locations.people.Roffy_D_Sloth] = -1,
+            [1] = Spel2AP.locations.people.Ana_Spelunky,
+            [2] = Spel2AP.locations.people.Margaret_Tunnel,
+            [3] = Spel2AP.locations.people.Colin_Northward,
+            [4] = Spel2AP.locations.people.Roffy_D_Sloth,
         },
 
         max_world = 1,
