@@ -228,6 +228,13 @@ end
 set_callback(function()
     debug_print("LOADING")
 
+    local goingIntoTransition = (state.screen == SCREEN.LEVEL and state.screen_next == SCREEN.TRANSITION)
+    local changingWorld = (state.world_next > state.world) and (state.level_next == 1)
+
+    if goingIntoTransition and changingWorld and not nextWorldUnlocked then
+        state.theme_next = state.theme_start
+    end
+
     if state.screen_next == SCREEN.CHARACTER_SELECT then
         update_characters(true)
     end
@@ -629,7 +636,7 @@ set_callback(function()
     end
 
     if shouldReset then
-        toast("This world is not unlocked yet!")
+        toast("Next world not unlocked. Returning to the start")
         state.world_next = state.world_start
         state.level_next = state.level_start
         state.theme_next = state.theme_start
@@ -638,13 +645,13 @@ set_callback(function()
 
 end, ON.TRANSITION)
 
-local purchasable_list = {
-    [ENT_TYPE.ITEM_PURCHASABLE_JETPACK] = true,
-    [ENT_TYPE.ITEM_PURCHASABLE_POWERPACK] = true,
-    [ENT_TYPE.ITEM_PURCHASABLE_HOVERPACK] = true,
-    [ENT_TYPE.ITEM_PURCHASABLE_TELEPORTER_BACKPACK] = true,
-    [ENT_TYPE.ITEM_PURCHASABLE_CAPE] = true
-}
+local purchasable_list = become_lookup_table({
+    ENT_TYPE.ITEM_PURCHASABLE_JETPACK,
+    ENT_TYPE.ITEM_PURCHASABLE_POWERPACK,
+    ENT_TYPE.ITEM_PURCHASABLE_HOVERPACK,
+    ENT_TYPE.ITEM_PURCHASABLE_TELEPORTER_BACKPACK,
+    ENT_TYPE.ITEM_PURCHASABLE_CAPE
+})
 
 local purchasable_counterpart = {
     [ENT_TYPE.ITEM_PURCHASABLE_JETPACK] = ENT_TYPE.ITEM_JETPACK,
@@ -740,7 +747,7 @@ local function process_potential_shop_item(entity, entEnumName)
         end
         if purchasable_list[entity.type.id] then
             entity:set_pre_destroy(function()
-                local liberatedItems = get_entities_at(purchasable_counterpart[entity.type.id], MASK.ANY, entity.x, entity.y, entity.layer, 1)
+                local liberatedItems = get_entities_at(purchasable_counterpart[entity.type.id], MASK.ITEM, entity.x, entity.y, entity.layer, 1)
                 for _, liberatedItem in ipairs(liberatedItems) do
                     local liberatedEntity = get_entity(liberatedItem)
                     liberatedEntity:destroy()

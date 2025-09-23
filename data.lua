@@ -383,7 +383,13 @@ function update_nextworld_variable()
     else
         maxUnlock = get_unlock_world_number()
     end
-    nextWorldUnlocked = maxUnlock >= math.min(state.world_next + 1,8)
+    local goalWorld = 8
+    if player_options.goal == AP_Goal.EASY then
+        goalWorld = 6
+    elseif player_options.goal == AP_Goal.HARD then
+        goalWorld = 7
+    end
+    nextWorldUnlocked = maxUnlock >= math.min(state.world_next + 1, goalWorld)
 end
 
 function get_unlock_world_number()
