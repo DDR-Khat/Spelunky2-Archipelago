@@ -15,18 +15,13 @@ end
 
 ap_save = {}
 
-function initialize_save()
+function initialize_save(playerGoal, includeHardLocations)
     debug_print("Initialising save to defaults")
 
     ap_save = {
         last_character = 0,
         last_index = -1, -- Stores AP item data sent from the server
-        checked_locations = {
-            [1] = Spel2AP.locations.people.Ana_Spelunky,
-            [2] = Spel2AP.locations.people.Margaret_Tunnel,
-            [3] = Spel2AP.locations.people.Colin_Northward,
-            [4] = Spel2AP.locations.people.Roffy_D_Sloth,
-        },
+        checked_locations = {},
 
         max_world = 1,
         shortcut_progress = 0,
@@ -57,231 +52,81 @@ function initialize_save()
 
         shortcut_unlocks = {},
 
-        places = {
-            [1] = false,  -- Dwelling
-            [2] = false,  -- Jungle
-            [3] = false,  -- Volcana
-            [4] = false,  -- Olmec's Lair
-            [5] = false,  -- Tide Pool
-            [6] = false,  -- Abzu
-            [7] = false,  -- Temple of Anubis
-            [8] = false,  -- City of Gold
-            [9] = false,  -- Duat
-            [10] = false, -- Ice Caves
-            [11] = false, -- Neo Babylon
-            [12] = false, -- Tiamat's Throne
-            [13] = false, -- Sunken Cty
-            [14] = false, -- Eggplant World
-            [15] = false, -- Hundun's Hideaway
-            [16] = false  -- Cosmic Ocean
-        },
+        places = {},
 
-        people = {
-            [1] = true,  -- Ana Spelunky
-            [2] = true,  -- Margaret Tunnel
-            [3] = true,  -- Colin Northward
-            [4] = true,  -- Roffy D. Sloth
-            [5] = false,  -- Alto Singh
-            [6] = false,  -- Liz Mutton
-            [7] = false,  -- Nekka the Eagle
-            [8] = false,  -- LISE Project
-            [9] = false,  -- Coco Von Diamonds
-            [10] = false, -- Manfred Tunnel
-            [11] = false, -- Little Jay
-            [12] = false, -- Tina Flan
-            [13] = false, -- Valerie Crump
-            [14] = false, -- Au
-            [15] = false, -- Demi Von Diamonds
-            [16] = false, -- Pilot
-            [17] = false, -- Princess Airyn
-            [18] = false, -- Dirk Yamaoka
-            [19] = false, -- Guy Spelunky
-            [20] = false, -- Classic Guy
-            [21] = false, -- Terra Tunnel
-            [22] = false, -- Hired Hand
-            [23] = false, -- Eggplant Child
-            [24] = false, -- Shopkeeper
-            [25] = false, -- Tun
-            [26] = false, -- Yang
-            [27] = false, -- Madame Tusk
-            [28] = false, -- Tusk's Bodyguard
-            [29] = false, -- Waddler
-            [30] = false, -- Caveman Shopkeeper
-            [31] = false, -- Ghist Shopkeeper
-            [32] = false, -- Van Horsing
-            [33] = false, -- Parsley
-            [34] = false, -- Parsnip
-            [35] = false, -- Parmesan
-            [36] = false, -- Sparrow
-            [37] = false, -- Beg
-            [38] = false, -- Eggplant King
-        },
+        people = {},
 
-        bestiary = {
-            [1] = false,  -- Snake
-            [2] = false,  -- Spider
-            [3] = false,  -- Bat
-            [4] = false,  -- Caveman
-            [5] = false,  -- Skeleton
-            [6] = false,  -- Horned Lizard
-            [7] = false,  -- Cave Mole
-            [8] = false,  -- Quillback
-            [9] = false,  -- Mantrap
-            [10] = false, -- Tikiman
-            [11] = false, -- Witch Doctor
-            [12] = false, -- Mosquito
-            [13] = false, -- Monkey
-            [14] = false, -- Hang Spider
-            [15] = false, -- Giant Spider
-            [16] = false, -- Magmar
-            [17] = false, -- Robot
-            [18] = false, -- Fire Bug
-            [19] = false, -- Imp
-            [20] = false, -- Lavamander
-            [21] = false, -- Vampire
-            [22] = false, -- Vlad
-            [23] = false, -- Olmec
-            [24] = false, -- Jiangshi
-            [25] = false, -- Jiangshi Assassin
-            [26] = false, -- Fish
-            [27] = false, -- Octopy
-            [28] = false, -- Hermit Crab
-            [29] = false, -- Pangxie
-            [30] = false, -- Great Humphead
-            [31] = false, -- Kingu
-            [32] = false, -- Crocman
-            [33] = false, -- Cobra
-            [34] = false, -- Mummy
-            [35] = false, -- Sorceress
-            [36] = false, -- Cat Mummy
-            [37] = false, -- Necromancer
-            [38] = false, -- Anubis
-            [39] = false, -- Ammit
-            [40] = false, -- Apep
-            [41] = false, -- Anubis II
-            [42] = false, -- Osiris
-            [43] = false, -- UFO
-            [44] = false, -- Alien
-            [45] = false, -- Yeti
-            [46] = false, -- Yeti King
-            [47] = false, -- Yeti Queen
-            [48] = false, -- Lahamu
-            [49] = false, -- Proto Shopkeeper
-            [50] = false, -- Olmite
-            [51] = false, -- Lamassu
-            [52] = false, -- Tiamat
-            [53] = false, -- Tadpole
-            [54] = false, -- Frog
-            [55] = false, -- Fire Frog
-            [56] = false, -- Goliath Frog
-            [57] = false, -- Grub
-            [58] = false, -- Giant Fly
-            [59] = false, -- Hundun
-            [60] = false, -- Eggplant Minister
-            [61] = false, -- Eggplup
-            [62] = false, -- Celestial Jelly
-            [63] = false, -- Scorpion
-            [64] = false, -- Bee
-            [65] = false, -- Queen Bee
-            [66] = false, -- Scarab
-            [67] = false, -- Golden Monkey
-            [68] = false, -- Leprechaun
-            [69] = false, -- Monty
-            [70] = false, -- Percy
-            [71] = false, -- Poochi
-            [72] = false, -- Ghist
-            [73] = false, -- Ghost
-            [74] = false, -- Cave Turkey
-            [75] = false, -- Rock Dog
-            [76] = false, -- Axolotl
-            [77] = false, -- Qilin
-            [78] = false  -- Mech Rider
-        },
+        bestiary = {},
 
-        items = {
-            [1] = false, -- Rope Pile
-            [2] = false, -- Bomb Bag
-            [3] = false, -- Bomb Box
-            [4] = false, -- Paste
-            [5] = false, -- Spectacles
-            [6] = false, -- Climbing Gloves
-            [7] = false, -- Pitcher's Mitt
-            [8] = false, -- Spring Shoes
-            [9] = false, -- Spike Shoes
-            [10] = false, -- Compass
-            [11] = false, -- Alien Compass
-            [12] = false, -- Parachute
-            [13] = false, -- Udjat Eye
-            [14] = false, -- Kapala
-            [15] = false, -- Hedjet
-            [16] = false, -- Crown
-            [17] = false, -- Eggplant Crown
-            [18] = false, -- True Crown
-            [19] = false, -- Ankh
-            [20] = false, -- Tablet of Destiny
-            [21] = false, -- Skeleton Key
-            [22] = false, -- Royal Jelly
-            [23] = false, -- Cape
-            [24] = false, -- Vlad's Cape
-            [25] = false, -- Jetpack
-            [26] = false, -- Telepack
-            [27] = false, -- Hoverpack
-            [28] = false, -- Powerpack
-            [29] = false, -- Webgun
-            [30] = false, -- Shotgun
-            [31] = false, -- Freeze Ray
-            [32] = false, -- Clone Gun
-            [33] = false, -- Crossbow
-            [34] = false, -- Camera
-            [35] = false, -- Teleporter
-            [36] = false, -- Mattock
-            [37] = false, -- Boomerang
-            [38] = false, -- Machete
-            [39] = false, -- Excalibur
-            [40] = false, -- Broken Sword
-            [41] = false, -- Plasma Cannon
-            [42] = false, -- Scepter
-            [43] = false, -- Hou Yi's Bow
-            [44] = false, -- Arrow of Light
-            [45] = false, -- Wooden Shield
-            [46] = false, -- Metal Shield
-            [47] = false, -- Idol
-            [48] = false, -- The Tusk Idol
-            [49] = false, -- Curse Pot
-            [50] = false, -- Ushabti
-            [51] = false, -- Eggplant
-            [52] = false, -- Cooked Turkey
-            [53] = false, -- Elixir
-            [54] = false, -- Four-Leaf Clover
-        },
+        items = {},
 
-        traps = {
-            [1] = false, -- Spikes
-            [2] = false, -- Arrow Trap
-            [3] = false, -- Totem Trap
-            [4] = false, -- Log Trap
-            [5] = false, -- Spear Trap
-            [6] = false, -- Thorny Vine
-            [7] = false, -- Bear Trap
-            [8] = false, -- Powder Box
-            [9] = false, -- Falling Platform
-            [10] = false, -- Spikeball
-            [11] = false, -- Lion Trap
-            [12] = false, -- Giant Clam
-            [13] = false, -- Sliding Wall
-            [14] = false, -- Crush Trap
-            [15] = false, -- Giant Crush Trap
-            [16] = false, -- Boulder
-            [17] = false, -- Spring Trap
-            [18] = false, -- Landmine
-            [19] = false, -- Laser Trap
-            [20] = false, -- Spark Trap
-            [21] = false, -- Frog Trap
-            [22] = false, -- Sticky Trap
-            [23] = false, -- Bone Drop
-            [24] = false  -- Egg Sac
-        }
+        traps = {}
     }
+
+    table.insert(ap_save.checked_locations, Spel2AP.locations.people.Ana_Spelunky)
+    ap_save.people[journal.people.ANA_SPELUNKY.index] = true
+    table.insert(ap_save.checked_locations, Spel2AP.locations.people.Margaret_Tunnel)
+    ap_save.people[journal.people.MARGARET_TUNNEL.index] = true
+    table.insert(ap_save.checked_locations, Spel2AP.locations.people.Colin_Northward)
+    ap_save.people[journal.people.COLIN_NORTHWARD.index] = true
+    table.insert(ap_save.checked_locations, Spel2AP.locations.people.Roffy_D_Sloth)
+    ap_save.people[journal.people.ROFFY_D_SLOTH.index] = true
+    if not includeHardLocations then
+        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.MAGMAR)
+        ap_save.bestiary[journal.bestiary.MAGMAR.index] = true
+        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.LAVAMANDER)
+        ap_save.bestiary[journal.bestiary.LAVAMANDER.index] = true
+        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.MECH_RIDER)
+        ap_save.bestiary[journal.bestiary.MECH_RIDER.index] = true
+        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.SCORPION)
+        ap_save.bestiary[journal.bestiary.SCORPION.index] = true
+        table.insert(ap_save.checked_locations, Spel2AP.locations.item.TRUE_CROWN)
+        ap_save.items[journal.items.TRUE_CROWN.index] = true
+    end
+    if playerGoal < AP_Goal.CO then
+        table.insert(ap_save.checked_locations, Spel2AP.locations.place.Cosmic_Ocean)
+        ap_save.places[journal.places.COSMIC_OCEAN.index] = true
+        table.insert(ap_save.checked_locations, Spel2AP.locations.people.Classic_Guy)
+        ap_save.people[journal.people.CLASSIC_GUY.index] = true
+        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.Celestial_Jelly)
+        ap_save.bestiary[journal.bestiary.CELESTIAL_JELLY.index] = true
+    end
+    if playerGoal < AP_Goal.HARD then
+        table.insert(ap_save.checked_locations, Spel2AP.locations.place.Tiamats_Throne)
+        ap_save.places[journal.places.TIAMATS_THRONE.index] = true
+        table.insert(ap_save.checked_locations, Spel2AP.locations.place.Sunken_City)
+        ap_save.places[journal.places.SUNKEN_CITY.index] = true
+        table.insert(ap_save.checked_locations, Spel2AP.locations.place.Eggplant_World)
+        ap_save.places[journal.places.EGGPLANT_WORLD.index] = true
+        table.insert(ap_save.checked_locations, Spel2AP.locations.place.HunDunsHideaway)
+        ap_save.places[journal.places.HUNDUNS_HIDEAWAY.index] = true
+        table.insert(ap_save.checked_locations, Spel2AP.locations.people.Dirk_Yamaoka)
+        ap_save.people[journal.people.DIRK_YAMAOKA.index] = true
+        table.insert(ap_save.checked_locations, Spel2AP.locations.people.Guy_Spelunky)
+        ap_save.people[journal.people.GUY_SPELUNKY.index] = true
+        table.insert(ap_save.checked_locations, Spel2AP.locations.people.Eggplant_King)
+        ap_save.people[journal.people.EGGPLANT_KING.index] = true
+        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.Tiamat)
+        ap_save.bestiary[journal.bestiary.TIAMAT.index] = true
+        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.Tadpole)
+        ap_save.bestiary[journal.bestiary.TADPOLE.index] = true
+        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.Frog)
+        ap_save.bestiary[journal.bestiary.FROG.index] = true
+        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.Fire_Frog)
+        ap_save.bestiary[journal.bestiary.FIRE_FROG.index] = true
+        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.Goliath_Frog)
+        ap_save.bestiary[journal.bestiary.GOLIATH_FROG.index] = true
+        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.Grub)
+        ap_save.bestiary[journal.bestiary.GRUB.index] = true
+        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.Giant_Fly)
+        ap_save.bestiary[journal.bestiary.GIANT_FLY.index] = true
+        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.Hundun)
+        ap_save.bestiary[journal.bestiary.HUNDUN.index] = true
+        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.Eggplant_Minister)
+        ap_save.bestiary[journal.bestiary.EGGPLANT_MINISTER.index] = true
+        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.Eggplup)
+        ap_save.bestiary[journal.bestiary.EGGPLUP.index] = true
+    end
 
     -- Adjust savegame data
     savegame.tutorial_state = 4
@@ -296,9 +141,7 @@ function initialize_save()
     savegame.deepest_area = 8
     savegame.deepest_level = 99
 
-    for _, chapter in ipairs(journal.chapters) do
-        clear_journal(savegame[chapter])
-    end
+    update_game_save()
 
     --[[
         for _, character in ipairs(player_options.starting_characters) do
@@ -320,6 +163,17 @@ end
 function update_game_save()
     for _, chapter in ipairs(journal.chapters) do
         copy_journal_data(chapter)
+    end
+end
+
+function copy_journal_data(chapter)
+    local source = ap_save[chapter]
+    local target = savegame[chapter]
+
+    if not source or not target then return end
+
+    for index = 1, #target do
+        target[index] = source[index] or false
     end
 end
 
@@ -363,10 +217,9 @@ function update_journal(chapter, location, sendLocation)
     local locationInfo = journal_lookup[location]
     local entry
     if locationInfo and locationInfo.chapter == chapter then
-        entry = journal[chapter][locationInfo.index]
+        entry = journal[chapter][locationInfo.key]
     else
-        -- Fallback: scan the chapter for this id
-        for _, data in ipairs(journal[chapter]) do
+        for _, data in pairs(journal[chapter]) do
             if data.id == location then
                 entry = data
                 break
@@ -409,21 +262,6 @@ function update_journal(chapter, location, sendLocation)
     if sendLocation then
         -- Send the location to AP
         send_location(location)
-    end
-end
-
-
-function copy_journal_data(chapter)
-    local array = ap_save[chapter]
-    for index, value in ipairs(array) do
-        savegame[chapter][index] = value
-    end
-end
-
-
-function clear_journal(array)
-    for i, _ in ipairs(array) do
-        array[i] = false
     end
 end
 

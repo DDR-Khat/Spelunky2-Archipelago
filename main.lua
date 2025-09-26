@@ -556,7 +556,7 @@ set_callback(function()
             if not save_entries[save_index] or ap_entries[save_index] then
                 goto continue
             end
-            for _, entry in ipairs(journal[chapter]) do
+            for _, entry in pairs(journal[chapter]) do
                 if entry.index == save_index then
                     if givingItem ~= nil then
                         debug_print(f"[ON.GAMEFRAME::check_journal::giveItemCheck] giveItem is NOT nil. Set Entry to false")
