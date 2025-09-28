@@ -659,3 +659,9 @@ function verify_locations(location_list)
         end
     end
 end
+
+-- If we close the game, tidy up after ourselves.
+set_callback(function()
+    ap = nil
+    collectgarbage("collect")
+end, ON.SCRIPT_DISABLE)

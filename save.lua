@@ -43,7 +43,7 @@ function initialize_save(playerGoal, includeHardLocations)
             [Spel2AP.permanent_upgrades.Health] = 0,
             [Spel2AP.permanent_upgrades.Bomb] = 0,
             [Spel2AP.permanent_upgrades.Rope] = 0,
-            [Spel2AP.permanent_upgrades.Cosmic_Ocean_Checkpoint] = 0,
+            [Spel2AP.permanent_upgrades.CO_Checkpoint] = 0,
         },
 
         starting_wallet = 0,
@@ -217,7 +217,7 @@ function update_journal(chapter, location, sendLocation)
     local locationInfo = journal_lookup[location]
     local entry
     if locationInfo and locationInfo.chapter == chapter then
-        entry = journal[chapter][locationInfo.key]
+        entry = journal[chapter][locationInfo.index]
     else
         for _, data in pairs(journal[chapter]) do
             if data.id == location then
@@ -228,7 +228,7 @@ function update_journal(chapter, location, sendLocation)
     end
 
     if not entry then
-        debug_print(f"Warning: Tried to update unknown {chapter} entry for location ID {tostring(id)}")
+        debug_print(f"Warning: Tried to update unknown {chapter} entry for location ID {tostring(location)}")
         return
     end
 
