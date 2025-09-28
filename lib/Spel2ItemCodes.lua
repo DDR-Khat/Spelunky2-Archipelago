@@ -194,6 +194,10 @@ Spel2AP.locations = {
     },
 
     people = {
+        Ana_Spelunky = 17,
+        Margaret_Tunnel = 18,
+        Colin_Northward = 19,
+        Roffy_D_Sloth = 20,
         Alto_Singh = 21,
         Liz_Mutton = 22,
         Nekka_The_Eagle = 23,

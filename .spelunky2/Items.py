@@ -92,20 +92,20 @@ permanent_upgrades = {
 }
 
 shortcuts = {  # TODO: Maybe add more shortcuts by editing the Camp to allow specific world selection from camp
-    # ShortcutName.PROGRESSIVE.value:      Spelunky2ItemData(501, ItemClassification.helpful),
-    # ShortcutName.DWELLING.value:         Spelunky2ItemData(502, ItemClassification.helpful),
-    # ShortcutName.JUNGLE.value:           Spelunky2ItemData(503, ItemClassification.helpful),
-    # ShortcutName.VOLCANA.value:          Spelunky2ItemData(504, ItemClassification.helpful),
-    # ShortcutName.OLMECS_LAIR.value:      Spelunky2ItemData(505, ItemClassification.helpful),
-    # ShortcutName.TIDE_POOL.value:        Spelunky2ItemData(506, ItemClassification.helpful),
-    # ShortcutName.TEMPLE.value:           Spelunky2ItemData(507, ItemClassification.helpful),
-    # ShortcutName.ICE_CAVES.value:        Spelunky2ItemData(508, ItemClassification.helpful),
-    # ShortcutName.NEO_BABYLON.value:      Spelunky2ItemData(509, ItemClassification.helpful),
-    # ShortcutName.SUNKEN_CITY.value:      Spelunky2ItemData(510, ItemClassification.helpful),
+    # ShortcutName.PROGRESSIVE.value:      Spelunky2ItemData(501, ItemClassification.useful),
+    # ShortcutName.DWELLING.value:         Spelunky2ItemData(502, ItemClassification.useful),
+    # ShortcutName.JUNGLE.value:           Spelunky2ItemData(503, ItemClassification.useful),
+    # ShortcutName.VOLCANA.value:          Spelunky2ItemData(504, ItemClassification.useful),
+    # ShortcutName.OLMECS_LAIR.value:      Spelunky2ItemData(505, ItemClassification.useful),
+    # ShortcutName.TIDE_POOL.value:        Spelunky2ItemData(506, ItemClassification.useful),
+    # ShortcutName.TEMPLE.value:           Spelunky2ItemData(507, ItemClassification.useful),
+    # ShortcutName.ICE_CAVES.value:        Spelunky2ItemData(508, ItemClassification.useful),
+    # ShortcutName.NEO_BABYLON.value:      Spelunky2ItemData(509, ItemClassification.useful),
+    # ShortcutName.SUNKEN_CITY.value:      Spelunky2ItemData(510, ItemClassification.useful),
 }
 
 world_unlocks = {
-    WorldName.PROGRESSIVE.value: Spelunky2ItemData(601, ItemClassification.import_progression, 0),  # Count set by goal
+    WorldName.PROGRESSIVE.value:  Spelunky2ItemData(601, ItemClassification.import_progression, 0),  # Count set by goal
     WorldName.JUNGLE.value:       Spelunky2ItemData(602, ItemClassification.import_progression, 0),
     WorldName.VOLCANA.value:      Spelunky2ItemData(603, ItemClassification.import_progression, 0),
     WorldName.OLMECS_LAIR.value:  Spelunky2ItemData(604, ItemClassification.import_progression, 0),
@@ -118,18 +118,17 @@ world_unlocks = {
 }
 
 traps = {
-    ItemName.POISON_TRAP.value:      Spelunky2ItemData(701, ItemClassification.trap, 0),
-    ItemName.CURSE_TRAP.value:       Spelunky2ItemData(702, ItemClassification.trap, 0),
-    ItemName.GHOST_TRAP.value:       Spelunky2ItemData(703, ItemClassification.trap, 0),
-    ItemName.STUN_TRAP.value:        Spelunky2ItemData(704, ItemClassification.trap, 0),
-    ItemName.LOOSE_BOMBS_TRAP.value: Spelunky2ItemData(705, ItemClassification.trap, 0),
-    ItemName.BLINDNESS_TRAP.value:   Spelunky2ItemData(706, ItemClassification.trap, 0),
-    # ItemName.AMNESIA_TRAP.value:     Spelunky2ItemData(707, ItemClassification.trap, 0),
+    ItemName.POISON_TRAP.value:              Spelunky2ItemData(701, ItemClassification.trap, 0),
+    ItemName.CURSE_TRAP.value:               Spelunky2ItemData(702, ItemClassification.trap, 0),
+    ItemName.GHOST_TRAP.value:               Spelunky2ItemData(703, ItemClassification.trap, 0),
+    ItemName.STUN_TRAP.value:                Spelunky2ItemData(704, ItemClassification.trap, 0),
+    ItemName.LOOSE_BOMBS_TRAP.value:         Spelunky2ItemData(705, ItemClassification.trap, 0),
+    ItemName.BLINDNESS_TRAP.value:           Spelunky2ItemData(706, ItemClassification.trap, 0),
+    # ItemName.AMNESIA_TRAP.value:           Spelunky2ItemData(707, ItemClassification.trap, 0),
     # ItemName.ANGRY_SHOPKEEPERS_TRAP.value: Spelunky2ItemData(708, ItemClassification.trap, 0),
-    ItemName.PUNISH_BALL_TRAP.value: Spelunky2ItemData(709, ItemClassification.trap, 0),
+    ItemName.PUNISH_BALL_TRAP.value:         Spelunky2ItemData(709, ItemClassification.trap, 0),
 }
 
-# Populate further with locked_items, starter_items and quest_items inside __init.py__ based on Options
 item_data_table = {
     **filler_items,
     **characters,

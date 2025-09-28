@@ -26,7 +26,7 @@ journal = {
         TIAMATS_THRONE =    { name = "Tiamat's Throne",   id = Spel2AP.locations.place.Tiamats_Throne,   index = 12 },
         SUNKEN_CITY =       { name = "Sunken City",       id = Spel2AP.locations.place.Sunken_City,      index = 13 },
         EGGPLANT_WORLD =    { name = "Eggplant World",    id = Spel2AP.locations.place.Eggplant_World,   index = 14 },
-        HUNDUNS_HIDEAWAY =  { name = "Hundun's Hideaway", id = Spel2AP.locations.place.HunDunsHideaway,  index = 15 },
+        HUNDUNS_HIDEAWAY =  { name = "Hundun's Hideaway", id = Spel2AP.locations.place.Hunduns_Hideaway,  index = 15 },
         COSMIC_OCEAN =      { name = "Cosmic Ocean",      id = Spel2AP.locations.place.Cosmic_Ocean,     index = 16 },
     },
     people = {
