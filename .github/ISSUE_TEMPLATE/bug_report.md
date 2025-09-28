@@ -1,7 +1,7 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: "[BUG] [V0.3.3]"
+title: "[BUG] [V0.3.3] (Short + Sweet title)"
 labels: bug
 assignees: DDR-Khat
 
@@ -14,6 +14,3 @@ assignees: DDR-Khat
 
 
 **To Reproduce** - *If you can make it happen on demand, please give the simplest steps on how*
-
-**Additional context**
-Add any other context about the problem here.
