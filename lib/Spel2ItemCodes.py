@@ -1,10 +1,11 @@
-from enum import IntEnum
-
 """
-This file contains Python enums for all Spelunky 2 item codes.
-It is generated based on the item data and logic found in the
+*!*AUTO-GENERATED MANUAL EDITS WILL BE LOST*!*
+This file contains Python IntEnums for all Spelunky 2 item codes.
+It is generated based on the item data and logic found in the.
 Spelunky 2 Archipelago world files.
 """
+
+from enum import IntEnum
 
 class Spelunky2ItemCode:
     """
@@ -12,7 +13,7 @@ class Spelunky2ItemCode:
     """
 
     class FillerItems(IntEnum):
-        """Standard filler items."""
+        """Auto-generated codes for filleritems."""
         Rope_Pile = 1
         Bomb_Bag = 2
         Bomb_Box = 3
@@ -25,14 +26,14 @@ class Spelunky2ItemCode:
         Diamond_Gem = 10
 
     class Characters(IntEnum):
-        """Unlockable characters."""
+        """Auto-generated codes for characters."""
         Ana_Spelunky = 101
         Margaret_Tunnel = 102
         Colin_Northward = 103
         Roffy_D_Sloth = 104
         Alto_Singh = 105
         Liz_Mutton = 106
-        Nekka_the_Eagle = 107
+        Nekka_The_Eagle = 107
         LISE_Project = 108
         Coco_Von_Diamonds = 109
         Manfred_Tunnel = 110
@@ -48,10 +49,10 @@ class Spelunky2ItemCode:
         Classic_Guy = 120
 
     class LockedItems(IntEnum):
-        """All locked items, including quest items."""
+        """Auto-generated codes for lockeditems."""
         Alien_Compass = 201
         Ankh = 202
-        Arrow_of_Light = 203
+        Arrow_Of_Light = 203
         Camera = 204
         Cape = 205
         Climbing_Gloves = 206
@@ -65,8 +66,8 @@ class Spelunky2ItemCode:
         Four_Leaf_Clover = 214
         Freeze_Ray = 215
         Hedjet = 216
-        Hoverpack = 217
-        Hou_Yis_Bow = 218
+        Hou_Yis_Bow = 217
+        Hoverpack = 218
         Jetpack = 219
         Kapala = 220
         Machete = 221
@@ -81,7 +82,7 @@ class Spelunky2ItemCode:
         Spectacles = 230
         Spike_Shoes = 231
         Spring_Shoes = 232
-        Tablet_of_Destiny = 233
+        Tablet_Of_Destiny = 233
         Telepack = 234
         Teleporter = 235
         True_Crown = 236
@@ -91,122 +92,314 @@ class Spelunky2ItemCode:
         Webgun = 240
 
     class Upgrades(IntEnum):
-        """Upgrades for powerups and equips."""
-        Ankh = 301
-        Camera = 302
-        Cape = 303
-        Climbing_Gloves = 304
-        Clone_Gun = 305
-        Compass = 306
-        Eggplant = 307
-        Eggplant_Crown = 308
-        Elixir = 309
-        Four_Leaf_Clover = 310
-        Freeze_Ray = 311
-        Hoverpack = 312
-        Jetpack = 313
-        Kapala = 314
-        Machete = 315
-        Mattock = 316
-        Paste = 317
-        Pitchers_Mitt = 318
-        Plasma_Cannon = 319
-        Powerpack = 320
-        Shield = 321
-        Skeleton_Key = 322
-        Spectacles = 323
-        Spike_Shoes = 324
-        Spring_Shoes = 325
-        Telepack = 326
-        Teleporter = 327
-        True_Crown = 328
-        Vlads_Cape = 329
-        Webgun = 330
-
-    class WaddlerUpgrades(IntEnum):
-        """Waddler upgrades for locked items."""
-        Alien_Compass = 401
-        Ankh = 402
-        Arrow_of_Light = 403
-        Camera = 404
-        Cape = 405
-        Climbing_Gloves = 406
-        Clone_Gun = 407
-        Compass = 408
-        Crown = 409
-        Eggplant = 410
-        Eggplant_Crown = 411
-        Elixir = 412
-        Excalibur = 413
-        Four_Leaf_Clover = 414
-        Freeze_Ray = 415
-        Hedjet = 416
-        Hoverpack = 417
-        Hou_Yis_Bow = 418
-        Jetpack = 419
-        Kapala = 420
-        Machete = 421
-        Mattock = 422
-        Paste = 423
-        Pitchers_Mitt = 424
-        Plasma_Cannon = 425
-        Powerpack = 426
-        Scepter = 427
-        Shield = 428
-        Skeleton_Key = 429
-        Spectacles = 430
-        Spike_Shoes = 431
-        Spring_Shoes = 432
-        Tablet_of_Destiny = 433
-        Telepack = 434
-        Teleporter = 435
-        True_Crown = 436
-        Udjat_Eye = 437
-        Ushabti = 438
-        Vlads_Cape = 439
-        Webgun = 440
+        """Auto-generated codes for upgrades."""
+        Alien_Compass = 301
+        Ankh = 302
+        Arrow_Of_Light = 303
+        Camera = 304
+        Cape = 305
+        Climbing_Gloves = 306
+        Clone_Gun = 307
+        Compass = 308
+        Crown = 309
+        Eggplant = 310
+        Eggplant_Crown = 311
+        Elixir = 312
+        Excalibur = 313
+        Four_Leaf_Clover = 314
+        Freeze_Ray = 315
+        Hedjet = 316
+        Hou_Yis_Bow = 317
+        Hoverpack = 318
+        Jetpack = 319
+        Kapala = 320
+        Machete = 321
+        Mattock = 322
+        Paste = 323
+        Pitchers_Mitt = 324
+        Plasma_Cannon = 325
+        Powerpack = 326
+        Scepter = 327
+        Shield = 328
+        Skeleton_Key = 329
+        Spectacles = 330
+        Spike_Shoes = 331
+        Spring_Shoes = 332
+        Tablet_Of_Destiny = 333
+        Telepack = 334
+        Teleporter = 335
+        True_Crown = 336
+        Udjat_Eye = 337
+        Ushabti = 338
+        Vlads_Cape = 339
+        Webgun = 340
 
     class PermanentUpgrades(IntEnum):
-        """Permanent health, bomb, rope upgrades, and checkpoints."""
-        Health = 501
-        Bomb = 502
-        Rope = 503
-        Cosmic_Ocean_Checkpoint = 504
-
-    class WorldUnlocks(IntEnum):
-        """Item codes for unlocking worlds."""
-        Progressive_World_Unlock = 701
-        Jungle = 702
-        Volcana = 703
-        Olmecs_Lair = 704
-        Tide_Pool = 705
-        Temple = 706
-        Ice_Caves = 707
-        Neo_Babylon = 708
-        Sunken_City = 709
-        Cosmic_Ocean = 710
+        """Auto-generated codes for permanentupgrades."""
+        Health = 401
+        Bomb = 402
+        Rope = 403
+        CO_Checkpoint = 404
 
     class Shortcuts(IntEnum):
-        """Shortcut codes"""
+        """Auto-generated codes for shortcuts."""
+        Progressive = 501
+        Dwelling = 502
+        Jungle = 503
+        Volcana = 504
+        Olmecs_Lair = 505
+        Tide_Pool = 506
+        Temple = 507
+        Ice_Caves = 508
+        Neo_Babylon = 509
+        Sunken_City = 510
+
+    class WorldUnlocks(IntEnum):
+        """Auto-generated codes for worldunlocks."""
         Progressive = 601
-        Dwelling = 602
-        Jungle = 603
-        Volcana = 604
-        Olmecs_Lair = 605
-        Tide_Pool = 606
-        Temple = 607
-        Ice_Caves = 608
-        Neo_Babylon = 609
-        Sunken_City = 610
+        Jungle = 602
+        Volcana = 603
+        Olmecs_Lair = 604
+        Tide_Pool = 605
+        Temple = 606
+        Ice_Caves = 607
+        Neo_Babylon = 608
+        Sunken_City = 609
+        Cosmic_Ocean = 610
 
     class Traps(IntEnum):
-        """Trap codes"""
-        Poison = 801
-        Curse = 802
-        Ghost = 803
-        Stun = 804
-        Loose_Bombs = 805
-        Blindness = 806
-        Amnesia = 807
-        Angry_Shopkeepers = 808
-        Punish_Ball = 809
+        """Auto-generated codes for traps."""
+        Poison = 701
+        Curse = 702
+        Ghost = 703
+        Stun = 704
+        Loose_Bombs = 705
+        Blindness = 706
+        Amnesia = 707
+        Angry_Shopkeepers = 708
+        Punish_Ball = 709
+
+    class Locations:
+        """Auto-generated location codes grouped by journal categories."""
+
+        class Place(IntEnum):
+            """Auto-generated codes for place."""
+            Dwelling = 1
+            Jungle = 2
+            Volcana = 3
+            Olmecs_Lair = 4
+            Tide_Pool = 5
+            Abzu = 6
+            Temple = 7
+            City_Of_Gold = 8
+            Duat = 9
+            Ice_Caves = 10
+            Neo_Babylon = 11
+            Tiamats_Throne = 12
+            Sunken_City = 13
+            Eggplant_World = 14
+            Hunduns_Hideaway = 15
+            Cosmic_Ocean = 16
+
+        class People(IntEnum):
+            """Auto-generated codes for people."""
+            Alto_Singh = 21
+            Liz_Mutton = 22
+            Nekka_The_Eagle = 23
+            LISE_Project = 24
+            Coco_Von_Diamonds = 25
+            Manfred_Tunnel = 26
+            Little_Jay = 27
+            Tina_Flan = 28
+            Valerie_Crump = 29
+            Au = 30
+            Demi_Von_Diamonds = 31
+            Pilot = 32
+            Princess_Airyn = 33
+            Dirk_Yamaoka = 34
+            Guy_Spelunky = 35
+            Classic_Guy = 36
+            Terra_Tunnel = 37
+            Hired_Hand = 38
+            Eggplant_Child = 39
+            Shopkeeper = 40
+            Tun = 41
+            Yang = 42
+            Madame_Tusk = 43
+            Tusks_Bodyguard = 44
+            Waddler = 45
+            Caveman_Shopkeeper = 46
+            Ghist_Shopkeeper = 47
+            Van_Horsing = 48
+            Parsley = 49
+            Parsnip = 50
+            Parmesan = 51
+            Sparrow = 52
+            Beg = 53
+            Eggplant_King = 54
+
+        class Bestiary(IntEnum):
+            """Auto-generated codes for bestiary."""
+            Snake = 55
+            Spider = 56
+            Bat = 57
+            Caveman = 58
+            Skeleton = 59
+            Horned_Lizard = 60
+            Cave_Mole = 61
+            Quillback = 62
+            Mantrap = 63
+            Tiki_Man = 64
+            Witch_Doctor = 65
+            Mosquito = 66
+            Monkey = 67
+            Hang_Spider = 68
+            Giant_Spider = 69
+            Magmar = 70
+            Robot = 71
+            Fire_Bug = 72
+            Imp = 73
+            Lavamander = 74
+            Vampire = 75
+            Vlad = 76
+            Olmec = 77
+            Jiangshi = 78
+            Jiangshi_Assassin = 79
+            Flying_Fish = 80
+            Octopy = 81
+            Hermit_Crab = 82
+            Pangxie = 83
+            Great_Humphead = 84
+            Kingu = 85
+            Crocman = 86
+            Cobra = 87
+            Mummy = 88
+            Sorceress = 89
+            Cat_Mummy = 90
+            Necromancer = 91
+            Anubis = 92
+            Ammit = 93
+            Apep = 94
+            Anubis_II = 95
+            Osiris = 96
+            Ufo = 97
+            Alien = 98
+            Yeti = 99
+            Yeti_King = 100
+            Yeti_Queen = 101
+            Lamahu = 102
+            Proto_Shopkeeper = 103
+            Olmite = 104
+            Lamassu = 105
+            Tiamat = 106
+            Tadpole = 107
+            Frog = 108
+            Fire_Frog = 109
+            Goliath_Frog = 110
+            Grub = 111
+            Giant_Fly = 112
+            Hundun = 113
+            Eggplant_Minister = 114
+            Eggplup = 115
+            Celestial_Jelly = 116
+            Scorpion = 117
+            Bee = 118
+            Queen_Bee = 119
+            Scarab = 120
+            Golden_Monkey = 121
+            Leprechaun = 122
+            Monty = 123
+            Percy = 124
+            Poochi = 125
+            Ghist = 126
+            Ghost = 127
+            Cave_Turkey = 128
+            Rock_Dog = 129
+            Axolotl = 130
+            Qilin = 131
+            Mech_Rider = 132
+
+        class Item(IntEnum):
+            """Auto-generated codes for item."""
+            Rope_Pile = 133
+            Bomb_Bag = 134
+            Bomb_Box = 135
+            Paste = 136
+            Spectacles = 137
+            Climbing_Gloves = 138
+            Pitchers_Mitt = 139
+            Spring_Shoes = 140
+            Spike_Shoes = 141
+            Compass = 142
+            Alien_Compass = 143
+            Parachute = 144
+            Udjat_Eye = 145
+            Kapala = 146
+            Hedjet = 147
+            Crown = 148
+            Eggplant_Crown = 149
+            True_Crown = 150
+            Ankh = 151
+            Tablet_Of_Destiny = 152
+            Skeleton_Key = 153
+            Royal_Jelly = 154
+            Cape = 155
+            Vlads_Cape = 156
+            Jetpack = 157
+            Telepack = 158
+            Hoverpack = 159
+            Powerpack = 160
+            Webgun = 161
+            Shotgun = 162
+            Freeze_Ray = 163
+            Clone_Gun = 164
+            Crossbow = 165
+            Camera = 166
+            Teleporter = 167
+            Mattock = 168
+            Boomerang = 169
+            Machete = 170
+            Excalibur = 171
+            Broken_Sword = 172
+            Plasma_Cannon = 173
+            Scepter = 174
+            Hou_Yis_Bow = 175
+            Arrow_Of_Light = 176
+            Wooden_Shield = 177
+            Metal_Shield = 178
+            Idol = 179
+            The_Tusk_Idol = 180
+            Curse_Pot = 181
+            Ushabti = 182
+            Eggplant = 183
+            Cooked_Turkey = 184
+            Elixir = 185
+            Four_Leaf_Clover = 186
+
+        class Trap(IntEnum):
+            """Auto-generated codes for trap."""
+            Spikes = 187
+            Arrow_Trap = 188
+            Totem_Trap = 189
+            Log_Trap = 190
+            Spear_Trap = 191
+            Thorny_Vine = 192
+            Bear_Trap = 193
+            Powder_Box = 194
+            Falling_Platform = 195
+            Spikeball = 196
+            Lion_Trap = 197
+            Giant_Clam = 198
+            Sliding_Wall = 199
+            Crush_Trap = 200
+            Giant_Crush_Trap = 201
+            Boulder = 202
+            Spring_Trap = 203
+            Landmine = 204
+            Laser_Trap = 205
+            Spark_Trap = 206
+            Frog_Trap = 207
+            Sticky_Trap = 208
+            Bone_Drop = 209
+            Egg_Sac = 210
+

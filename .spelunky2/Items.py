@@ -2,6 +2,8 @@ from typing import Optional, NamedTuple
 from BaseClasses import Item, ItemClassification
 from .enums import ItemName, ShortcutName, WorldName
 
+ItemClassification.import_progression = ItemClassification.progression + ItemClassification.useful
+
 # Master Item List
 powerup_options = frozenset({ItemName.ANKH.value, ItemName.CLIMBING_GLOVES.value, ItemName.COMPASS.value,
     ItemName.EGGPLANT_CROWN.value, ItemName.ELIXIR.value, ItemName.FOUR_LEAF_CLOVER.value, ItemName.KAPALA.value,
@@ -103,16 +105,16 @@ shortcuts = {  # TODO: Maybe add more shortcuts by editing the Camp to allow spe
 }
 
 world_unlocks = {
-    WorldName.PROGRESSIVE.value: Spelunky2ItemData(601, ItemClassification.progression, 0),  # Count set by goal
-    WorldName.JUNGLE.value:       Spelunky2ItemData(602, ItemClassification.progression, 0),
-    WorldName.VOLCANA.value:      Spelunky2ItemData(603, ItemClassification.progression, 0),
-    WorldName.OLMECS_LAIR.value:  Spelunky2ItemData(604, ItemClassification.progression, 0),
-    WorldName.TIDE_POOL.value:    Spelunky2ItemData(605, ItemClassification.progression, 0),
-    WorldName.TEMPLE.value:       Spelunky2ItemData(606, ItemClassification.progression, 0),
-    WorldName.ICE_CAVES.value:    Spelunky2ItemData(607, ItemClassification.progression, 0),
-    WorldName.NEO_BABYLON.value:  Spelunky2ItemData(608, ItemClassification.progression, 0),
-    WorldName.SUNKEN_CITY.value:  Spelunky2ItemData(609, ItemClassification.progression, 0),
-    WorldName.COSMIC_OCEAN.value: Spelunky2ItemData(610, ItemClassification.progression, 0),
+    WorldName.PROGRESSIVE.value: Spelunky2ItemData(601, ItemClassification.import_progression, 0),  # Count set by goal
+    WorldName.JUNGLE.value:       Spelunky2ItemData(602, ItemClassification.import_progression, 0),
+    WorldName.VOLCANA.value:      Spelunky2ItemData(603, ItemClassification.import_progression, 0),
+    WorldName.OLMECS_LAIR.value:  Spelunky2ItemData(604, ItemClassification.import_progression, 0),
+    WorldName.TIDE_POOL.value:    Spelunky2ItemData(605, ItemClassification.import_progression, 0),
+    WorldName.TEMPLE.value:       Spelunky2ItemData(606, ItemClassification.import_progression, 0),
+    WorldName.ICE_CAVES.value:    Spelunky2ItemData(607, ItemClassification.import_progression, 0),
+    WorldName.NEO_BABYLON.value:  Spelunky2ItemData(608, ItemClassification.import_progression, 0),
+    WorldName.SUNKEN_CITY.value:  Spelunky2ItemData(609, ItemClassification.import_progression, 0),
+    WorldName.COSMIC_OCEAN.value: Spelunky2ItemData(610, ItemClassification.import_progression, 0),
 }
 
 traps = {

@@ -19,7 +19,7 @@ journal = {
         TIDE_POOL =         { name = "Tide Pool",         id = Spel2AP.locations.place.Tide_Pool,        index = 5  },
         ABZU =              { name = "Abzu",              id = Spel2AP.locations.place.Abzu,             index = 6  },
         TEMPLE_OF_ANUBIS =  { name = "Temple of Anubis",  id = Spel2AP.locations.place.Temple,           index = 7  },
-        CITY_OF_GOLD =      { name = "City of Gold",      id = Spel2AP.locations.place.City_of_Gold,     index = 8  },
+        CITY_OF_GOLD =      { name = "City of Gold",      id = Spel2AP.locations.place.City_Of_Gold,     index = 8  },
         DUAT =              { name = "Duat",              id = Spel2AP.locations.place.Duat,             index = 9  },
         ICE_CAVES =         { name = "Ice Caves",         id = Spel2AP.locations.place.Ice_Caves,        index = 10 },
         NEO_BABYLON =       { name = "Neo Babylon",       id = Spel2AP.locations.place.Neo_Babylon,      index = 11 },
@@ -36,7 +36,7 @@ journal = {
         ROFFY_D_SLOTH =      { name = "Roffy D. Sloth",     id = Spel2AP.locations.people.Roffy_D_Sloth,      index = 4  }, -- Not implemented until I figure out how to do it
         ALTO_SINGH =         { name = "Alto Singh",         id = Spel2AP.locations.people.Alto_Singh,         index = 5  },
         LIZ_MUTTON =         { name = "Liz Mutton",         id = Spel2AP.locations.people.Liz_Mutton,         index = 6  },
-        NEKKA_THE_EAGLE =    { name = "Nekka the Eagle",    id = Spel2AP.locations.people.Nekka_the_Eagle,    index = 7  },
+        NEKKA_THE_EAGLE =    { name = "Nekka the Eagle",    id = Spel2AP.locations.people.Nekka_The_Eagle,    index = 7  },
         LISE_PROJECT =       { name = "LISE Project",       id = Spel2AP.locations.people.LISE_Project,       index = 8  },
         COCO_VON_DIAMONDS =  { name = "Coco Von Diamonds",  id = Spel2AP.locations.people.Coco_Von_Diamonds,  index = 9  },
         MANFRED_TUNNEL =     { name = "Manfred Tunnel",     id = Spel2AP.locations.people.Manfred_Tunnel,     index = 10 },
@@ -112,7 +112,7 @@ journal = {
         APEP =              { name = "Apep",               id = Spel2AP.locations.bestiary.Apep,               index = 40 },
         ANUBIS_II =         { name = "Anubis II",          id = Spel2AP.locations.bestiary.Anubis_II,          index = 41 },
         OSIRIS =            { name = "Osiris",             id = Spel2AP.locations.bestiary.Osiris,             index = 42 },
-        UFO =               { name = "UFO",                id = Spel2AP.locations.bestiary.UFO,                index = 43 },
+        UFO =               { name = "UFO",                id = Spel2AP.locations.bestiary.Ufo,                index = 43 },
         ALIEN =             { name = "Alien",              id = Spel2AP.locations.bestiary.Alien,              index = 44 },
         YETI =              { name = "Yeti",               id = Spel2AP.locations.bestiary.Yeti,               index = 45 },
         YETI_KING =         { name = "Yeti King",          id = Spel2AP.locations.bestiary.Yeti_King,          index = 46 },
@@ -182,7 +182,7 @@ journal = {
         PLASMA_CANNON    = { name = "Plasma Cannon",     id = Spel2AP.locations.item.Plasma_Cannon,     index = 41, ent_type = ENT_TYPE.ITEM_PLASMACANNON,           lock = Spel2AP.locked_items.Plasma_Cannon },
         SCEPTER          = { name = "Scepter",           id = Spel2AP.locations.item.Scepter,           index = 42, ent_type = ENT_TYPE.ITEM_SCEPTER,                lock = Spel2AP.locked_items.Scepter },
         HOUYIS_BOW       = { name = "Hou Yi's Bow",      id = Spel2AP.locations.item.Hou_Yis_Bow,       index = 43, ent_type = ENT_TYPE.ITEM_HOUYIBOW,               lock = Spel2AP.locked_items.Hou_Yis_Bow },
-        ARROW_OF_LIGHT   = { name = "Arrow of Light",    id = Spel2AP.locations.item.Arrow_of_Light,    index = 44, ent_type = ENT_TYPE.ITEM_LIGHT_ARROW,            lock = Spel2AP.locked_items.Arrow_of_Light },
+        ARROW_OF_LIGHT   = { name = "Arrow of Light",    id = Spel2AP.locations.item.Arrow_Of_Light,    index = 44, ent_type = ENT_TYPE.ITEM_LIGHT_ARROW,            lock = Spel2AP.locked_items.Arrow_Of_Light },
         METAL_SHIELD     = { name = "Metal Shield",      id = Spel2AP.locations.item.Metal_Shield,      index = 46, ent_type = ENT_TYPE.ITEM_METAL_SHIELD,           lock = Spel2AP.locked_items.Shield },
         USHABTI          = { name = "Ushabti",           id = Spel2AP.locations.item.Ushabti,           index = 50, ent_type = ENT_TYPE.ITEM_USHABTI,                lock = Spel2AP.locked_items.Ushabti },
         EGGPLANT         = { name = "Eggplant",          id = Spel2AP.locations.item.Eggplant,          index = 51, ent_type = ENT_TYPE.ITEM_EGGPLANT,               lock = Spel2AP.locked_items.Eggplant },
@@ -203,7 +203,7 @@ journal = {
         EGGPLANT_CROWN   = { name = "Eggplant Crown",    id = Spel2AP.locations.item.Eggplant_Crown,    index = 17, ent_type = ENT_TYPE.ITEM_PICKUP_EGGPLANTCROWN,   lock = Spel2AP.locked_items.Eggplant_Crown,    powerup = ENT_TYPE.ITEM_POWERUP_EGGPLANTCROWN },
         TRUE_CROWN       = { name = "True Crown",        id = Spel2AP.locations.item.True_Crown,        index = 18, ent_type = ENT_TYPE.ITEM_PICKUP_TRUECROWN,       lock = Spel2AP.locked_items.True_Crown,        powerup = ENT_TYPE.ITEM_POWERUP_TRUECROWN },
         ANKH             = { name = "Ankh",              id = Spel2AP.locations.item.Ankh,              index = 19, ent_type = ENT_TYPE.ITEM_PICKUP_ANKH,            lock = Spel2AP.locked_items.Ankh,              powerup = ENT_TYPE.ITEM_POWERUP_ANKH },
-        TABLET_OF_DESTINY= { name = "Tablet of Destiny", id = Spel2AP.locations.item.Tablet_of_Destiny, index = 20, ent_type = ENT_TYPE.ITEM_PICKUP_TABLETOFDESTINY, lock = Spel2AP.locked_items.Tablet_of_Destiny, powerup = ENT_TYPE.ITEM_POWERUP_TABLETOFDESTINY },
+        TABLET_OF_DESTINY= { name = "Tablet of Destiny", id = Spel2AP.locations.item.Tablet_Of_Destiny, index = 20, ent_type = ENT_TYPE.ITEM_PICKUP_TABLETOFDESTINY, lock = Spel2AP.locked_items.Tablet_Of_Destiny, powerup = ENT_TYPE.ITEM_POWERUP_TABLETOFDESTINY },
     },
     traps = {
         SPIKES =           { name = "Spikes",            id = Spel2AP.locations.trap.Spikes,            index = 1  },
@@ -278,11 +278,11 @@ character_data =
         ent = ENT_TYPE.CHAR_GREEN_GIRL,
         location = Spel2AP.locations.people.Liz_Mutton
     },
-    [Spel2AP.characters.Nekka_the_Eagle] =
+    [Spel2AP.characters.Nekka_The_Eagle] =
     {
         index = 7,
         ent = ENT_TYPE.CHAR_AMAZON,
-        location = Spel2AP.locations.people.Nekka_the_Eagle
+        location = Spel2AP.locations.people.Nekka_The_Eagle
     },
     [Spel2AP.characters.LISE_Project] =
     {
@@ -556,7 +556,7 @@ item_ids = {
         TileX = 0,
         priority = PRIORITY.CHARACTER
     },
-    [Spel2AP.characters.Nekka_the_Eagle] = {
+    [Spel2AP.characters.Nekka_The_Eagle] = {
         type = Spel2AP.characters,
         name = get_character_name(ENT_TYPE.CHAR_AMAZON),
         display = TEXTURE.DATA_TEXTURES_CHAR_OLIVE_0,
@@ -686,7 +686,7 @@ item_ids = {
         TileX = 5,
         priority = PRIORITY.UNLOCKS
     },
-    [Spel2AP.locked_items.Arrow_of_Light] = {
+    [Spel2AP.locked_items.Arrow_Of_Light] = {
         type = Spel2AP.locked_items,
         name = "Arrow of Light Unlocked",
         lock_name = "Arrow of Light",
@@ -956,7 +956,7 @@ item_ids = {
         TileX = 7,
         priority = PRIORITY.UNLOCKS
     },
-    [Spel2AP.locked_items.Tablet_of_Destiny] = {
+    [Spel2AP.locked_items.Tablet_Of_Destiny] = {
         type = Spel2AP.locked_items,
         name = "Tablet of Destiny Unlocked",
         lock_name = "Tablet of Destiny",
@@ -1044,7 +1044,7 @@ item_ids = {
         TileX = 5,
         priority = PRIORITY.UPGRADES
     },
-    [Spel2AP.upgrades.Arrow_of_Light] = {
+    [Spel2AP.upgrades.Arrow_Of_Light] = {
         type = Spel2AP.upgrades,
         name = "Arrow of Light Upgrade",
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
@@ -1284,7 +1284,7 @@ item_ids = {
         TileX = 7,
         priority = PRIORITY.UPGRADES
     },
-    [Spel2AP.upgrades.Tablet_of_Destiny] = {
+    [Spel2AP.upgrades.Tablet_Of_Destiny] = {
         type = Spel2AP.upgrades,
         name = "Tablet of Destiny Upgrade",
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
@@ -1372,7 +1372,7 @@ item_ids = {
         TileX = 4,
         priority = PRIORITY.STATS
     },
-    [Spel2AP.permanent_upgrades.Cosmic_Ocean_Checkpoint] = {
+    [Spel2AP.permanent_upgrades.CO_Checkpoint] = {
         type = Spel2AP.permanent_upgrades,
         name = "Cosmic Ocean Checkpoint",
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_BG_0,
@@ -1380,7 +1380,7 @@ item_ids = {
         TileY = 2,
         priority = PRIORITY.STATS
     },
-    [Spel2AP.world_unlocks.Progressive_World] = {
+    [Spel2AP.world_unlocks.Progressive] = {
         type = Spel2AP.world_unlocks,
         name = "Progressive World Unlocked",
         display = TEXTURE.DATA_TEXTURES_FX_SMALL3_0,
@@ -1637,13 +1637,13 @@ ItemCode_to_Index = {
     [Spel2AP.upgrades.Webgun]           = 29, [Spel2AP.locked_items.Webgun]           = 29,
 
     [Spel2AP.upgrades.Alien_Compass]     = 11, [Spel2AP.locked_items.Alien_Compass]     = 11,
-    [Spel2AP.upgrades.Arrow_of_Light]    = 44, [Spel2AP.locked_items.Arrow_of_Light]    = 44,
+    [Spel2AP.upgrades.Arrow_Of_Light]    = 44, [Spel2AP.locked_items.Arrow_Of_Light]    = 44,
     [Spel2AP.upgrades.Crown]             = 16, [Spel2AP.locked_items.Crown]             = 16,
     [Spel2AP.upgrades.Excalibur]         = 39, [Spel2AP.locked_items.Excalibur]         = 39,
     [Spel2AP.upgrades.Hedjet]            = 15, [Spel2AP.locked_items.Hedjet]            = 15,
     [Spel2AP.upgrades.Hou_Yis_Bow]       = 43, [Spel2AP.locked_items.Hou_Yis_Bow]       = 43,
     [Spel2AP.upgrades.Scepter]           = 42, [Spel2AP.locked_items.Scepter]           = 42,
-    [Spel2AP.upgrades.Tablet_of_Destiny] = 20, [Spel2AP.locked_items.Tablet_of_Destiny] = 20,
+    [Spel2AP.upgrades.Tablet_Of_Destiny] = 20, [Spel2AP.locked_items.Tablet_Of_Destiny] = 20,
     [Spel2AP.upgrades.Udjat_Eye]         = 13, [Spel2AP.locked_items.Udjat_Eye]         = 13,
     [Spel2AP.upgrades.Ushabti]           = 50, [Spel2AP.locked_items.Ushabti]           = 50,
 }
@@ -1664,7 +1664,7 @@ Journal_to_ItemEnt = {
     [17] = { type = ENT_TYPE.ITEM_PICKUP_EGGPLANTCROWN,             lock = Spel2AP.locked_items.Eggplant_Crown,     powerup = ENT_TYPE.ITEM_POWERUP_EGGPLANTCROWN },
     [18] = { type = ENT_TYPE.ITEM_PICKUP_TRUECROWN,                 lock = Spel2AP.locked_items.True_Crown,         powerup = ENT_TYPE.ITEM_POWERUP_TRUECROWN },
     [19] = { type = ENT_TYPE.ITEM_PICKUP_ANKH,                      lock = Spel2AP.locked_items.Ankh,               powerup = ENT_TYPE.ITEM_POWERUP_ANKH },
-    [20] = { type = ENT_TYPE.ITEM_PICKUP_TABLETOFDESTINY,           lock = Spel2AP.locked_items.Tablet_of_Destiny,  powerup = ENT_TYPE.ITEM_POWERUP_TABLETOFDESTINY },
+    [20] = { type = ENT_TYPE.ITEM_PICKUP_TABLETOFDESTINY,           lock = Spel2AP.locked_items.Tablet_Of_Destiny,  powerup = ENT_TYPE.ITEM_POWERUP_TABLETOFDESTINY },
     [21] = { type = ENT_TYPE.ITEM_PICKUP_SKELETON_KEY,              lock = Spel2AP.locked_items.Skeleton_Key,       powerup = ENT_TYPE.ITEM_POWERUP_SKELETON_KEY },
     [23] = { type = ENT_TYPE.ITEM_CAPE,                             lock = Spel2AP.locked_items.Cape },
     [24] = { type = ENT_TYPE.ITEM_VLADS_CAPE,                       lock = Spel2AP.locked_items.Vlads_Cape },
@@ -1683,7 +1683,7 @@ Journal_to_ItemEnt = {
     [41] = { type = ENT_TYPE.ITEM_PLASMACANNON,                     lock = Spel2AP.locked_items.Plasma_Cannon },
     [42] = { type = ENT_TYPE.ITEM_SCEPTER,                          lock = Spel2AP.locked_items.Scepter },
     [43] = { type = ENT_TYPE.ITEM_HOUYIBOW,                         lock = Spel2AP.locked_items.Hou_Yis_Bow },
-    [44] = { type = ENT_TYPE.ITEM_LIGHT_ARROW,                      lock = Spel2AP.locked_items.Arrow_of_Light },
+    [44] = { type = ENT_TYPE.ITEM_LIGHT_ARROW,                      lock = Spel2AP.locked_items.Arrow_Of_Light },
     [46] = { type = ENT_TYPE.ITEM_METAL_SHIELD,                     lock = Spel2AP.locked_items.Shield },
     [50] = { type = ENT_TYPE.ITEM_USHABTI,                          lock = Spel2AP.locked_items.Ushabti },
     [51] = { type = ENT_TYPE.ITEM_EGGPLANT,                         lock = Spel2AP.locked_items.Eggplant },
