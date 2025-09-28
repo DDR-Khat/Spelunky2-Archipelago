@@ -147,15 +147,15 @@ class Spelunky2World(World):
             spelunky2_item_pool.extend([
                 self.create_item(str(world)) for world in individual_worlds
             ])
-
         # Add all quest items that match the goal
         if self.options.goal.value == Spelunky2Goal.EASY:
-            quest_item_names = {ItemName.ALIEN_COMPASS.value}
+            quest_item_names = quest_items - {ItemName.ARROW_OF_LIGHT.value,
+                                              ItemName.HOU_YI_BOW.value,
+                                              ItemName.TABLET_OF_DESTINY.value,
+                                              ItemName.USHABTI.value}
         elif self.options.goal.value == Spelunky2Goal.HARD:
-            quest_item_names = quest_items - {
-                ItemName.ARROW_OF_LIGHT.value,
-                ItemName.HOU_YI_BOW.value,
-            }
+            quest_item_names = quest_items - {ItemName.ARROW_OF_LIGHT.value,
+                                              ItemName.HOU_YI_BOW.value}
         else:
             quest_item_names = quest_items
 
@@ -172,11 +172,7 @@ class Spelunky2World(World):
 
         # Add a single "Upgrade" item for each unique item selected.
         for item_name in all_upgrades_selected:
-            upgrade_name = f"{item_name} Upgrade"
-            spelunky2_item_pool.append(self.create_item(upgrade_name))
-            # Special handling for Compass, if needed
-            if item_name == ItemName.COMPASS.value and item_name in self.options.item_upgrades.value:
-                spelunky2_item_pool.append(self.create_item(upgrade_name))
+            spelunky2_item_pool.append(self.create_item(f"{item_name}{UPGRADE_SUFFIX}"))
 
         # Permanent upgrades
         for _ in range(self.options.health_upgrades):

@@ -2,7 +2,7 @@ meta = {
     name = "Spelunky 2 Archipelago",
     description = "Adds Archipelago Multiworld Randomizer support!",
     author = "DDRKhat\nOriginal: Eszenn",
-    version = "0.3.3",
+    version = "0.3.4",
     unsafe = true
 }
 register_option_float('popup_time', 'Popup Timer', 'How long the "You received" or "You sent"! popup lingers.\n(Note: Higher values makes receiving items take longer)\nTime in seconds', 3.5, 0.5, 10)
@@ -228,6 +228,13 @@ end
 set_callback(function()
     debug_print("LOADING")
 
+    local goingIntoTransition = (state.screen == SCREEN.LEVEL and state.screen_next == SCREEN.TRANSITION)
+    local changingWorld = (state.world_next > state.world) and (state.level_next == 1)
+
+    if goingIntoTransition and changingWorld and not nextWorldUnlocked then
+        state.theme_next = state.theme_start
+    end
+
     if state.screen_next == SCREEN.CHARACTER_SELECT then
         update_characters(true)
     end
@@ -236,6 +243,8 @@ set_callback(function()
         ap_save.last_character = savegame.players[1]
         update_characters(false)
         set_shortcut_progress(get_shortcut_level())
+    elseif ap_save.checked_locations[Spel2AP.locations.people.Terra_Tunnel] then
+        set_shortcut_progress(8)
     end
 
     if (state.screen_next == SCREEN.CAMP
@@ -308,7 +317,7 @@ set_callback(function()
         end
         local journal_index = -1
         if item_code == Spel2AP.upgrades.Compass then
-            journal_index = (value == 2 and savegame.items[10]) and 11 or 10
+            journal_index = (value == 2 and savegame.items[journal.items.COMPASS.index]) and journal.items.ALIEN_COMPASS.index or journal.items.COMPASS.index
         else
             journal_index = ItemCode_to_Index[item_code]
         end
@@ -373,7 +382,7 @@ set_callback(function()
             ::continue::
         end
         if compassCount ~= 0 then
-            local journal_index = (compassCount == 1) and 10 or 11
+            local journal_index = (compassCount == 1) and journal.items.COMPASS.index or journal.items.ALIEN_COMPASS.index
             local ent, _ = SpawnJournalIndex(journal_index, false)
             waddler_store_entity(ent)
         end
@@ -384,7 +393,7 @@ end, ON.RESET)
 set_callback(function()
     debug_print("LEVEL")
     if state.level >= 10
-       and state.level <= ap_save.stat_upgrades[Spel2AP.permanent_upgrades.Cosmic_Ocean_Checkpoint] * 10 then
+       and state.level <= ap_save.stat_upgrades[Spel2AP.permanent_upgrades.CO_Checkpoint] * 10 then
         state.world_start = 7
         state.theme_start = THEME.COSMIC_OCEAN
         state.level_start = math.floor(state.level / 10) * 10
@@ -473,10 +482,10 @@ set_post_entity_spawn(function (door)
     door:set_pre_enter(function()
         if isTiamatWorld -- Send Guy Spelunky if we go in. Because we normally would.
                 and not ap_save.checked_locations[Spel2AP.locations.people.Guy_Spelunky] then
-            update_journal(journal.chapters["people"], character_data[Spel2AP.locations.people.Guy_Spelunky].index, true)
+            update_journal("people", Spel2AP.locations.people.Guy_Spelunky, true)
         elseif isHunDunWorld -- Classic Guy, same reason.
                 and not ap_save.checked_locations[Spel2AP.locations.people.Classic_Guy] then
-            update_journal(journal.chapters["people"], character_data[Spel2AP.locations.people.Classic_Guy].index, true)
+            update_journal("people", Spel2AP.locations.people.Classic_Guy, true)
         end
         if isTiamatWorld or isHunDunWorld then
             usedBossDoor = true
@@ -549,7 +558,7 @@ set_callback(function()
             if not save_entries[save_index] or ap_entries[save_index] then
                 goto continue
             end
-            for _, entry in ipairs(journal[chapter]) do
+            for _, entry in pairs(journal[chapter]) do
                 if entry.index == save_index then
                     if givingItem ~= nil then
                         debug_print(f"[ON.GAMEFRAME::check_journal::giveItemCheck] giveItem is NOT nil. Set Entry to false")
@@ -629,7 +638,7 @@ set_callback(function()
     end
 
     if shouldReset then
-        toast("This world is not unlocked yet!")
+        toast("Next world not unlocked. Returning to the start")
         state.world_next = state.world_start
         state.level_next = state.level_start
         state.theme_next = state.theme_start
@@ -638,13 +647,13 @@ set_callback(function()
 
 end, ON.TRANSITION)
 
-local purchasable_list = {
-    [ENT_TYPE.ITEM_PURCHASABLE_JETPACK] = true,
-    [ENT_TYPE.ITEM_PURCHASABLE_POWERPACK] = true,
-    [ENT_TYPE.ITEM_PURCHASABLE_HOVERPACK] = true,
-    [ENT_TYPE.ITEM_PURCHASABLE_TELEPORTER_BACKPACK] = true,
-    [ENT_TYPE.ITEM_PURCHASABLE_CAPE] = true
-}
+local purchasable_list = become_lookup_table({
+    ENT_TYPE.ITEM_PURCHASABLE_JETPACK,
+    ENT_TYPE.ITEM_PURCHASABLE_POWERPACK,
+    ENT_TYPE.ITEM_PURCHASABLE_HOVERPACK,
+    ENT_TYPE.ITEM_PURCHASABLE_TELEPORTER_BACKPACK,
+    ENT_TYPE.ITEM_PURCHASABLE_CAPE
+})
 
 local purchasable_counterpart = {
     [ENT_TYPE.ITEM_PURCHASABLE_JETPACK] = ENT_TYPE.ITEM_JETPACK,
@@ -704,12 +713,12 @@ local function process_potential_kali_item(entity, isUnlocked, entEnumName)
             if not entryJournalID then
                 goto continue
             end
-            local powerupID = Journal_to_ItemEnt[entryJournalID].powerup
-            if not powerupID then
+            local journalData = Journal_to_ItemEnt[entryJournalID]
+            if not journalData.powerup then
                 goto continue
             end
-            if ap_save.item_unlocks[entryJournalID] and not apPlayer:has_powerup(powerupID) then
-                debug_print(f"[processKaliItem::shouldReplace] Found and spawning {enum_get_name(ENT_TYPE,entry.type.id)} as a replacement")
+            if ap_save.item_unlocks[journalData.lock] and not apPlayer:has_powerup(journalData.powerup) then
+                debug_print(f"[processKaliItem::shouldReplace] Found and spawning {enum_get_name(ENT_TYPE, entry.type.id)} as a replacement")
                 foundReplacement = true
                 spawn_entity_snapped_to_floor(entry, entity.x, entity.y, entity.layer)
                 break
@@ -740,7 +749,7 @@ local function process_potential_shop_item(entity, entEnumName)
         end
         if purchasable_list[entity.type.id] then
             entity:set_pre_destroy(function()
-                local liberatedItems = get_entities_at(purchasable_counterpart[entity.type.id], MASK.ANY, entity.x, entity.y, entity.layer, 1)
+                local liberatedItems = get_entities_at(purchasable_counterpart[entity.type.id], MASK.ITEM, entity.x, entity.y, entity.layer, 1)
                 for _, liberatedItem in ipairs(liberatedItems) do
                     local liberatedEntity = get_entity(liberatedItem)
                     liberatedEntity:destroy()
