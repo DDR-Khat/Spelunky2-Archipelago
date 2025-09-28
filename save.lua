@@ -72,15 +72,15 @@ function initialize_save(playerGoal, includeHardLocations)
     table.insert(ap_save.checked_locations, Spel2AP.locations.people.Roffy_D_Sloth)
     ap_save.people[journal.people.ROFFY_D_SLOTH.index] = true
     if not includeHardLocations then
-        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.MAGMAR)
+        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.Magmar)
         ap_save.bestiary[journal.bestiary.MAGMAR.index] = true
-        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.LAVAMANDER)
+        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.Lavamander)
         ap_save.bestiary[journal.bestiary.LAVAMANDER.index] = true
-        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.MECH_RIDER)
+        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.Mech_Rider)
         ap_save.bestiary[journal.bestiary.MECH_RIDER.index] = true
-        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.SCORPION)
+        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.Scorpion)
         ap_save.bestiary[journal.bestiary.SCORPION.index] = true
-        table.insert(ap_save.checked_locations, Spel2AP.locations.item.TRUE_CROWN)
+        table.insert(ap_save.checked_locations, Spel2AP.locations.item.True_Crown)
         ap_save.items[journal.items.TRUE_CROWN.index] = true
     end
     if playerGoal < AP_Goal.CO then
@@ -98,7 +98,7 @@ function initialize_save(playerGoal, includeHardLocations)
         ap_save.places[journal.places.SUNKEN_CITY.index] = true
         table.insert(ap_save.checked_locations, Spel2AP.locations.place.Eggplant_World)
         ap_save.places[journal.places.EGGPLANT_WORLD.index] = true
-        table.insert(ap_save.checked_locations, Spel2AP.locations.place.HunDunsHideaway)
+        table.insert(ap_save.checked_locations, Spel2AP.locations.place.Hunduns_Hideaway)
         ap_save.places[journal.places.HUNDUNS_HIDEAWAY.index] = true
         table.insert(ap_save.checked_locations, Spel2AP.locations.people.Dirk_Yamaoka)
         ap_save.people[journal.people.DIRK_YAMAOKA.index] = true

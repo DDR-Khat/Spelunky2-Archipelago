@@ -391,7 +391,7 @@ end, ON.RESET)
 set_callback(function()
     debug_print("LEVEL")
     if state.level >= 10
-       and state.level <= ap_save.stat_upgrades[Spel2AP.permanent_upgrades.Cosmic_Ocean_Checkpoint] * 10 then
+       and state.level <= ap_save.stat_upgrades[Spel2AP.permanent_upgrades.CO_Checkpoint] * 10 then
         state.world_start = 7
         state.theme_start = THEME.COSMIC_OCEAN
         state.level_start = math.floor(state.level / 10) * 10
@@ -480,10 +480,10 @@ set_post_entity_spawn(function (door)
     door:set_pre_enter(function()
         if isTiamatWorld -- Send Guy Spelunky if we go in. Because we normally would.
                 and not ap_save.checked_locations[Spel2AP.locations.people.Guy_Spelunky] then
-            update_journal(journal.chapters["people"], character_data[Spel2AP.locations.people.Guy_Spelunky].index, true)
+            update_journal("people", Spel2AP.locations.people.Guy_Spelunky, true)
         elseif isHunDunWorld -- Classic Guy, same reason.
                 and not ap_save.checked_locations[Spel2AP.locations.people.Classic_Guy] then
-            update_journal(journal.chapters["people"], character_data[Spel2AP.locations.people.Classic_Guy].index, true)
+            update_journal("people", Spel2AP.locations.people.Classic_Guy, true)
         end
         if isTiamatWorld or isHunDunWorld then
             usedBossDoor = true
@@ -711,12 +711,12 @@ local function process_potential_kali_item(entity, isUnlocked, entEnumName)
             if not entryJournalID then
                 goto continue
             end
-            local powerupID = Journal_to_ItemEnt[entryJournalID].powerup
-            if not powerupID then
+            local journalData = Journal_to_ItemEnt[entryJournalID]
+            if not journalData.powerup then
                 goto continue
             end
-            if ap_save.item_unlocks[entryJournalID] and not apPlayer:has_powerup(powerupID) then
-                debug_print(f"[processKaliItem::shouldReplace] Found and spawning {enum_get_name(ENT_TYPE,entry.type.id)} as a replacement")
+            if ap_save.item_unlocks[journalData.lock] and not apPlayer:has_powerup(journalData.powerup) then
+                debug_print(f"[processKaliItem::shouldReplace] Found and spawning {enum_get_name(ENT_TYPE, entry.type.id)} as a replacement")
                 foundReplacement = true
                 spawn_entity_snapped_to_floor(entry, entity.x, entity.y, entity.layer)
                 break

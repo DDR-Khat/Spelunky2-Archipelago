@@ -549,11 +549,14 @@ function complete_goal()
 end
 
 function item_handler(itemID, isQueued)
+    debug_print(f"[item_handler] Method called. [itemID: {itemID} | isQueued: {isQueued}]")
     local item_info = item_ids[itemID]
     if not item_info then
+        debug_print("[item_handler] item_info had nothing.")
         return false
     end
     local category = item_info.type
+    debug_print(f"[item_handler] item_ids: [{item_info.name}, {item_info.display}, {item_info.TileY}, {item_info.TileX}, {item_info.priority}]")
     if category == Spel2AP.filler_items then
         give_item(itemID, isQueued)
         return true
@@ -588,7 +591,7 @@ function item_handler(itemID, isQueued)
         return true
     elseif category == Spel2AP.world_unlocks and not isQueued then
         if player_options.progressive_worlds then
-            if itemID == Spel2AP.world_unlocks.Progressive_World then
+            if itemID == Spel2AP.world_unlocks.Progressive then
                 ap_save.max_world = ap_save.max_world + 1
             end
         else

@@ -18,7 +18,7 @@ journal = {
         OLMECS_LAIR =       { name = "Olmec's Lair",      id = Spel2AP.locations.place.Olmecs_Lair,      index = 4  },
         TIDE_POOL =         { name = "Tide Pool",         id = Spel2AP.locations.place.Tide_Pool,        index = 5  },
         ABZU =              { name = "Abzu",              id = Spel2AP.locations.place.Abzu,             index = 6  },
-        TEMPLE_OF_ANUBIS =  { name = "Temple of Anubis",  id = Spel2AP.locations.place.Temple,           index = 7  },
+        TEMPLE =            { name = "Temple of Anubis",  id = Spel2AP.locations.place.Temple,           index = 7  },
         CITY_OF_GOLD =      { name = "City of Gold",      id = Spel2AP.locations.place.City_Of_Gold,     index = 8  },
         DUAT =              { name = "Duat",              id = Spel2AP.locations.place.Duat,             index = 9  },
         ICE_CAVES =         { name = "Ice Caves",         id = Spel2AP.locations.place.Ice_Caves,        index = 10 },
@@ -26,7 +26,7 @@ journal = {
         TIAMATS_THRONE =    { name = "Tiamat's Throne",   id = Spel2AP.locations.place.Tiamats_Throne,   index = 12 },
         SUNKEN_CITY =       { name = "Sunken City",       id = Spel2AP.locations.place.Sunken_City,      index = 13 },
         EGGPLANT_WORLD =    { name = "Eggplant World",    id = Spel2AP.locations.place.Eggplant_World,   index = 14 },
-        HUNDUNS_HIDEAWAY =  { name = "Hundun's Hideaway", id = Spel2AP.locations.place.Hunduns_Hideaway,  index = 15 },
+        HUNDUNS_HIDEAWAY =  { name = "Hundun's Hideaway", id = Spel2AP.locations.place.Hunduns_Hideaway, index = 15 },
         COSMIC_OCEAN =      { name = "Cosmic Ocean",      id = Spel2AP.locations.place.Cosmic_Ocean,     index = 16 },
     },
     people = {
@@ -1460,6 +1460,14 @@ item_ids = {
         TileY = 0,
         priority = PRIORITY.WORLD
     },
+    [Spel2AP.shortcuts.Dwelling] = {
+        type = Spel2AP.shortcuts,
+        name = "Dwelling Shortcut",
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileX = 0,
+        TileY = 0,
+        priority = PRIORITY.SHORTCUT
+    },
     [Spel2AP.shortcuts.Jungle] = {
         type = Spel2AP.shortcuts,
         name = "Jungle Shortcut",
@@ -1738,7 +1746,7 @@ hard_journal_entries = become_lookup_table
     Spel2AP.locations.place.Tiamats_Throne,
     Spel2AP.locations.place.Sunken_City,
     Spel2AP.locations.place.Eggplant_World,
-    Spel2AP.locations.place.HunDunsHideaway,
+    Spel2AP.locations.place.Hunduns_Hideaway,
     Spel2AP.locations.people.Dirk_Yamaoka,
     Spel2AP.locations.people.Guy_Spelunky,
     Spel2AP.locations.people.Eggplant_King,

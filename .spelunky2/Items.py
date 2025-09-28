@@ -2,7 +2,7 @@ from typing import Optional, NamedTuple
 from BaseClasses import Item, ItemClassification
 from .enums import ItemName, ShortcutName, WorldName
 
-ItemClassification.import_progression = ItemClassification.progression + ItemClassification.useful
+ItemClassification.import_progression = ItemClassification.progression | ItemClassification.useful
 
 # Master Item List
 powerup_options = frozenset({ItemName.ANKH.value, ItemName.CLIMBING_GLOVES.value, ItemName.COMPASS.value,
