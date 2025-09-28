@@ -243,6 +243,8 @@ set_callback(function()
         ap_save.last_character = savegame.players[1]
         update_characters(false)
         set_shortcut_progress(get_shortcut_level())
+    elseif ap_save.checked_locations[Spel2AP.locations.people.Terra_Tunnel] then
+        set_shortcut_progress(8)
     end
 
     if (state.screen_next == SCREEN.CAMP
@@ -315,7 +317,7 @@ set_callback(function()
         end
         local journal_index = -1
         if item_code == Spel2AP.upgrades.Compass then
-            journal_index = (value == 2 and savegame.items[10]) and 11 or 10
+            journal_index = (value == 2 and savegame.items[journal.items.COMPASS.index]) and journal.items.ALIEN_COMPASS.index or journal.items.COMPASS.index
         else
             journal_index = ItemCode_to_Index[item_code]
         end
@@ -380,7 +382,7 @@ set_callback(function()
             ::continue::
         end
         if compassCount ~= 0 then
-            local journal_index = (compassCount == 1) and 10 or 11
+            local journal_index = (compassCount == 1) and journal.items.COMPASS.index or journal.items.ALIEN_COMPASS.index
             local ent, _ = SpawnJournalIndex(journal_index, false)
             waddler_store_entity(ent)
         end
