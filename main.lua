@@ -2,7 +2,7 @@ meta = {
     name = "Spelunky 2 Archipelago",
     description = "Adds Archipelago Multiworld Randomizer support!",
     author = "DDRKhat\nOriginal: Eszenn",
-    version = "0.3.4",
+    version = "0.3.5",
     unsafe = true
 }
 register_option_float('popup_time', 'Popup Timer', 'How long the "You received" or "You sent"! popup lingers.\n(Note: Higher values makes receiving items take longer)\nTime in seconds', 3.5, 0.5, 10)
@@ -766,8 +766,13 @@ for _, data in pairs(Journal_to_ItemEnt) do
                 return
             end
             local entType = entity.type.id
+            local isUnlocked = ap_save.item_unlocks[data.lock]
             if (entType == ENT_TYPE.ITEM_PICKUP_CROWN
                or entType == ENT_TYPE.ITEM_PICKUP_HEDJET) then
+                if isUnlocked then
+                    clear_callback()
+                    return
+                end
                 if apPlayer.layer ~= entity.layer then
                     return
                 end
@@ -783,7 +788,6 @@ for _, data in pairs(Journal_to_ItemEnt) do
                 end
             end
             clear_callback()
-            local isUnlocked = ap_save.item_unlocks[data.lock]
             local enumName = enum_get_name(ENT_TYPE,entity.type.id)
             process_potential_kali_item(entity, isUnlocked, enumName)
             if isUnlocked then
