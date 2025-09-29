@@ -176,11 +176,12 @@ end
 
 buildKaliLookup()
 
+
 local shortcut_save_values = {
-    [0] = 1,
-    [1] = 4,
-    [2] = 7,
-    [3] = 10
+    NONE = 1,
+    DWELLING = 4,
+    OLMEC = 7,
+    ICE_CAVES = 10
 }
 
 function IsInGame()
@@ -201,13 +202,13 @@ function IsWaddlerLevel()
 end
 
 local shortcut_levels = {
-    [2] = 1, -- Jungle/Volcana
-    [3] = 2, -- Olmec
-    [4] = 2, -- ignore Tidepool/Temple, same level as Olmec
-    [5] = 3, -- Ice Caves
-    [6] = 3, -- Neo Babylon
-    [7] = 3, -- Sunken City
-    [8] = 3, -- Cosmic Ocean
+    [2] = shortcut_save_values.DWELLING, -- Jungle/Volcana
+    [3] = shortcut_save_values.OLMEC, -- Olmec
+    [4] = shortcut_save_values.OLMEC, -- ignore Tidepool/Temple, same level as Olmec
+    [5] = shortcut_save_values.ICE_CAVES, -- Ice Caves
+    [6] = shortcut_save_values.ICE_CAVES, -- Neo Babylon
+    [7] = shortcut_save_values.ICE_CAVES, -- Sunken City
+    [8] = shortcut_save_values.ICE_CAVES, -- Cosmic Ocean
 }
 
 function get_shortcut_level()
@@ -218,11 +219,11 @@ function get_shortcut_level()
         currentMax = get_unlock_world_number()
     end
 
-    return shortcut_levels[currentMax] or 0
+    return shortcut_levels[currentMax] or shortcut_save_values.NONE
 end
 
 function set_shortcut_progress(level)
-    savegame.shortcuts = shortcut_save_values[level] or 1
+    savegame.shortcuts = level
 end
 
 set_callback(function()
@@ -244,7 +245,7 @@ set_callback(function()
         update_characters(false)
         set_shortcut_progress(get_shortcut_level())
     elseif ap_save.checked_locations[Spel2AP.locations.people.Terra_Tunnel] then
-        set_shortcut_progress(8)
+        set_shortcut_progress(shortcut_save_values.ICE_CAVES)
     end
 
     if (state.screen_next == SCREEN.CAMP
