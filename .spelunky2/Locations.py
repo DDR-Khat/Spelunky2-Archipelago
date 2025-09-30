@@ -37,11 +37,10 @@ place_entries = {
 }
 
 people_entries = {
-    # starters excluded until implementation details are defined
-    # JournalName.ANA_SPELUNKY.value:      Spelunky2LocationData(17, MAIN_MENU_STRING),
-    # JournalName.MARGARET_TUNNEL.value:   Spelunky2LocationData(18, MAIN_MENU_STRING),
-    # JournalName.COLIN_NORTHWARD.value:   Spelunky2LocationData(19, MAIN_MENU_STRING),
-    # JournalName.ROFFY_D_SLOTH.value:     Spelunky2LocationData(20, MAIN_MENU_STRING),
+    JournalName.ANA_SPELUNKY.value:      Spelunky2LocationData(17, LocationName.VLADS_CASTLE),
+    JournalName.MARGARET_TUNNEL.value:   Spelunky2LocationData(18, LocationName.VLADS_CASTLE),
+    JournalName.COLIN_NORTHWARD.value:   Spelunky2LocationData(19, LocationName.VLADS_CASTLE),
+    JournalName.ROFFY_D_SLOTH.value:     Spelunky2LocationData(20, LocationName.VLADS_CASTLE),
 
     JournalName.ALTO_SINGH.value:         Spelunky2LocationData(21, WorldName.DWELLING),
     JournalName.LIZ_MUTTON.value:         Spelunky2LocationData(22, WorldName.JUNGLE),

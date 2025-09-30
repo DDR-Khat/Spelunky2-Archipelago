@@ -430,6 +430,62 @@ set_callback(function()
     update_nextworld_variable()
 end, ON.LEVEL)
 
+set_callback(function()
+    debug_print("POST_LEVEL_GENERATION")
+    if state.theme == THEME.VOLCANA then
+        if state.level <= 1 then
+            return
+        end
+        local vlads = get_entities_by(ENT_TYPE.MONS_VLAD, MASK.MONSTER, LAYER.BACK)
+        if #vlads <= 0 then
+            return
+        end
+    end
+    local coffin_uids = get_entities_by(ENT_TYPE.ITEM_COFFIN, MASK.ITEM, LAYER.BACK)
+    for _, uid in ipairs(coffin_uids) do
+        local coffin = get_entity(uid)
+        if coffin.inside == ENT_TYPE.CHAR_HIREDHAND and #locked_starters > 0 then
+            set_contents(coffin.uid, locked_starters[1])
+            table.remove(locked_starters, 1)
+        end
+    end
+end, ON.POST_LEVEL_GENERATION)
+
+set_post_entity_spawn(function(hiredHand)
+    if hiredHand.layer ~= LAYER.BACK then
+        return
+    end
+    print("onHiredHand::Spawn::backlayer")
+    if #locked_starters < 1 then
+        print("Less than 1 starter. stopping.")
+        return
+    end
+    print("More than 1")
+    hiredHand:set_pre_update_state_machine(function()
+        if not test_flag(hiredHand.more_flags, ENT_MORE_FLAG.FINISHED_SPAWNING) then
+            return
+        end
+        clear_callback()
+        local entX, entY, entLayer = get_position(hiredHand.uid)
+        local roomX, roomY = get_room_index(entX, entY)
+        local room_template = get_room_template(roomX, roomY, LAYER.BACK)
+        if room_template == nil or room_template ~= ROOM_TEMPLATE.SHOP_JAIL_BACKLAYER then
+            return
+        end
+        print("Hired Hand (back layer) spawned + jailed + starters locked.")
+        local isFacingLeft = test_flag(hiredHand.flags, ENT_FLAG.FACING_LEFT)
+        local replacementID = spawn_companion(locked_starters[1], entX, entY, entLayer)
+        local replacement = get_entity(replacementID)
+        replacement.ai.state = hiredHand.ai.state
+        replacement.ai.last_state = hiredHand.ai.last_state
+        if isFacingLeft then
+            replacement.flags = set_flag(replacement.flags, ENT_FLAG.FACING_LEFT)
+        end
+        table.remove(locked_starters, 1)
+        hiredHand:destroy()
+    end)
+end, SPAWN_TYPE.LEVEL_GEN, MASK.PLAYER, ENT_TYPE.CHAR_HIREDHAND)
+
 
 set_post_entity_spawn(function(crate)
     if get_local_state().screen ~= SCREEN.LEVEL then
@@ -459,7 +515,6 @@ set_post_entity_spawn(function(crate)
         crate.inside = replaceItem
     end)
 end, SPAWN_TYPE.ANY, MASK.ITEM, {ENT_TYPE.ITEM_CRATE, ENT_TYPE.ITEM_PRESENT, ENT_TYPE.ITEM_GHIST_PRESENT})
-
 
 --[[
 If it's not our goal, let us beat the boss and loop back.

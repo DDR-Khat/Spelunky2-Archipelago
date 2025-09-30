@@ -58,7 +58,7 @@ player_options = {
     goal_level = 30,
     increase_wallet = false,
     progressive_worlds = true,
-    starting_characters = {"Ana Spelunky", "Margaret Tunnel", "Colin Northward", "Roffy D. Sloth"},
+    starting_characters = {},
     starting_health = 4,
     starting_bombs = 4,
     starting_ropes = 4,
@@ -185,7 +185,7 @@ function connect(server, slot, password)
         player_options.seed = ap:get_seed()
         player_options.goal = slot_data.goal
         player_options.goal_level = slot_data.goal_level
-        -- player_options.starting_characters = slot_data.starting_characters
+        player_options.starting_characters = become_lookup_table(slot_data.starting_characters)
         player_options.increase_wallet = slot_data.increase_starting_wallet
         player_options.progressive_worlds = slot_data.progressive_worlds
         player_options.starting_health = slot_data.starting_health
@@ -234,6 +234,19 @@ function connect(server, slot, password)
         end
         read_save()
         savegame.players[1] = ap_save.last_character
+        for _, locationID in pairs(ap_save.checked_locations) do
+            local starterEntity = starter_lookup[locationID]
+            if starterEntity == nil then
+                goto continue
+            end
+            for i = #locked_starters, 1, -1 do
+                if locked_starters[i] == starterEntity then
+                    table.remove(locked_starters, i)
+                    break
+                end
+            end
+            ::continue::
+        end
     end
 
     function on_slot_refused(reasons)
@@ -633,6 +646,13 @@ function queue_death_link()
 end
 
 function send_location(location_id)
+    local starterEntity = starter_lookup[location_id]
+    for i = #locked_starters, 1, -1 do
+        if locked_starters[i] == starterEntity then
+            table.remove(locked_starters, i)
+            break
+        end
+    end
     local success_checked, checked = pcall(function()
         return ap:LocationChecks({location_id})
     end)

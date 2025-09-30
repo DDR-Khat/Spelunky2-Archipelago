@@ -30,10 +30,10 @@ journal = {
         COSMIC_OCEAN =      { name = "Cosmic Ocean",      id = Spel2AP.locations.place.Cosmic_Ocean,     index = 16 },
     },
     people = {
-        ANA_SPELUNKY =       { name = "Ana Spelunky",       id = Spel2AP.locations.people.Ana_Spelunky,       index = 1  }, -- Not implemented until I figure out how to do it
-        MARGARET_TUNNEL =    { name = "Margaret Tunnel",    id = Spel2AP.locations.people.Margaret_Tunnel,    index = 2  }, -- Not implemented until I figure out how to do it
-        COLIN_NORTHWARD =    { name = "Colin Northward",    id = Spel2AP.locations.people.Colin_Northward,    index = 3  }, -- Not implemented until I figure out how to do it
-        ROFFY_D_SLOTH =      { name = "Roffy D. Sloth",     id = Spel2AP.locations.people.Roffy_D_Sloth,      index = 4  }, -- Not implemented until I figure out how to do it
+        ANA_SPELUNKY =       { name = "Ana Spelunky",       id = Spel2AP.locations.people.Ana_Spelunky,       index = 1, ent_type = ENT_TYPE.CHAR_ANA_SPELUNKY },
+        MARGARET_TUNNEL =    { name = "Margaret Tunnel",    id = Spel2AP.locations.people.Margaret_Tunnel,    index = 2, ent_type = ENT_TYPE.CHAR_MARGARET_TUNNEL  },
+        COLIN_NORTHWARD =    { name = "Colin Northward",    id = Spel2AP.locations.people.Colin_Northward,    index = 3, ent_type = ENT_TYPE.CHAR_COLIN_NORTHWARD  },
+        ROFFY_D_SLOTH =      { name = "Roffy D. Sloth",     id = Spel2AP.locations.people.Roffy_D_Sloth,      index = 4, ent_type = ENT_TYPE.CHAR_ROFFY_D_SLOTH  },
         ALTO_SINGH =         { name = "Alto Singh",         id = Spel2AP.locations.people.Alto_Singh,         index = 5  },
         LIZ_MUTTON =         { name = "Liz Mutton",         id = Spel2AP.locations.people.Liz_Mutton,         index = 6  },
         NEKKA_THE_EAGLE =    { name = "Nekka the Eagle",    id = Spel2AP.locations.people.Nekka_The_Eagle,    index = 7  },
@@ -236,12 +236,18 @@ journal = {
 journal_lookup = {}
 for _, chapter in ipairs(journal.chapters) do
     for key, entry in pairs(journal[chapter]) do
-        journal_lookup[entry.id] = { chapter = chapter, index = key }
+        journal_lookup[entry.id] = { chapter = chapter, entry = key, ent = entry.ent_type, index = entry.index }
     end
 end
 
-character_data =
-{
+starter_lookup = {
+    [Spel2AP.locations.people.Ana_Spelunky]    = journal.people.ANA_SPELUNKY.ent_type,
+    [Spel2AP.locations.people.Margaret_Tunnel] = journal.people.MARGARET_TUNNEL.ent_type,
+    [Spel2AP.locations.people.Colin_Northward] = journal.people.COLIN_NORTHWARD.ent_type,
+    [Spel2AP.locations.people.Roffy_D_Sloth]   = journal.people.ROFFY_D_SLOTH.ent_type
+}
+
+character_data = {
     [Spel2AP.characters.Ana_Spelunky] =
     {
         index = 1,

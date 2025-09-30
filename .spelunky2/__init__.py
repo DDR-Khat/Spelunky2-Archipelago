@@ -195,9 +195,11 @@ class Spelunky2World(World):
                     self.create_item(str(ItemName.COSMIC_OCEAN_CP))
                 )
 
-        # Characters are always in pool
+        # Characters to add (minus the "Starting" ones, because we begin with them)
+        starting_characters = set(self.options.starting_characters or [ItemName.ANA_SPELUNKY.value])
         for char_name in characters:
-            spelunky2_item_pool.append(self.create_item(char_name))
+            if char_name not in starting_characters:
+                spelunky2_item_pool.append(self.create_item(char_name))
 
         # Filler & traps
         locations_count = len(self.multiworld.get_unfilled_locations(self.player))
@@ -275,6 +277,11 @@ class Spelunky2World(World):
             "starting_health": self.options.starting_health.value,
             "starting_bombs": self.options.starting_bombs.value,
             "starting_ropes": self.options.starting_ropes.value,
+            "starting_characters": [
+                self.item_name_to_id[name]
+                for name in (self.options.starting_characters or [ItemName.ANA_SPELUNKY.value])
+                if name in self.item_name_to_id
+            ],
             "health_upgrades": self.options.health_upgrades.value,
             "bomb_upgrades": self.options.bomb_upgrades.value,
             "rope_upgrades": self.options.rope_upgrades.value,
