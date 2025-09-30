@@ -2,7 +2,7 @@ from typing import Optional, NamedTuple
 from BaseClasses import Item, ItemClassification
 from .enums import ItemName, ShortcutName, WorldName
 
-ItemClassification.import_progression = ItemClassification.progression | ItemClassification.useful
+ItemClassification.important_progression = ItemClassification.progression | ItemClassification.useful
 
 # Master Item List
 powerup_options = frozenset({ItemName.ANKH.value, ItemName.CLIMBING_GLOVES.value, ItemName.COMPASS.value,
@@ -22,6 +22,12 @@ quest_items = frozenset({ItemName.ALIEN_COMPASS.value, ItemName.ARROW_OF_LIGHT.v
 
 item_options = sorted(powerup_options | equip_options)
 locked_items = sorted(powerup_options | equip_options | quest_items)
+
+character_options = frozenset({ItemName.ANA_SPELUNKY.value, ItemName.MARGARET_TUNNEL.value, ItemName.COLIN_NORTHWARD,
+   ItemName.ROFFY_D_SLOTH, ItemName.ALTO_SINGH, ItemName.LIZ_MUTTON, ItemName.NEKKA_THE_EAGLE, ItemName.LISE_PROJECT,
+   ItemName.COCO_VON_DIAMONDS, ItemName.MANFRED_TUNNEL, ItemName.LITTLE_JAY, ItemName.TINA_FLAN, ItemName.VALERIE_CRUMP,
+   ItemName.AU, ItemName.DEMI_VON_DIAMONDS, ItemName.PILOT, ItemName.PRINCESS_AIRYN, ItemName.DIAMOND_GEM,
+   ItemName.GUY_SPELUNKY, ItemName.CLASSIC_GUY})  # noqa: E128
 # End of Master Item List
 
 
@@ -48,11 +54,11 @@ filler_items = {
     ItemName.DIAMOND_GEM.value: Spelunky2ItemData(10),
 }
 
-characters = {  # 4 Characters randomly chosen, Ana/Margaret/Colin/Roffy will be found where non-starters exist
-    # ItemName.ANA_SPELUNKY.value:      Spelunky2ItemData(101),
-    # ItemName.MARGARET_TUNNEL.value:   Spelunky2ItemData(102),
-    # ItemName.COLIN_NORTHWARD.value:   Spelunky2ItemData(103),
-    # ItemName.ROFFY_D_SLOTH.value:     Spelunky2ItemData(104),
+characters = {
+    ItemName.ANA_SPELUNKY.value:       Spelunky2ItemData(101),
+    ItemName.MARGARET_TUNNEL.value:    Spelunky2ItemData(102),
+    ItemName.COLIN_NORTHWARD.value:    Spelunky2ItemData(103),
+    ItemName.ROFFY_D_SLOTH.value:      Spelunky2ItemData(104),
     ItemName.ALTO_SINGH.value:         Spelunky2ItemData(105),
     ItemName.LIZ_MUTTON.value:         Spelunky2ItemData(106),
     ItemName.NEKKA_THE_EAGLE.value:    Spelunky2ItemData(107),
@@ -105,16 +111,16 @@ shortcuts = {  # TODO: Maybe add more shortcuts by editing the Camp to allow spe
 }
 
 world_unlocks = {
-    WorldName.PROGRESSIVE.value:  Spelunky2ItemData(601, ItemClassification.import_progression, 0),  # Count set by goal
-    WorldName.JUNGLE.value:       Spelunky2ItemData(602, ItemClassification.import_progression, 0),
-    WorldName.VOLCANA.value:      Spelunky2ItemData(603, ItemClassification.import_progression, 0),
-    WorldName.OLMECS_LAIR.value:  Spelunky2ItemData(604, ItemClassification.import_progression, 0),
-    WorldName.TIDE_POOL.value:    Spelunky2ItemData(605, ItemClassification.import_progression, 0),
-    WorldName.TEMPLE.value:       Spelunky2ItemData(606, ItemClassification.import_progression, 0),
-    WorldName.ICE_CAVES.value:    Spelunky2ItemData(607, ItemClassification.import_progression, 0),
-    WorldName.NEO_BABYLON.value:  Spelunky2ItemData(608, ItemClassification.import_progression, 0),
-    WorldName.SUNKEN_CITY.value:  Spelunky2ItemData(609, ItemClassification.import_progression, 0),
-    WorldName.COSMIC_OCEAN.value: Spelunky2ItemData(610, ItemClassification.import_progression, 0),
+    WorldName.PROGRESSIVE.value:  Spelunky2ItemData(601, ItemClassification.important_progression, 0),  # Set by goal
+    WorldName.JUNGLE.value:       Spelunky2ItemData(602, ItemClassification.important_progression, 0),
+    WorldName.VOLCANA.value:      Spelunky2ItemData(603, ItemClassification.important_progression, 0),
+    WorldName.OLMECS_LAIR.value:  Spelunky2ItemData(604, ItemClassification.important_progression, 0),
+    WorldName.TIDE_POOL.value:    Spelunky2ItemData(605, ItemClassification.important_progression, 0),
+    WorldName.TEMPLE.value:       Spelunky2ItemData(606, ItemClassification.important_progression, 0),
+    WorldName.ICE_CAVES.value:    Spelunky2ItemData(607, ItemClassification.important_progression, 0),
+    WorldName.NEO_BABYLON.value:  Spelunky2ItemData(608, ItemClassification.important_progression, 0),
+    WorldName.SUNKEN_CITY.value:  Spelunky2ItemData(609, ItemClassification.important_progression, 0),
+    WorldName.COSMIC_OCEAN.value: Spelunky2ItemData(610, ItemClassification.important_progression, 0),
 }
 
 traps = {

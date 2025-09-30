@@ -58,7 +58,7 @@ player_options = {
     goal_level = 30,
     increase_wallet = false,
     progressive_worlds = true,
-    starting_characters = {"Ana Spelunky", "Margaret Tunnel", "Colin Northward", "Roffy D. Sloth"},
+    starting_characters = {},
     starting_health = 4,
     starting_bombs = 4,
     starting_ropes = 4,
@@ -185,7 +185,7 @@ function connect(server, slot, password)
         player_options.seed = ap:get_seed()
         player_options.goal = slot_data.goal
         player_options.goal_level = slot_data.goal_level
-        -- player_options.starting_characters = slot_data.starting_characters
+        player_options.starting_characters = become_lookup_table(slot_data.starting_characters)
         player_options.increase_wallet = slot_data.increase_starting_wallet
         player_options.progressive_worlds = slot_data.progressive_worlds
         player_options.starting_health = slot_data.starting_health
@@ -234,6 +234,19 @@ function connect(server, slot, password)
         end
         read_save()
         savegame.players[1] = ap_save.last_character
+        for _, locationID in pairs(ap_save.checked_locations) do
+            local starterEntity = starter_lookup[locationID]
+            if starterEntity == nil then
+                goto continue
+            end
+            for i = #locked_starters, 1, -1 do
+                if locked_starters[i] == starterEntity then
+                    table.remove(locked_starters, i)
+                    break
+                end
+            end
+            ::continue::
+        end
     end
 
     function on_slot_refused(reasons)
@@ -255,6 +268,12 @@ function connect(server, slot, password)
                     end
                 else
                     sender = "you"
+                end
+                if data.item == Spel2AP.upgrades.Compass then
+                    local compassCount = ap_save.permanent_item_upgrades[Spel2AP.upgrades.Compass] or 0
+                    if compassCount >= 1 then
+                        data.item = Spel2AP.upgrades.Alien_Compass
+                    end
                 end
                 item_handler(data.item, false)
                 if IsInGame() then
@@ -572,13 +591,17 @@ function item_handler(itemID, isQueued)
     elseif category == Spel2AP.upgrades and not isQueued then
         if player_options.waddler_upgrades[itemID] then
             if itemID == Spel2AP.upgrades.Compass then
-                ap_save.waddler_item_unlocks[itemID] = (ap_save.waddler_item_unlocks[itemID] or 0) + 1
+                ap_save.waddler_item_unlocks[Spel2AP.upgrades.Compass] = 1
+            elseif itemID == Spel2AP.upgrades.Alien_Compass then
+                ap_save.waddler_item_unlocks[Spel2AP.upgrades.Compass] = 2
             else
                 ap_save.waddler_item_unlocks[itemID] = true
             end
         else
             if itemID == Spel2AP.upgrades.Compass then
-                ap_save.permanent_item_upgrades[itemID] = (ap_save.permanent_item_upgrades[itemID] or 0) + 1
+                ap_save.permanent_item_upgrades[Spel2AP.upgrades.Compass] = 1
+            elseif itemID == Spel2AP.upgrades.Alien_Compass then
+                ap_save.permanent_item_upgrades[Spel2AP.upgrades.Compass] = 2
             else
                 ap_save.permanent_item_upgrades[itemID] = true
             end
@@ -633,6 +656,13 @@ function queue_death_link()
 end
 
 function send_location(location_id)
+    local starterEntity = starter_lookup[location_id]
+    for i = #locked_starters, 1, -1 do
+        if locked_starters[i] == starterEntity then
+            table.remove(locked_starters, i)
+            break
+        end
+    end
     local success_checked, checked = pcall(function()
         return ap:LocationChecks({location_id})
     end)

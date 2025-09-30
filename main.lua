@@ -2,7 +2,7 @@ meta = {
     name = "Spelunky 2 Archipelago",
     description = "Adds Archipelago Multiworld Randomizer support!",
     author = "DDRKhat\nOriginal: Eszenn",
-    version = "0.3.4",
+    version = "0.3.5",
     unsafe = true
 }
 register_option_float('popup_time', 'Popup Timer', 'How long the "You received" or "You sent"! popup lingers.\n(Note: Higher values makes receiving items take longer)\nTime in seconds', 3.5, 0.5, 10)
@@ -176,11 +176,12 @@ end
 
 buildKaliLookup()
 
+
 local shortcut_save_values = {
-    [0] = 1,
-    [1] = 4,
-    [2] = 7,
-    [3] = 10
+    NONE = 1,
+    DWELLING = 4,
+    OLMEC = 7,
+    ICE_CAVES = 10
 }
 
 function IsInGame()
@@ -201,13 +202,13 @@ function IsWaddlerLevel()
 end
 
 local shortcut_levels = {
-    [2] = 1, -- Jungle/Volcana
-    [3] = 2, -- Olmec
-    [4] = 2, -- ignore Tidepool/Temple, same level as Olmec
-    [5] = 3, -- Ice Caves
-    [6] = 3, -- Neo Babylon
-    [7] = 3, -- Sunken City
-    [8] = 3, -- Cosmic Ocean
+    [2] = shortcut_save_values.DWELLING, -- Jungle/Volcana
+    [3] = shortcut_save_values.OLMEC, -- Olmec
+    [4] = shortcut_save_values.OLMEC, -- ignore Tidepool/Temple, same level as Olmec
+    [5] = shortcut_save_values.ICE_CAVES, -- Ice Caves
+    [6] = shortcut_save_values.ICE_CAVES, -- Neo Babylon
+    [7] = shortcut_save_values.ICE_CAVES, -- Sunken City
+    [8] = shortcut_save_values.ICE_CAVES, -- Cosmic Ocean
 }
 
 function get_shortcut_level()
@@ -218,11 +219,11 @@ function get_shortcut_level()
         currentMax = get_unlock_world_number()
     end
 
-    return shortcut_levels[currentMax] or 0
+    return shortcut_levels[currentMax] or shortcut_save_values.NONE
 end
 
 function set_shortcut_progress(level)
-    savegame.shortcuts = shortcut_save_values[level] or 1
+    savegame.shortcuts = level
 end
 
 set_callback(function()
@@ -244,7 +245,7 @@ set_callback(function()
         update_characters(false)
         set_shortcut_progress(get_shortcut_level())
     elseif ap_save.checked_locations[Spel2AP.locations.people.Terra_Tunnel] then
-        set_shortcut_progress(8)
+        set_shortcut_progress(shortcut_save_values.ICE_CAVES)
     end
 
     if (state.screen_next == SCREEN.CAMP
@@ -429,6 +430,58 @@ set_callback(function()
     update_nextworld_variable()
 end, ON.LEVEL)
 
+set_callback(function()
+    debug_print("POST_LEVEL_GENERATION")
+    if state.theme == THEME.VOLCANA then
+        if state.level <= 1 then
+            return
+        end
+        local vlads = get_entities_by(ENT_TYPE.MONS_VLAD, MASK.MONSTER, LAYER.BACK)
+        if #vlads <= 0 then
+            return
+        end
+    end
+    local coffin_uids = get_entities_by(ENT_TYPE.ITEM_COFFIN, MASK.ITEM, LAYER.BACK)
+    for _, uid in ipairs(coffin_uids) do
+        local coffin = get_entity(uid)
+        if coffin.inside == ENT_TYPE.CHAR_HIREDHAND and #locked_starters > 0 then
+            set_contents(coffin.uid, locked_starters[1])
+            table.remove(locked_starters, 1)
+        end
+    end
+end, ON.POST_LEVEL_GENERATION)
+
+set_post_entity_spawn(function(hiredHand)
+    if hiredHand.layer ~= LAYER.BACK then
+        return
+    end
+    if #locked_starters < 1 then
+        return
+    end
+    hiredHand:set_pre_update_state_machine(function()
+        if not test_flag(hiredHand.more_flags, ENT_MORE_FLAG.FINISHED_SPAWNING) then
+            return
+        end
+        clear_callback()
+        local entX, entY, entLayer = get_position(hiredHand.uid)
+        local roomX, roomY = get_room_index(entX, entY)
+        local room_template = get_room_template(roomX, roomY, LAYER.BACK)
+        if room_template == nil or room_template ~= ROOM_TEMPLATE.SHOP_JAIL_BACKLAYER then
+            return
+        end
+        local isFacingLeft = test_flag(hiredHand.flags, ENT_FLAG.FACING_LEFT)
+        local replacementID = spawn_companion(locked_starters[1], entX, entY, entLayer)
+        local replacement = get_entity(replacementID)
+        replacement.ai.state = hiredHand.ai.state
+        replacement.ai.last_state = hiredHand.ai.last_state
+        if isFacingLeft then
+            replacement.flags = set_flag(replacement.flags, ENT_FLAG.FACING_LEFT)
+        end
+        table.remove(locked_starters, 1)
+        hiredHand:destroy()
+    end)
+end, SPAWN_TYPE.LEVEL_GEN, MASK.PLAYER, ENT_TYPE.CHAR_HIREDHAND)
+
 
 set_post_entity_spawn(function(crate)
     if get_local_state().screen ~= SCREEN.LEVEL then
@@ -458,7 +511,6 @@ set_post_entity_spawn(function(crate)
         crate.inside = replaceItem
     end)
 end, SPAWN_TYPE.ANY, MASK.ITEM, {ENT_TYPE.ITEM_CRATE, ENT_TYPE.ITEM_PRESENT, ENT_TYPE.ITEM_GHIST_PRESENT})
-
 
 --[[
 If it's not our goal, let us beat the boss and loop back.
@@ -518,7 +570,9 @@ end, SPAWN_TYPE.ANY, MASK.ITEM, ENT_TYPE.ITEM_PICKUP_CLOVER)
 
 local replacingUshabti = false
 set_post_entity_spawn(function(ushabti)
-    if ap_save.waddler_item_unlocks[Spel2AP.upgrades.Ushabti] ~= true or not IsWaddlerLevel() then
+    if ap_save.waddler_item_unlocks[Spel2AP.upgrades.Ushabti] ~= true
+       or not IsWaddlerLevel()
+       or state.screen ~= SCREEN.LEVEL then
         return
     end
     if replacingUshabti then
@@ -766,8 +820,13 @@ for _, data in pairs(Journal_to_ItemEnt) do
                 return
             end
             local entType = entity.type.id
+            local isUnlocked = ap_save.item_unlocks[data.lock]
             if (entType == ENT_TYPE.ITEM_PICKUP_CROWN
                or entType == ENT_TYPE.ITEM_PICKUP_HEDJET) then
+                if isUnlocked then
+                    clear_callback()
+                    return
+                end
                 if apPlayer.layer ~= entity.layer then
                     return
                 end
@@ -783,7 +842,6 @@ for _, data in pairs(Journal_to_ItemEnt) do
                 end
             end
             clear_callback()
-            local isUnlocked = ap_save.item_unlocks[data.lock]
             local enumName = enum_get_name(ENT_TYPE,entity.type.id)
             process_potential_kali_item(entity, isUnlocked, enumName)
             if isUnlocked then

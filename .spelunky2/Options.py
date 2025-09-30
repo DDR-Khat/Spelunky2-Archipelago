@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from Options import Toggle, DefaultOnToggle, Range, Choice, PerGameCommonOptions, DeathLink, ItemSet
 from .enums import ItemName
-from .Items import item_options, locked_items, powerup_options, equip_options, quest_items
+from .Items import item_options, locked_items, powerup_options, equip_options, quest_items, character_options
 
 
 def format_options(options, row_length=10):
@@ -19,6 +19,7 @@ def format_options(options, row_length=10):
 
 item_options_text = format_options(sorted(item_options))
 locked_items_text = format_options(sorted(locked_items))
+character_options_text = format_options(sorted(character_options))
 
 
 class Goal(Choice):
@@ -70,6 +71,16 @@ class IncreaseStartingWallet(Toggle):
 class JournalEntryRequired(DefaultOnToggle):
     """Should the Journal Entry of an item be required for its Item/Waddler upgrade to take effect?"""
     display_name = "Journal Entry Required"
+
+class StartingCharacters(ItemSet):
+    __doc__ = f"""Characters that are immediately selectable. Adding more or less to this will adjust how many character locations you need to visit.
+Normally unlocked characters (Ana/Margaret/Colin/Roffy) will show up in shopkeeper locked cages if a hired hand would be there -OR- in Vlad's Castle
+If you do not specify ANY then Ana will be the only unlocked character
+Options: 
+{character_options_text}"""  # noqa: E128
+    display_name = "Starting Characters"
+    valid_keys = character_options
+    default = {ItemName.ANA_SPELUNKY.value, ItemName.MARGARET_TUNNEL.value, ItemName.COLIN_NORTHWARD.value, ItemName.ROFFY_D_SLOTH.value}
 
 
 class StartingHealth(Range):
@@ -135,7 +146,7 @@ AFTER obtaining it's journal entry if 'Journal Entry Required' is true.
 Options: 
 {item_options_text}"""  # noqa: E128
     display_name = "Item Upgrades"
-    valid_keys = item_options
+    valid_keys = sorted(set(item_options) | {ItemName.ALIEN_COMPASS.value})
     default = powerup_options - {ItemName.TRUE_CROWN.value, ItemName.EGGPLANT_CROWN.value, ItemName.PITCHERS_MITT.value}
 
 
@@ -320,6 +331,7 @@ class Spelunky2Options(PerGameCommonOptions):
     include_hard_locations: IncludeHardLocations
     journal_entry_required: JournalEntryRequired
     starting_wallet: IncreaseStartingWallet
+    starting_characters: StartingCharacters
     progressive_worlds: ProgressiveWorlds
     # progressive_shortcuts: ProgressiveShortcuts - Not implemented yet
     starting_health: StartingHealth

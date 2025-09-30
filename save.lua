@@ -13,10 +13,15 @@ local function deep_merge(base, new_data)
     return base
 end
 
+locked_starters = {ENT_TYPE.CHAR_ANA_SPELUNKY, ENT_TYPE.CHAR_MARGARET_TUNNEL,
+                   ENT_TYPE.CHAR_COLIN_NORTHWARD, ENT_TYPE.CHAR_ROFFY_D_SLOTH}
+
 ap_save = {}
 
 function initialize_save(playerGoal, includeHardLocations)
     debug_print("Initialising save to defaults")
+
+    local set_first_character = false
 
     ap_save = {
         last_character = 0,
@@ -26,12 +31,7 @@ function initialize_save(playerGoal, includeHardLocations)
         max_world = 1,
         shortcut_progress = 0,
 
-        character_unlocks = become_lookup_table({
-            Spel2AP.characters.Ana_Spelunky,
-            Spel2AP.characters.Margaret_Tunnel,
-            Spel2AP.characters.Colin_Northward,
-            Spel2AP.characters.Roffy_D_Sloth,
-        }),
+        character_unlocks = {},
 
         item_unlocks = {},
 
@@ -63,14 +63,17 @@ function initialize_save(playerGoal, includeHardLocations)
         traps = {}
     }
 
-    table.insert(ap_save.checked_locations, Spel2AP.locations.people.Ana_Spelunky)
-    ap_save.people[journal.people.ANA_SPELUNKY.index] = true
-    table.insert(ap_save.checked_locations, Spel2AP.locations.people.Margaret_Tunnel)
-    ap_save.people[journal.people.MARGARET_TUNNEL.index] = true
-    table.insert(ap_save.checked_locations, Spel2AP.locations.people.Colin_Northward)
-    ap_save.people[journal.people.COLIN_NORTHWARD.index] = true
-    table.insert(ap_save.checked_locations, Spel2AP.locations.people.Roffy_D_Sloth)
-    ap_save.people[journal.people.ROFFY_D_SLOTH.index] = true
+    for character in pairs(player_options.starting_characters) do
+        local character_index = character_data[character].index
+        table.insert(ap_save.checked_locations, character)
+        ap_save.character_unlocks[character] = true
+        ap_save.people[character_index] = true
+        savegame.people[character_index] = true
+        if not set_first_character then
+            ap_save.last_character = character_index - 1
+            set_first_character = true
+        end
+    end
     if not includeHardLocations then
         table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.Magmar)
         ap_save.bestiary[journal.bestiary.MAGMAR.index] = true
@@ -142,21 +145,7 @@ function initialize_save(playerGoal, includeHardLocations)
     savegame.deepest_level = 99
 
     update_game_save()
-
-    --[[
-        for _, character in ipairs(player_options.starting_characters) do
-            local index = character_data.name_to_index[character]
-            ap_save.unlocked_characters[index] = true
-
-            if index <= 4 then
-                table.remove(ap_save.default_character_queue, index)
-            end
-        end
-    ]]--
-
-    -- savegame.players[1] = character_data.name_to_index[player_options.starting_characters[1]] - 1
     update_characters(false)
-    savegame.players[1] = 0 -- Default to Ana
 end
 
 
@@ -217,7 +206,7 @@ function update_journal(chapter, location, sendLocation)
     local locationInfo = journal_lookup[location]
     local entry
     if locationInfo and locationInfo.chapter == chapter then
-        entry = journal[chapter][locationInfo.index]
+        entry = journal[chapter][locationInfo.entry]
     else
         for _, data in pairs(journal[chapter]) do
             if data.id == location then
