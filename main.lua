@@ -455,12 +455,9 @@ set_post_entity_spawn(function(hiredHand)
     if hiredHand.layer ~= LAYER.BACK then
         return
     end
-    print("onHiredHand::Spawn::backlayer")
     if #locked_starters < 1 then
-        print("Less than 1 starter. stopping.")
         return
     end
-    print("More than 1")
     hiredHand:set_pre_update_state_machine(function()
         if not test_flag(hiredHand.more_flags, ENT_MORE_FLAG.FINISHED_SPAWNING) then
             return
@@ -472,7 +469,6 @@ set_post_entity_spawn(function(hiredHand)
         if room_template == nil or room_template ~= ROOM_TEMPLATE.SHOP_JAIL_BACKLAYER then
             return
         end
-        print("Hired Hand (back layer) spawned + jailed + starters locked.")
         local isFacingLeft = test_flag(hiredHand.flags, ENT_FLAG.FACING_LEFT)
         local replacementID = spawn_companion(locked_starters[1], entX, entY, entLayer)
         local replacement = get_entity(replacementID)
