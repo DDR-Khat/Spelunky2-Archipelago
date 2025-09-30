@@ -1038,8 +1038,8 @@ item_ids = {
         type = Spel2AP.upgrades,
         name = "Alien Compass Upgrade",
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
-        TileY = 1,
-        TileX = 5,
+        TileY = 4,
+        TileX = 8,
         priority = PRIORITY.UPGRADES
     },
     [Spel2AP.upgrades.Ankh] = {

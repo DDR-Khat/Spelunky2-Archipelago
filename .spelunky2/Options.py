@@ -146,7 +146,7 @@ AFTER obtaining it's journal entry if 'Journal Entry Required' is true.
 Options: 
 {item_options_text}"""  # noqa: E128
     display_name = "Item Upgrades"
-    valid_keys = item_options
+    valid_keys = sorted(set(item_options) | {ItemName.ALIEN_COMPASS.value})
     default = powerup_options - {ItemName.TRUE_CROWN.value, ItemName.EGGPLANT_CROWN.value, ItemName.PITCHERS_MITT.value}
 
 

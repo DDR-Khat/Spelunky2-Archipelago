@@ -269,6 +269,12 @@ function connect(server, slot, password)
                 else
                     sender = "you"
                 end
+                if data.item == Spel2AP.upgrades.Compass then
+                    local compassCount = ap_save.permanent_item_upgrades[Spel2AP.upgrades.Compass] or 0
+                    if compassCount >= 1 then
+                        data.item = Spel2AP.upgrades.Alien_Compass
+                    end
+                end
                 item_handler(data.item, false)
                 if IsInGame() then
                     local dataEntry = item_ids[data.item]
@@ -585,13 +591,17 @@ function item_handler(itemID, isQueued)
     elseif category == Spel2AP.upgrades and not isQueued then
         if player_options.waddler_upgrades[itemID] then
             if itemID == Spel2AP.upgrades.Compass then
-                ap_save.waddler_item_unlocks[itemID] = (ap_save.waddler_item_unlocks[itemID] or 0) + 1
+                ap_save.waddler_item_unlocks[Spel2AP.upgrades.Compass] = 1
+            elseif itemID == Spel2AP.upgrades.Alien_Compass then
+                ap_save.waddler_item_unlocks[Spel2AP.upgrades.Compass] = 2
             else
                 ap_save.waddler_item_unlocks[itemID] = true
             end
         else
             if itemID == Spel2AP.upgrades.Compass then
-                ap_save.permanent_item_upgrades[itemID] = (ap_save.permanent_item_upgrades[itemID] or 0) + 1
+                ap_save.permanent_item_upgrades[Spel2AP.upgrades.Compass] = 1
+            elseif itemID == Spel2AP.upgrades.Alien_Compass then
+                ap_save.permanent_item_upgrades[Spel2AP.upgrades.Compass] = 2
             else
                 ap_save.permanent_item_upgrades[itemID] = true
             end

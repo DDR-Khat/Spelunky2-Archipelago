@@ -170,9 +170,15 @@ class Spelunky2World(World):
 
         all_upgrades_selected = self.options.waddler_upgrades.value | self.options.item_upgrades.value
 
-        # Add a single "Upgrade" item for each unique item selected.
+        # Add a single "Upgrade" item for each unique item selected. (Except Alien/Compass . Special Rules)
+        compasses = 2 if ItemName.ALIEN_COMPASS in all_upgrades_selected else (
+                    1 if ItemName.COMPASS in all_upgrades_selected
+                    else 0)
+        for _ in range(compasses):
+            spelunky2_item_pool.append(self.create_item(f"{ItemName.COMPASS}{UPGRADE_SUFFIX}"))
         for item_name in all_upgrades_selected:
-            spelunky2_item_pool.append(self.create_item(f"{item_name}{UPGRADE_SUFFIX}"))
+            if item_name not in (ItemName.ALIEN_COMPASS, ItemName.COMPASS):
+                spelunky2_item_pool.append(self.create_item(f"{item_name}{UPGRADE_SUFFIX}"))
 
         # Permanent upgrades
         for _ in range(self.options.health_upgrades):
