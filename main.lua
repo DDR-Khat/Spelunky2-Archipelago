@@ -570,7 +570,9 @@ end, SPAWN_TYPE.ANY, MASK.ITEM, ENT_TYPE.ITEM_PICKUP_CLOVER)
 
 local replacingUshabti = false
 set_post_entity_spawn(function(ushabti)
-    if ap_save.waddler_item_unlocks[Spel2AP.upgrades.Ushabti] ~= true or not IsWaddlerLevel() then
+    if ap_save.waddler_item_unlocks[Spel2AP.upgrades.Ushabti] ~= true
+       or not IsWaddlerLevel()
+       or state.screen ~= SCREEN.LEVEL then
         return
     end
     if replacingUshabti then
