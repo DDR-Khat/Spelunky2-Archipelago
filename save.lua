@@ -16,6 +16,24 @@ end
 locked_starters = {ENT_TYPE.CHAR_ANA_SPELUNKY, ENT_TYPE.CHAR_MARGARET_TUNNEL,
                    ENT_TYPE.CHAR_COLIN_NORTHWARD, ENT_TYPE.CHAR_ROFFY_D_SLOTH}
 
+session_locked_starters = {}
+
+function refresh_session_starters()
+    session_locked_starters = {}
+    for index, value in ipairs(locked_starters) do
+        session_locked_starters[index] = value
+    end
+end
+
+function try_fetch_starter()
+    returnValue = nil
+    if session_locked_starters ~= nil and #session_locked_starters > 0 then
+        returnValue = session_locked_starters[1]
+        table.remove(session_locked_starters, 1)
+    end
+    return returnValue
+end
+
 ap_save = {}
 
 function initialize_save(playerGoal, includeHardLocations)
