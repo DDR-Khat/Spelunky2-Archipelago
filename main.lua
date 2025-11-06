@@ -233,6 +233,7 @@ set_callback(function()
 
     if goingIntoTransition and changingWorld and not nextWorldUnlocked then
         state.theme_next = state.theme_start
+        state.world_next = state.world_start
     end
 
     if state.screen_next == SCREEN.CHARACTER_SELECT then
