@@ -858,6 +858,11 @@ for _, data in pairs(Journal_to_ItemEnt) do
                 local entVelX, entVelY = get_velocity(entity.uid)
                 spawn_entity(getBombOrRope(), entity.x, entity.y, entity.layer, entVelX, entVelY)
             end
+
+            if worn_backitem(apPlayer.uid) == entity.uid then
+                unequip_backitem(apPlayer.uid)
+            end
+            drop(apPlayer.uid, entity.uid)
             entity:destroy()
         end)
     end, SPAWN_TYPE.ANY, MASK.ITEM, data.type)
