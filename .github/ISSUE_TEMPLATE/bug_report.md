@@ -1,7 +1,7 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: "[BUG] [V0.3.3] (Short + Sweet title)"
+title: "[BUG] [V0.3.5] (Short + Sweet title)"
 labels: bug
 assignees: DDR-Khat
 
