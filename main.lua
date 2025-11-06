@@ -859,10 +859,13 @@ for _, data in pairs(Journal_to_ItemEnt) do
                 spawn_entity(getBombOrRope(), entity.x, entity.y, entity.layer, entVelX, entVelY)
             end
 
-            if worn_backitem(apPlayer.uid) == entity.uid then
-                unequip_backitem(apPlayer.uid)
+            if apPlayer ~= nil then
+                local wornItem = worn_backitem(apPlayer.uid)
+                if wornItem ~= -1 and wornItem == entity.uid then
+                    unequip_backitem(apPlayer.uid)
+                end
+                drop(apPlayer.uid, entity.uid)
             end
-            drop(apPlayer.uid, entity.uid)
             entity:destroy()
         end)
     end, SPAWN_TYPE.ANY, MASK.ITEM, data.type)
