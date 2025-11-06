@@ -772,8 +772,8 @@ local function process_potential_kali_item(entity, isUnlocked, entEnumName)
             if not journalData.powerup then
                 goto continue
             end
-            if ap_save.item_unlocks[journalData.lock] and not apPlayer:has_powerup(journalData.powerup) then -- TODO: Debug this. [Cape / Skeleton Key??]
-                debug_print(f"[processKaliItem::shouldReplace] Found and spawning {enum_get_name(ENT_TYPE, entry.type.id)} as a replacement")
+            if ap_save.item_unlocks[journalData.lock] and not apPlayer:has_powerup(journalData.powerup) then
+                debug_print(f"[processKaliItem::shouldReplace] Found and spawning {enum_get_name(ENT_TYPE, entry)} as a replacement")
                 foundReplacement = true
                 spawn_entity_snapped_to_floor(entry, entity.x, entity.y, entity.layer)
                 break
