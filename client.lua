@@ -247,6 +247,7 @@ function connect(server, slot, password)
             end
             ::continue::
         end
+        refresh_session_starters()
     end
 
     function on_slot_refused(reasons)

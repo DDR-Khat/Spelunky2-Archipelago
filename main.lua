@@ -2,7 +2,7 @@ meta = {
     name = "Spelunky 2 Archipelago",
     description = "Adds Archipelago Multiworld Randomizer support!",
     author = "DDRKhat\nOriginal: Eszenn",
-    version = "0.3.5",
+    version = "0.3.6",
     unsafe = true
 }
 register_option_float('popup_time', 'Popup Timer', 'How long the "You received" or "You sent"! popup lingers.\n(Note: Higher values makes receiving items take longer)\nTime in seconds', 3.5, 0.5, 10)
@@ -175,7 +175,6 @@ local function buildKaliLookup()
 end
 
 buildKaliLookup()
-
 
 local shortcut_save_values = {
     NONE = 1,
@@ -393,6 +392,7 @@ end, ON.RESET)
 
 set_callback(function()
     debug_print("LEVEL")
+    refresh_session_starters()
     if state.level >= 10
        and state.level <= ap_save.stat_upgrades[Spel2AP.permanent_upgrades.CO_Checkpoint] * 10 then
         state.world_start = 7
@@ -444,9 +444,9 @@ set_callback(function()
     local coffin_uids = get_entities_by(ENT_TYPE.ITEM_COFFIN, MASK.ITEM, LAYER.BACK)
     for _, uid in ipairs(coffin_uids) do
         local coffin = get_entity(uid)
-        if coffin.inside == ENT_TYPE.CHAR_HIREDHAND and #locked_starters > 0 then
-            set_contents(coffin.uid, locked_starters[1])
-            table.remove(locked_starters, 1)
+        local starterCharacter = try_fetch_starter()
+        if coffin.inside == ENT_TYPE.CHAR_HIREDHAND and starterCharacter ~= nil then
+            set_contents(coffin.uid, starterCharacter)
         end
     end
 end, ON.POST_LEVEL_GENERATION)
@@ -455,7 +455,8 @@ set_post_entity_spawn(function(hiredHand)
     if hiredHand.layer ~= LAYER.BACK then
         return
     end
-    if #locked_starters < 1 then
+    local starterCharacter = try_fetch_starter()
+    if starterCharacter ~= nil then
         return
     end
     hiredHand:set_pre_update_state_machine(function()
@@ -470,14 +471,13 @@ set_post_entity_spawn(function(hiredHand)
             return
         end
         local isFacingLeft = test_flag(hiredHand.flags, ENT_FLAG.FACING_LEFT)
-        local replacementID = spawn_companion(locked_starters[1], entX, entY, entLayer)
+        local replacementID = spawn_companion(starterCharacter, entX, entY, entLayer)
         local replacement = get_entity(replacementID)
         replacement.ai.state = hiredHand.ai.state
         replacement.ai.last_state = hiredHand.ai.last_state
         if isFacingLeft then
             replacement.flags = set_flag(replacement.flags, ENT_FLAG.FACING_LEFT)
         end
-        table.remove(locked_starters, 1)
         hiredHand:destroy()
     end)
 end, SPAWN_TYPE.LEVEL_GEN, MASK.PLAYER, ENT_TYPE.CHAR_HIREDHAND)
@@ -771,7 +771,7 @@ local function process_potential_kali_item(entity, isUnlocked, entEnumName)
             if not journalData.powerup then
                 goto continue
             end
-            if ap_save.item_unlocks[journalData.lock] and not apPlayer:has_powerup(journalData.powerup) then
+            if ap_save.item_unlocks[journalData.lock] and not apPlayer:has_powerup(journalData.powerup) then -- TODO: Debug this. [Cape / Skeleton Key??]
                 debug_print(f"[processKaliItem::shouldReplace] Found and spawning {enum_get_name(ENT_TYPE, entry.type.id)} as a replacement")
                 foundReplacement = true
                 spawn_entity_snapped_to_floor(entry, entity.x, entity.y, entity.layer)
