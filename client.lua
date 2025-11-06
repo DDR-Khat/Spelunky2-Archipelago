@@ -289,6 +289,7 @@ function connect(server, slot, password)
                     end
                     table.insert(item_queue, insertIndex, {item = data.item,player = sender,priority = priority})
                 end
+                ap_save.last_index = data.index
             end
         end
     end
@@ -484,7 +485,6 @@ function set_ap_callbacks()
             msgTitle = (player == "you" and "You found an item!") or f"Item received from {player}"
             msgDesc = (player == "you" and f"{item.name}") or f"Received {item.name}"
             table.remove(item_queue, 1)
-            ap_save.last_index = ap_save.last_index + 1
             write_save()
         elseif IsType(send_item_queue, "table") and #send_item_queue >0 then
             item = (type(send_item_queue[1].item) == "string" and send_item_queue[1].item) or "<Error>"
@@ -562,8 +562,6 @@ function complete_goal()
             item_handler(data.item, false)
         end
         table.remove(item_queue, 1)
-        ap_save.last_index = ap_save.last_index + 1
-
         write_save()
     end
 end
@@ -616,7 +614,7 @@ function item_handler(itemID, isQueued)
     elseif category == Spel2AP.world_unlocks and not isQueued then
         if player_options.progressive_worlds then
             if itemID == Spel2AP.world_unlocks.Progressive then
-                ap_save.max_world = ap_save.max_world + 1
+                ap_save.max_world = math.min(ap_save.max_world + 1,8)
             end
         else
             ap_save.world_unlocks[itemID] = true
