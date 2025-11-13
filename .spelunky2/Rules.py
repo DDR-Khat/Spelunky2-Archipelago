@@ -83,6 +83,8 @@ def set_common_rules(world: "Spelunky2World", player: int):
              lambda state:
              has_royalty(world, state, player)
              and has_or_unrestricted(world, state, player, ItemName.EXCALIBUR))
+    set_rule(world.get_location(JournalName.BROKEN_SWORD),
+             lambda state: has_or_unrestricted(world, state, player, ItemName.EXCALIBUR))
     set_rule(world.get_location(JournalName.SCEPTER),
              lambda state: has_or_unrestricted(world, state, player, ItemName.SCEPTER))
     set_rule(world.get_location(JournalName.HOU_YI_BOW),
