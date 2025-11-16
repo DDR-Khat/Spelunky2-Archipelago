@@ -176,6 +176,8 @@ def can_access_mothership(state: CollectionState, player: int) -> bool:
 # TODO Excalibur Skip settings
 def can_obtain_tablet(world: "Spelunky2World", state: CollectionState, player: int) -> bool:
     return (
+            has_or_unrestricted(world, state, player, ItemName.ANKH)
+            and
             has_or_unrestricted(world, state, player, ItemName.TABLET_OF_DESTINY)
             and (
                     state.can_reach(LocationName.DUAT, "Region", player)
