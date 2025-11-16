@@ -164,6 +164,7 @@ function connect(server, slot, password)
         ourTeam = nil
         apSlots = {}
         apGames = {}
+        initialize_save(AP_Goal.EASY, false)
     end
 
     function on_room_info()

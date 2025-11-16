@@ -2,7 +2,7 @@ meta = {
     name = "Spelunky 2 Archipelago",
     description = "Adds Archipelago Multiworld Randomizer support!",
     author = "DDRKhat\nOriginal: Eszenn",
-    version = "0.3.6",
+    version = "0.3.7",
     unsafe = true
 }
 register_option_float('popup_time', 'Popup Timer', 'How long the "You received" or "You sent"! popup lingers.\n(Note: Higher values makes receiving items take longer)\nTime in seconds', 3.5, 0.5, 10)
@@ -859,13 +859,6 @@ for _, data in pairs(Journal_to_ItemEnt) do
                 spawn_entity(getBombOrRope(), entity.x, entity.y, entity.layer, entVelX, entVelY)
             end
 
-            if apPlayer ~= nil then
-                local wornItem = worn_backitem(apPlayer.uid)
-                if wornItem ~= -1 and wornItem == entity.uid then
-                    unequip_backitem(apPlayer.uid)
-                end
-                drop(apPlayer.uid, entity.uid)
-            end
             entity:destroy()
         end)
     end, SPAWN_TYPE.ANY, MASK.ITEM, data.type)
