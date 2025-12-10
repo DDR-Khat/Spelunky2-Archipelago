@@ -235,7 +235,7 @@ function connect(server, slot, password)
         end
         read_save()
         savegame.players[1] = ap_save.last_character
-        for _, locationID in pairs(ap_save.checked_locations) do
+        for locationID, _ in pairs(ap_save.checked_locations) do
             local starterEntity = starter_lookup[locationID]
             if starterEntity == nil then
                 goto continue
@@ -350,7 +350,7 @@ function connect(server, slot, password)
         debug_print("Server reported checked locations: " .. table.concat(locations, ", "))
 
         for _, location_id in ipairs(locations) do
-            for _, checked_id in ipairs(ap_save.checked_locations) do
+            for checked_id, _ in ipairs(ap_save.checked_locations) do
                 if checked_id == location_id then
                     goto continue
                 end
@@ -686,8 +686,8 @@ function send_location(location_id)
 end
 
 function verify_locations(location_list)
-    for index, location_id in ipairs(ap_save.checked_locations) do
-        if location_list[index] ~= location_id then
+    for location_id, _ in ipairs(ap_save.checked_locations) do
+        if not location_list[location_id] then
             send_location(location_id)
         end
     end

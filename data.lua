@@ -8,6 +8,10 @@ function become_lookup_table(list)
     return lookup
 end
 
+function table.set(table, key)
+    table[key] = true
+end
+
 journal = {
     chapters = { "places", "people", "bestiary", "items", "traps" },
 
