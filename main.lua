@@ -684,6 +684,10 @@ set_callback(function(ctx, type, page)
         local bottom = iconY - iconHeight
         ctx:draw_screen_texture(data.display, data.TileY, data.TileX, left, top, right, bottom, iconColor)
         icon_count = icon_count + 1
+        if (worldID == Spel2AP.world_unlocks.Neo_Babylon and player_options.goal == AP_Goal.EASY)
+            or (worldID == Spel2AP.world_unlocks.Sunken_City and player_options.goal == AP_Goal.HARD) then
+            break
+        end
     end
 end, ON.RENDER_POST_JOURNAL_PAGE)
 
