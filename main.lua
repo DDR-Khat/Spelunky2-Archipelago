@@ -660,6 +660,32 @@ set_callback(function(ctx, hud)
     end
 end, ON.RENDER_PRE_HUD)
 
+set_callback(function(ctx, type, page)
+    if type ~= JOURNAL_PAGE_TYPE.PROGRESS then
+        return
+    end
+    local page_quad = page.background:dest_get_quad():get_AABB()
+    local page_dimensions = page_quad:width() / page_quad:height()
+    local icon_count = 0
+    for worldID, data in pairs(journal_world_icons) do
+        local iconColor = dullColor
+        if worldID == 600
+            or (player_options.progressive_worlds and ap_save.max_world >= data.worldCount)
+            or (not player_options.progressive_worlds and ap_save.world_unlocks[worldID]) then
+            iconColor = fullColor
+        end
+        local iconX = -0.65 + page.background.x + (data.offsetX or 0)
+        local iconY = 0.70 - page.background.y - icon_count * 0.111 + (data.offsetY or 0)
+        local iconWidth = data.width or 0.1
+        local iconHeight = data.height or 0.1
+        local left   = iconX
+        local top    = iconY
+        local right  = iconX + iconWidth / page_dimensions
+        local bottom = iconY - iconHeight
+        ctx:draw_screen_texture(data.display, data.TileY, data.TileX, left, top, right, bottom, iconColor)
+        icon_count = icon_count + 1
+    end
+end, ON.RENDER_POST_JOURNAL_PAGE)
 
 set_callback(function()
     debug_print("TRANSITION")
