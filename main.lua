@@ -668,6 +668,10 @@ set_callback(function(ctx, type, page)
     local page_dimensions = page_quad:width() / page_quad:height()
     local icon_count = 0
     for worldID, data in pairs(journal_world_icons) do
+        if (worldID == Spel2AP.world_unlocks.Sunken_City and player_options.goal == AP_Goal.EASY)
+                or (worldID == Spel2AP.world_unlocks.Cosmic_Ocean and player_options.goal ~= AP_Goal.CO) then
+            goto continue
+        end
         local iconColor = dullColor
         if worldID == 600
             or (player_options.progressive_worlds and ap_save.max_world >= data.worldCount)
@@ -684,10 +688,7 @@ set_callback(function(ctx, type, page)
         local bottom = iconY - iconHeight
         ctx:draw_screen_texture(data.display, data.TileY, data.TileX, left, top, right, bottom, iconColor)
         icon_count = icon_count + 1
-        if (worldID == Spel2AP.world_unlocks.Neo_Babylon and player_options.goal == AP_Goal.EASY)
-            or (worldID == Spel2AP.world_unlocks.Sunken_City and player_options.goal == AP_Goal.HARD) then
-            break
-        end
+        ::continue::
     end
 end, ON.RENDER_POST_JOURNAL_PAGE)
 
