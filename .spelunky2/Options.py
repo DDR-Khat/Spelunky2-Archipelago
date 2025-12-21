@@ -173,6 +173,26 @@ class DeathLinkAmnesty(Range):
     default = 2
 
 
+class UdjatSkipLogic(Toggle):
+    """Sets if progression logic should assume you can perform Udjat skipping to get into Black Market/Vlad's Castle"""
+
+
+class AnkhSkipLogic(Toggle):
+    """Sets if progression logic should assume you can perform Ankh skipping in Tidepool"""
+
+
+class QilinSkipLogic(Toggle):
+    """Sets if progression logic should assume you can perform Qilin skip"""
+
+
+class AlienCompassSkipLogic(Toggle):
+    """Sets if progression should assume you know how to find the Mothership without Alien Compass"""
+
+
+class KinguExcaliburSkipLogic(Toggle):
+    """Sets if progression should assume you can kill Kingu without needing Excalibur to break the shell"""
+
+
 class RopePileWeight(Range):
     """Sets the likelihood of a filler item being a Rope Pile relative to others."""
     display_name = "Rope Pile Weight"
@@ -352,6 +372,11 @@ class Spelunky2Options(PerGameCommonOptions):
     restricted_items: RestrictedItems
     item_upgrades: ItemUpgrades
     waddler_upgrades: WaddlerUpgrades
+    can_ankh_skip: AnkhSkipLogic
+    can_udjat_skip: UdjatSkipLogic
+    can_qilin_skip: QilinSkipLogic
+    can_kingu_skip: KinguExcaliburSkipLogic
+    can_mothership_skip: AlienCompassSkipLogic
     rope_pile_weight: RopePileWeight
     bomb_bag_weight: BombBagWeight
     bomb_box_weight: BombBoxWeight
