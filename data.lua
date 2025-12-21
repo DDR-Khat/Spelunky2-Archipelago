@@ -1908,3 +1908,11 @@ unrestricted_items = become_lookup_table
     ENT_TYPE.ITEM_PICKUP_ROYALJELLY,
     ENT_TYPE.ITEM_WOODEN_SHIELD,
 })
+
+deathlink_reasons = {
+    [CAUSE_OF_DEATH.ENTITY] = "not managing to dodge danger",
+    [CAUSE_OF_DEATH.LONG_FALL] = "breaking every bone in their body",
+    [CAUSE_OF_DEATH.STILL_FALLING] = "finding a VERY big hole",
+    [CAUSE_OF_DEATH.MISSED] = "teleporting into terrain",
+    [CAUSE_OF_DEATH.POISONED] = "not curing their poison",
+}

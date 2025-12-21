@@ -165,6 +165,14 @@ class DeathLinkBypassesAnkh(Toggle):
     display_name = "Death Link Ankh Handling"
 
 
+class DeathLinkAmnesty(Range):
+    """A \"grace\" count of how many deaths you are allowed before you send a Deathlink out to the multiworld."""
+    display_name = "Death Link Amnesty"
+    range_start = 0
+    range_end = 10
+    default = 2
+
+
 class RopePileWeight(Range):
     """Sets the likelihood of a filler item being a Rope Pile relative to others."""
     display_name = "Rope Pile Weight"
@@ -328,6 +336,7 @@ class Spelunky2Options(PerGameCommonOptions):
     goal_level: GoalLevel
     death_link: DeathLink
     bypass_ankh: DeathLinkBypassesAnkh
+    death_link_amnesty_count: DeathLinkAmnesty
     include_hard_locations: IncludeHardLocations
     journal_entry_required: JournalEntryRequired
     starting_wallet: IncreaseStartingWallet

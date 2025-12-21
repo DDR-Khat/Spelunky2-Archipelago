@@ -16,6 +16,7 @@ local item_queue = {}
 local send_item_queue = {}
 local ready_for_item = true
 local caused_by_death_link = false
+local amnesity_death_count = 0
 local id
 ourSlot = nil
 ourTeam = nil
@@ -66,6 +67,7 @@ player_options = {
     waddler_upgrades = {},
     death_link = false,
     bypass_ankh = false,
+    amnesty_count = 0,
     include_hard_locations = false,
     journal_entry_required = true
 }
@@ -195,6 +197,7 @@ function connect(server, slot, password)
         player_options.starter_upgrades = become_lookup_table(slot_data.item_upgrades)
         player_options.waddler_upgrades = become_lookup_table(slot_data.waddler_upgrades)
         player_options.death_link = slot_data.death_link
+        player_options.amnesty_count = slot_data.amnesty_count
         player_options.include_hard_locations = slot_data.include_hard_locations
         player_options.journal_entry_required = slot_data.journal_entry_required
         ap:Set(f"{ourSlot}_{ourTeam}_worldTab", "Entire map", false, { { operation = "add", value = "Entire map" } }, nil)
@@ -205,14 +208,26 @@ function connect(server, slot, password)
             player_options.bypass_ankh = slot_data.bypass_ankh
 
             set_callback(function()
-                if not caused_by_death_link then
-                    local data = {
-                        time = ap:get_server_time(),
-                        source = game_info.username
-                    }
-                    ap:Bounce(data, nil, nil, {"DeathLink"})
+                if state.screen_level.time_till_death_screen ~= 150
+                        and state.screen_level.time_till_death_screen > 148 then
+                    local deathMessage = f"{ap:get_player_alias(ourSlot)} died due to {deathlink_reasons[state.cause_of_death]}"
+                    if player_options.amnesty_count > 0 then
+                        amnesity_death_count = amnesity_death_count + 1
+                        if amnesity_death_count < player_options.amnesty_count  then
+                            return
+                        end
+                    end
+                    if not caused_by_death_link then
+                        local data = {
+                            time = ap:get_server_time(),
+                            source = game_info.username,
+                            cause = deathMessage
+                        }
+                        ap:Bounce(data, nil, nil, {"DeathLink"})
+                        amnesity_death_count = 0
+                    end
                 end
-            end, ON.DEATH)
+            end, ON.GAMEFRAME)
         end
         write_last_login()
         show_delete_button = true
