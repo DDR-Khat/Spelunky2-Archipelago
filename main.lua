@@ -246,6 +246,8 @@ set_callback(function()
         set_shortcut_progress(get_shortcut_level())
     elseif ap_save.checked_locations[Spel2AP.locations.people.Terra_Tunnel] then
         set_shortcut_progress(shortcut_save_values.ICE_CAVES)
+    else
+        set_shortcut_progress(shortcut_save_values.NONE)
     end
 
     if (state.screen_next == SCREEN.CAMP
