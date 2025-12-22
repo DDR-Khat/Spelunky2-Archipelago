@@ -1910,6 +1910,7 @@ unrestricted_items = become_lookup_table
 })
 
 deathlink_reasons = {
+    [CAUSE_OF_DEATH.DEATH] = "a sudden heart attack",
     [CAUSE_OF_DEATH.ENTITY] = "not managing to dodge danger",
     [CAUSE_OF_DEATH.LONG_FALL] = "breaking every bone in their body",
     [CAUSE_OF_DEATH.STILL_FALLING] = "finding a VERY big hole",
