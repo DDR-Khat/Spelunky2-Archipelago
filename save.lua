@@ -83,7 +83,7 @@ function initialize_save(playerGoal, includeHardLocations)
 
     for character in pairs(player_options.starting_characters) do
         local character_index = character_data[character].index
-        table.insert(ap_save.checked_locations, character)
+        table.set(ap_save.checked_locations, character)
         ap_save.character_unlocks[character] = true
         ap_save.people[character_index] = true
         savegame.people[character_index] = true
@@ -93,60 +93,60 @@ function initialize_save(playerGoal, includeHardLocations)
         end
     end
     if not includeHardLocations then
-        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.Magmar)
-        ap_save.bestiary[journal.bestiary.MAGMAR.index] = true
-        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.Lavamander)
-        ap_save.bestiary[journal.bestiary.LAVAMANDER.index] = true
-        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.Mech_Rider)
-        ap_save.bestiary[journal.bestiary.MECH_RIDER.index] = true
-        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.Scorpion)
-        ap_save.bestiary[journal.bestiary.SCORPION.index] = true
-        table.insert(ap_save.checked_locations, Spel2AP.locations.item.True_Crown)
-        ap_save.items[journal.items.TRUE_CROWN.index] = true
+        table.set(ap_save.checked_locations, Spel2AP.locations.bestiary.Magmar)
+        table.set(ap_save.bestiary, journal.bestiary.MAGMAR.index)
+        table.set(ap_save.checked_locations, Spel2AP.locations.bestiary.Lavamander)
+        table.set(ap_save.bestiary, journal.bestiary.LAVAMANDER.index)
+        table.set(ap_save.checked_locations, Spel2AP.locations.bestiary.Mech_Rider)
+        table.set(ap_save.bestiary, journal.bestiary.MECH_RIDER.index)
+        table.set(ap_save.checked_locations, Spel2AP.locations.bestiary.Scorpion)
+        table.set(ap_save.bestiary, journal.bestiary.SCORPION.index)
+        table.set(ap_save.checked_locations, Spel2AP.locations.item.True_Crown)
+        table.set(ap_save.items, journal.items.TRUE_CROWN.index)
     end
     if playerGoal < AP_Goal.CO then
-        table.insert(ap_save.checked_locations, Spel2AP.locations.place.Cosmic_Ocean)
-        ap_save.places[journal.places.COSMIC_OCEAN.index] = true
-        table.insert(ap_save.checked_locations, Spel2AP.locations.people.Classic_Guy)
-        ap_save.people[journal.people.CLASSIC_GUY.index] = true
-        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.Celestial_Jelly)
-        ap_save.bestiary[journal.bestiary.CELESTIAL_JELLY.index] = true
+        table.set(ap_save.checked_locations, Spel2AP.locations.place.Cosmic_Ocean)
+        table.set(ap_save.places, journal.places.COSMIC_OCEAN.index)
+        table.set(ap_save.checked_locations, Spel2AP.locations.people.Classic_Guy)
+        table.set(ap_save.people, journal.people.CLASSIC_GUY.index)
+        table.set(ap_save.checked_locations, Spel2AP.locations.bestiary.Celestial_Jelly)
+        table.set(ap_save.bestiary, journal.bestiary.CELESTIAL_JELLY.index)
     end
     if playerGoal < AP_Goal.HARD then
-        table.insert(ap_save.checked_locations, Spel2AP.locations.place.Tiamats_Throne)
-        ap_save.places[journal.places.TIAMATS_THRONE.index] = true
-        table.insert(ap_save.checked_locations, Spel2AP.locations.place.Sunken_City)
-        ap_save.places[journal.places.SUNKEN_CITY.index] = true
-        table.insert(ap_save.checked_locations, Spel2AP.locations.place.Eggplant_World)
-        ap_save.places[journal.places.EGGPLANT_WORLD.index] = true
-        table.insert(ap_save.checked_locations, Spel2AP.locations.place.Hunduns_Hideaway)
-        ap_save.places[journal.places.HUNDUNS_HIDEAWAY.index] = true
-        table.insert(ap_save.checked_locations, Spel2AP.locations.people.Dirk_Yamaoka)
-        ap_save.people[journal.people.DIRK_YAMAOKA.index] = true
-        table.insert(ap_save.checked_locations, Spel2AP.locations.people.Guy_Spelunky)
-        ap_save.people[journal.people.GUY_SPELUNKY.index] = true
-        table.insert(ap_save.checked_locations, Spel2AP.locations.people.Eggplant_King)
-        ap_save.people[journal.people.EGGPLANT_KING.index] = true
-        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.Tiamat)
-        ap_save.bestiary[journal.bestiary.TIAMAT.index] = true
-        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.Tadpole)
-        ap_save.bestiary[journal.bestiary.TADPOLE.index] = true
-        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.Frog)
-        ap_save.bestiary[journal.bestiary.FROG.index] = true
-        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.Fire_Frog)
-        ap_save.bestiary[journal.bestiary.FIRE_FROG.index] = true
-        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.Goliath_Frog)
-        ap_save.bestiary[journal.bestiary.GOLIATH_FROG.index] = true
-        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.Grub)
-        ap_save.bestiary[journal.bestiary.GRUB.index] = true
-        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.Giant_Fly)
-        ap_save.bestiary[journal.bestiary.GIANT_FLY.index] = true
-        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.Hundun)
-        ap_save.bestiary[journal.bestiary.HUNDUN.index] = true
-        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.Eggplant_Minister)
-        ap_save.bestiary[journal.bestiary.EGGPLANT_MINISTER.index] = true
-        table.insert(ap_save.checked_locations, Spel2AP.locations.bestiary.Eggplup)
-        ap_save.bestiary[journal.bestiary.EGGPLUP.index] = true
+        table.set(ap_save.checked_locations, Spel2AP.locations.place.Tiamats_Throne)
+        table.set(ap_save.places, journal.places.TIAMATS_THRONE.index)
+        table.set(ap_save.checked_locations, Spel2AP.locations.place.Sunken_City)
+        table.set(ap_save.places, journal.places.SUNKEN_CITY.index)
+        table.set(ap_save.checked_locations, Spel2AP.locations.place.Eggplant_World)
+        table.set(ap_save.places, journal.places.EGGPLANT_WORLD.index)
+        table.set(ap_save.checked_locations, Spel2AP.locations.place.Hunduns_Hideaway)
+        table.set(ap_save.places, journal.places.HUNDUNS_HIDEAWAY.index)
+        table.set(ap_save.checked_locations, Spel2AP.locations.people.Dirk_Yamaoka)
+        table.set(ap_save.people, journal.people.DIRK_YAMAOKA.index)
+        table.set(ap_save.checked_locations, Spel2AP.locations.people.Guy_Spelunky)
+        table.set(ap_save.people, journal.people.GUY_SPELUNKY.index)
+        table.set(ap_save.checked_locations, Spel2AP.locations.people.Eggplant_King)
+        table.set(ap_save.people, journal.people.EGGPLANT_KING.index)
+        table.set(ap_save.checked_locations, Spel2AP.locations.bestiary.Tiamat)
+        table.set(ap_save.bestiary, journal.bestiary.TIAMAT.index)
+        table.set(ap_save.checked_locations, Spel2AP.locations.bestiary.Tadpole)
+        table.set(ap_save.bestiary, journal.bestiary.TADPOLE.index)
+        table.set(ap_save.checked_locations, Spel2AP.locations.bestiary.Frog)
+        table.set(ap_save.bestiary, journal.bestiary.FROG.index)
+        table.set(ap_save.checked_locations, Spel2AP.locations.bestiary.Fire_Frog)
+        table.set(ap_save.bestiary, journal.bestiary.FIRE_FROG.index)
+        table.set(ap_save.checked_locations, Spel2AP.locations.bestiary.Goliath_Frog)
+        table.set(ap_save.bestiary, journal.bestiary.GOLIATH_FROG.index)
+        table.set(ap_save.checked_locations, Spel2AP.locations.bestiary.Grub)
+        table.set(ap_save.bestiary, journal.bestiary.GRUB.index)
+        table.set(ap_save.checked_locations, Spel2AP.locations.bestiary.Giant_Fly)
+        table.set(ap_save.bestiary, journal.bestiary.GIANT_FLY.index)
+        table.set(ap_save.checked_locations, Spel2AP.locations.bestiary.Hundun)
+        table.set(ap_save.bestiary, journal.bestiary.HUNDUN.index)
+        table.set(ap_save.checked_locations, Spel2AP.locations.bestiary.Eggplant_Minister)
+        table.set(ap_save.bestiary, journal.bestiary.EGGPLANT_MINISTER.index)
+        table.set(ap_save.checked_locations, Spel2AP.locations.bestiary.Eggplup)
+        table.set(ap_save.bestiary, journal.bestiary.EGGPLUP.index)
     end
 
     -- Adjust savegame data
@@ -201,7 +201,7 @@ function update_characters(characterSelect)
         end
     else
         local characters_in_journal = {}
-        for _, location in pairs(ap_save.checked_locations) do
+        for location, _ in pairs(ap_save.checked_locations) do
             characters_in_journal[location] = true
         end
         for _, data in pairs(character_data) do
@@ -248,7 +248,7 @@ function update_journal(chapter, location, sendLocation)
     debug_print(f"Updated {chapter} entry {entry.name}")
 
     -- Track in checked_locations
-    table.insert(ap_save.checked_locations, location)
+    table.set(ap_save.checked_locations, location)
 
     -- Skip sending if excluded by player options, because it won't exist in the multiworld
     if not player_options.include_hard_locations

@@ -1,4 +1,5 @@
 safe_require("lib/Spel2ItemCodes")
+safe_require("lib/popup")
 
 function become_lookup_table(list)
     local lookup = {}
@@ -6,6 +7,10 @@ function become_lookup_table(list)
         lookup[value] = true
     end
     return lookup
+end
+
+function table.set(table, key)
+    table[key] = true
 end
 
 journal = {
@@ -398,26 +403,33 @@ function update_nextworld_variable()
     nextWorldUnlocked = maxUnlock >= math.min(state.world_next + 1, goalWorld)
 end
 
+local progressive_world_unlocks = {
+    { Spel2AP.world_unlocks.Jungle, Spel2AP.world_unlocks.Volcana },
+    { Spel2AP.world_unlocks.Olmecs_Lair },
+    { Spel2AP.world_unlocks.Tide_Pool, Spel2AP.world_unlocks.Temple },
+    { Spel2AP.world_unlocks.Ice_Caves },
+    { Spel2AP.world_unlocks.Neo_Babylon },
+    { Spel2AP.world_unlocks.Sunken_City },
+    { Spel2AP.world_unlocks.Cosmic_Ocean },
+}
+
 function get_unlock_world_number()
-    if ap_save.world_unlocks[Spel2AP.world_unlocks.Cosmic_Ocean] then
-        return 8
-    elseif ap_save.world_unlocks[Spel2AP.world_unlocks.Sunken_City] then
-        return 7
-    elseif ap_save.world_unlocks[Spel2AP.world_unlocks.Neo_Babylon] then
-        return 6
-    elseif ap_save.world_unlocks[Spel2AP.world_unlocks.Ice_Caves] then
-        return 5
-    elseif ap_save.world_unlocks[Spel2AP.world_unlocks.Tide_Pool]
-           or ap_save.world_unlocks[Spel2AP.world_unlocks.Temple] then
-        return 4
-    elseif ap_save.world_unlocks[Spel2AP.world_unlocks.Olmecs_Lair] then
-        return 3
-    elseif ap_save.world_unlocks[Spel2AP.world_unlocks.Jungle]
-            or ap_save.world_unlocks[Spel2AP.world_unlocks.Volcana] then
-        return 2
-    else
-        return 1
+    local level = 1
+    for _, worlds in ipairs(progressive_world_unlocks) do
+        local unlocked = false
+        for _, world in ipairs(worlds) do
+            if ap_save.world_unlocks[world] then
+                unlocked = true
+                break
+            end
+        end
+        if unlocked then
+            level = level + 1
+        else
+            break
+        end
     end
+    return level
 end
 
 PRIORITY = {
@@ -431,6 +443,111 @@ PRIORITY = {
     FILLER_MED = 3,
     FILLER_LOW = 2,
     CHARACTER = 1
+}
+fullColor = RGB2Color(255, 255, 255, 255)
+dullColor = RGB2Color(10, 10, 10, 255)
+
+journal_world_icons = {
+    [600] = {
+        display = TEXTURE.DATA_TEXTURES_MONSTERS01_0,
+        TileY = 2,
+        TileX = 11,
+        width = 0.18,
+        height = 0.18,
+        offsetX = -0.01,
+        offsetY = 0.00,
+        worldCount = 1
+    },
+    [Spel2AP.world_unlocks.Jungle] = {
+        display = TEXTURE.DATA_TEXTURES_MONSTERS01_0,
+        TileY = 7,
+        TileX = 5,
+        width = 0.26,
+        height = 0.26,
+        offsetX = -0.05,
+        offsetY = 0.01,
+        worldCount = 2
+    },
+    [Spel2AP.world_unlocks.Volcana] = {
+        display = TEXTURE.DATA_TEXTURES_MONSTERS01_0,
+        TileY = 1,
+        TileX = 10,
+        width = 0.18,
+        height = 0.18,
+        offsetX = 0.0,
+        offsetY = -0.02,
+        worldCount = 2
+    },
+    [Spel2AP.world_unlocks.Olmecs_Lair] = {
+        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        TileY = 5,
+        TileX = 13,
+        width = 0.13,
+        height = 0.13,
+        offsetX = 0.02,
+        offsetY = -0.03,
+        worldCount = 3
+    },
+    [Spel2AP.world_unlocks.Tide_Pool] = {
+        display = TEXTURE.DATA_TEXTURES_MONSTERS02_0,
+        TileY = 7,
+        TileX = 7,
+        width = 0.17,
+        height = 0.17,
+        offsetX = 0.0,
+        offsetY = -0.01,
+        worldCount = 4
+    },
+    [Spel2AP.world_unlocks.Temple] = {
+        display = TEXTURE.DATA_TEXTURES_MONSTERS02_0,
+        TileY = 14,
+        TileX = 9,
+        width = 0.14,
+        height = 0.14,
+        offsetX = 0.03,
+        offsetY = 0.02,
+        worldCount = 4
+    },
+    [Spel2AP.world_unlocks.Ice_Caves] = {
+        display = TEXTURE.DATA_TEXTURES_MONSTERS03_0,
+        TileY = 3,
+        TileX = 6,
+        width = 0.14,
+        height = 0.14,
+        offsetX = 0.02,
+        offsetY = 0.04,
+        worldCount = 5
+    },
+    [Spel2AP.world_unlocks.Neo_Babylon] = {
+        display = TEXTURE.DATA_TEXTURES_MONSTERS03_0,
+        TileY = 4,
+        TileX = 1,
+        width = 0.14,
+        height = 0.14,
+        offsetX = 0.02,
+        offsetY = 0.02,
+        worldCount = 6
+    },
+    [Spel2AP.world_unlocks.Sunken_City] = {
+        display = TEXTURE.DATA_TEXTURES_MONSTERS03_0,
+        TileY = 5,
+        TileX = 0,
+        width = 0.34,
+        height = 0.34,
+        offsetX = -0.09,
+        offsetY = 0.15,
+        worldCount = 7
+    },
+    [Spel2AP.world_unlocks.Cosmic_Ocean] = {
+        display = TEXTURE.DATA_TEXTURES_MONSTERS_GHOST_0,
+        TileY = 7,
+        TileX = 0,
+        width = 0.13,
+        height = 0.13,
+        offsetX = 0.03,
+        offsetY = 0.04,
+        worldCount = 8
+    }
 }
 
 item_ids = {
@@ -1791,3 +1908,12 @@ unrestricted_items = become_lookup_table
     ENT_TYPE.ITEM_PICKUP_ROYALJELLY,
     ENT_TYPE.ITEM_WOODEN_SHIELD,
 })
+
+deathlink_reasons = {
+    [CAUSE_OF_DEATH.DEATH] = "a sudden heart attack",
+    [CAUSE_OF_DEATH.ENTITY] = "not managing to dodge danger",
+    [CAUSE_OF_DEATH.LONG_FALL] = "breaking every bone in their body",
+    [CAUSE_OF_DEATH.STILL_FALLING] = "finding a VERY big hole",
+    [CAUSE_OF_DEATH.MISSED] = "teleporting into terrain",
+    [CAUSE_OF_DEATH.POISONED] = "not curing their poison",
+}

@@ -2,7 +2,7 @@ meta = {
     name = "Spelunky 2 Archipelago",
     description = "Adds Archipelago Multiworld Randomizer support!",
     author = "DDRKhat\nOriginal: Eszenn",
-    version = "0.3.7",
+    version = "0.3.8",
     unsafe = true
 }
 register_option_float('popup_time', 'Popup Timer', 'How long the "You received" or "You sent"! popup lingers.\n(Note: Higher values makes receiving items take longer)\nTime in seconds', 3.5, 0.5, 10)
@@ -246,6 +246,8 @@ set_callback(function()
         set_shortcut_progress(get_shortcut_level())
     elseif ap_save.checked_locations[Spel2AP.locations.people.Terra_Tunnel] then
         set_shortcut_progress(shortcut_save_values.ICE_CAVES)
+    else
+        set_shortcut_progress(shortcut_save_values.NONE)
     end
 
     if (state.screen_next == SCREEN.CAMP
@@ -532,7 +534,7 @@ set_post_entity_spawn(function (door)
     if player_options.goal == AP_Goal.CO and isCosmicOcean and state.level < player_options.goal_level - 1 then
         return
     end
-    door:set_pre_enter(function()
+    door:set_pre_hide_hud(function()
         if isTiamatWorld -- Send Guy Spelunky if we go in. Because we normally would.
                 and not ap_save.checked_locations[Spel2AP.locations.people.Guy_Spelunky] then
             update_journal("people", Spel2AP.locations.people.Guy_Spelunky, true)
@@ -660,6 +662,37 @@ set_callback(function(ctx, hud)
     end
 end, ON.RENDER_PRE_HUD)
 
+set_callback(function(ctx, type, page)
+    if type ~= JOURNAL_PAGE_TYPE.PROGRESS then
+        return
+    end
+    local page_quad = page.background:dest_get_quad():get_AABB()
+    local page_dimensions = page_quad:width() / page_quad:height()
+    local icon_count = 0
+    for worldID, data in pairs(journal_world_icons) do
+        if (worldID == Spel2AP.world_unlocks.Sunken_City and player_options.goal == AP_Goal.EASY)
+                or (worldID == Spel2AP.world_unlocks.Cosmic_Ocean and player_options.goal ~= AP_Goal.CO) then
+            goto continue
+        end
+        local iconColor = dullColor
+        if worldID == 600
+            or (player_options.progressive_worlds and ap_save.max_world >= data.worldCount)
+            or (not player_options.progressive_worlds and ap_save.world_unlocks[worldID]) then
+            iconColor = fullColor
+        end
+        local iconX = -0.65 + page.background.x + (data.offsetX or 0)
+        local iconY = 0.70 - page.background.y - icon_count * 0.111 + (data.offsetY or 0)
+        local iconWidth = data.width or 0.1
+        local iconHeight = data.height or 0.1
+        local left   = iconX
+        local top    = iconY
+        local right  = iconX + iconWidth / page_dimensions
+        local bottom = iconY - iconHeight
+        ctx:draw_screen_texture(data.display, data.TileY, data.TileX, left, top, right, bottom, iconColor)
+        icon_count = icon_count + 1
+        ::continue::
+    end
+end, ON.RENDER_POST_JOURNAL_PAGE)
 
 set_callback(function()
     debug_print("TRANSITION")
