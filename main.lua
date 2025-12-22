@@ -534,7 +534,7 @@ set_post_entity_spawn(function (door)
     if player_options.goal == AP_Goal.CO and isCosmicOcean and state.level < player_options.goal_level - 1 then
         return
     end
-    door:set_pre_enter(function()
+    door:set_pre_hide_hud(function()
         if isTiamatWorld -- Send Guy Spelunky if we go in. Because we normally would.
                 and not ap_save.checked_locations[Spel2AP.locations.people.Guy_Spelunky] then
             update_journal("people", Spel2AP.locations.people.Guy_Spelunky, true)
