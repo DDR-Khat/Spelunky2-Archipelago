@@ -1,5 +1,6 @@
 # Spelunky 2 Archipelago Mod
 This mod allows you to connect to Archipelago in order to play a multiworld randomizer. Every journal entry is a location that you can check, and the item you send out could be anything from anyone's game, including your own. For more information about Archipelago, visit their [website](https://archipelago.gg/) or join their [Discord server](https://discord.gg/8Z65BR2).
+
 ## Features
 - Multiple game options to customize your experience, such as:
     - The goal of the run
@@ -17,23 +18,24 @@ This mod allows you to connect to Archipelago in order to play a multiworld rand
     - Checked locations and received items are unique to the Archipelago seed, allowing you to have multiple Archipelago games running at once
 
 ## Goals
-- Tiamat: Defeat Tiamat in 6-4 and complete the normal ending
-- Hundun: Defeat Hundun in 7-4 and complete the hard ending
-- Cosmic Ocean: Reach a level specified by your player options in Cosmic Ocean and complete the secret ending
+- Easy: Defeat Tiamat in 6-4 to complete the normal ending
+- Hard: Defeat Hundun in 7-4 to complete the hard ending
+- CO: Reach a level specified by your player options in Cosmic Ocean to complete the secret ending
+
+## Locations
+- Every Journal Entry is a location: Worlds, Items, Characters, Enemies, Traps
+- There's an option to exclude hard locations such as Lavamander and True Crown. You can also use the `exclude_locations` yaml field for this purpose.
+- Journal entries are logically located in an area that must be reachable. For example Plasma Cannon Journal Entry logically requires access to the Mothership; Paste Journal Entry is in Jungle; Spike Shoes Journal Entry is in Ice Caves; etc. Items with no guaranteed spawn that can be found in shops, such as Powerpack, are logically located in the Black Market. For full details, see the [source code](https://github.com/DDR-Khat/Spelunky2-Archipelago/blob/main/.spelunky2/Locations.py).
 
 ## Items
-- Rope Pile: +3 ropes for this run only
-- Bomb Bag: +3 bombs for this run only
-- Bomb Box: +12 Bombs for this run only
-- Cooked Turkey: +1 Health for this run only
-- Royal Jelly: +6 Health for this run only
-- Gold Bar: +500 gold (or more depending on the world you're in) for this run only
-- Starting Health Upgrade: +1 Health at the start of every run for each stack you have
-- Starting Bomb Increase: +1 Bomb at the start of every run for each stack you have
-- Starting Rope Increase" +1 Rope at the start of every run for each stack you have
-- Permanent Paste: Start each run with the Paste power-up
-- Progressive Compass: Start each run with either a Compass or Alien Compass depending on how many stacks you have
-- Cosmic Ocean Checkpoint: Each stack you have lets you start further into Cosmic Ocean if you die there. 1 stack will let you start at 7-10, 2 stacks at 7-20, and so on
+- World Unlock: You start with only Dwelling accessible and further worlds must be unlocked as AP items. Entering an area must be done from the correct doorway. A doorway to a locked world loops back to 1-1 or whichever other level number you started via a shortcut.
+- Rope Pile, Bomb Bag, Bomb Box, Cooked Turkey, Royal Jelly: a benefit for the current run only.
+- Gold Bar, Emerald, Sapphire, Ruby, Diamond: Some gold (scales with the world you're in) for this run only. There's an option to grant gold received through AP at the start of every run instead.
+- Starting Health/Bomb/Rope Upgrade: +1 Health/Bomb/Rope at the start of every run for each stack you have.
+- Unlock Items: Items which normally exist in Vanilla are locked until an AP item is found to unlock them. Almost every item can be locked according to your yaml: Ankh, Arrow of Light, Camera, Cape, etc.
+- Permanent Items: Start every run with an item once the AP item "Upgrade" has been found. There's an option to additionally require the Journal Entry for the item before you get it. Most items can be granted at the start of a run: Paste, Jetpack, Spike Shoes, etc.
+- Permanent Waddler Inventory: Like Permanent Items, but Waddler starts every run with the item instead of you. A larger set of items is allowed at Waddler including quest items.
+- Cosmic Ocean Checkpoint: Each stack you have lets you start further into Cosmic Ocean if you die there. 1 stack will let you start at 7-10, 2 stacks at 7-20, and so on.
 
 ## Traps
 - Poison Trap: Poisons the player

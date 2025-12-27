@@ -21,6 +21,7 @@ quest_items = frozenset({ItemName.ALIEN_COMPASS.value, ItemName.ARROW_OF_LIGHT.v
     ItemName.TABLET_OF_DESTINY.value, ItemName.UDJAT_EYE.value, ItemName.USHABTI.value})  # noqa: E128
 
 item_options = sorted(powerup_options | equip_options)
+upgrade_items = sorted(powerup_options | equip_options | {ItemName.ALIEN_COMPASS.value})
 locked_items = sorted(powerup_options | equip_options | quest_items)
 
 character_options = frozenset({ItemName.ANA_SPELUNKY.value, ItemName.MARGARET_TUNNEL.value, ItemName.COLIN_NORTHWARD,
