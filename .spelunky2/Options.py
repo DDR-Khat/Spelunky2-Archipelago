@@ -173,6 +173,14 @@ class DeathLinkAmnesty(Range):
     default = 2
 
 
+class DeathLinkGrace(Range):
+    """How many deaths you receive before you fall victim to a Deathlink from the multiworld."""
+    display_name = "Death Link Grace"
+    range_start = 0
+    range_end = 10
+    default = 2
+
+
 class UdjatSkipLogic(Toggle):
     """Sets if progression logic should assume you can perform Udjat skipping to get into Black Market/Vlad's Castle"""
 
@@ -357,6 +365,7 @@ class Spelunky2Options(PerGameCommonOptions):
     death_link: DeathLink
     bypass_ankh: DeathLinkBypassesAnkh
     death_link_amnesty_count: DeathLinkAmnesty
+    death_link_grace_count: DeathLinkGrace
     include_hard_locations: IncludeHardLocations
     journal_entry_required: JournalEntryRequired
     starting_wallet: IncreaseStartingWallet

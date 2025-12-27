@@ -17,6 +17,7 @@ local send_item_queue = {}
 local ready_for_item = true
 local caused_by_death_link = false
 local amnesity_death_count = 0
+local grace_death_count = 0
 local id
 ourSlot = nil
 ourTeam = nil
@@ -68,6 +69,7 @@ player_options = {
     death_link = false,
     bypass_ankh = false,
     amnesty_count = 0,
+    grave_Count = 0,
     include_hard_locations = false,
     journal_entry_required = true
 }
@@ -198,6 +200,7 @@ function connect(server, slot, password)
         player_options.waddler_upgrades = become_lookup_table(slot_data.waddler_upgrades)
         player_options.death_link = slot_data.death_link
         player_options.amnesty_count = slot_data.amnesty_count
+        player_options.grace_count = slot_data.grace_count
         player_options.include_hard_locations = slot_data.include_hard_locations
         player_options.journal_entry_required = slot_data.journal_entry_required
         ap:Set(f"{ourSlot}_{ourTeam}_worldTab", "Entire map", false, { { operation = "add", value = "Entire map" } }, nil)
@@ -238,6 +241,8 @@ function connect(server, slot, password)
                                 }
                                 ap:Bounce(data, nil, nil, {"DeathLink"})
                                 amnesity_death_count = 0
+                            else
+                                caused_by_death_link = false
                             end
                         end)
                     end
@@ -428,7 +433,7 @@ function connect(server, slot, password)
         if bounce.tags ~= nil then
             for _, tag in ipairs(bounce.tags) do
                 if tag == "DeathLink" and bounce.data.source ~= game_info.username then
-                    queue_death_link()
+                    queue_death_link(bounce.data.source, bounce.data.cause)
                 end
             end
         end
@@ -563,7 +568,6 @@ function set_ap_callbacks()
     end, ON.POST_LEVEL_GENERATION)
 
     set_callback(function()
-        caused_by_death_link = false
         state.toast_timer = 0
         state.speechbubble_timer = 0
     end, ON.RESET)
@@ -667,7 +671,21 @@ function item_handler(itemID, isQueued)
     end
 end
 
-function queue_death_link()
+function queue_death_link(dyingPlayer, deathReason)
+    local deathMessage = f"deathlink received by {dyingPlayer}"
+    if deathReason ~= nil then
+        deathMessage = deathMessage .. f"due to {deathReason}"
+    end
+    if player_options.grace_count > 0 then
+        grace_death_count = grace_death_count + 1
+        if grace_death_count < player_options.grace_count then
+            print(f"Protected from {deathMessage}")
+            return
+        else
+            print(f"Received {deathMessage}")
+            grace_death_count = 0
+        end
+    end
     set_global_interval(function()
         if state.screen == SCREEN.LEVEL then
             local player = get_player(1, false)
@@ -676,9 +694,11 @@ function queue_death_link()
                 player:remove_powerup(ENT_TYPE.ITEM_POWERUP_ANKH)
             end
 
-            player:kill(false, nil)
-
             caused_by_death_link = true
+
+            local playerX, playerY, playerL = get_position(player.uid)
+            player:kill(true, nil)
+            spawn_entity(ENT_TYPE.FX_ALIENBLAST, playerX, playerY, playerL, 0, 0)
 
             clear_callback()
         end

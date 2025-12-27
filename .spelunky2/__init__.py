@@ -309,7 +309,8 @@ class Spelunky2World(World):
             "include_hard_locations": bool(self.options.include_hard_locations),
             "journal_entry_required": bool(self.options.journal_entry_required),
             "death_link": self.options.death_link.value > 0,
-            "amnesty_count": self.options.death_link_amnesty_count.value
+            "amnesty_count": self.options.death_link_amnesty_count.value,
+            "grace_count": self.options.death_link_grace_count.value
         }
 
         if self.options.goal.value == Spelunky2Goal.CO:
