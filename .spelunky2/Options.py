@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from Options import Toggle, DefaultOnToggle, Range, Choice, PerGameCommonOptions, DeathLink, ItemSet
 from .enums import ItemName
-from .Items import item_options, locked_items, powerup_options, equip_options, quest_items, character_options
+from .Items import item_options, upgrade_items, locked_items, powerup_options, equip_options, quest_items, character_options
 
 
 def format_options(options, row_length=10):
@@ -18,15 +18,16 @@ def format_options(options, row_length=10):
 
 
 item_options_text = format_options(sorted(item_options))
+upgrade_items_text = format_options(sorted(upgrade_items))
 locked_items_text = format_options(sorted(locked_items))
 character_options_text = format_options(sorted(character_options))
 
 
 class Goal(Choice):
     """When is your world considered finished.
-    Easy: Requires completing the "normal" ending by reaching 6-4 and defeating Tiamat
-    Hard: Requires completing the "hard" ending by reaching 7-4 and defeating Hundun
-    CO: Requires reaching a specified level in Cosmic Ocean"""
+    Easy: Requires completing the "normal" ending by reaching 6-4 and defeating Tiamat.
+    Hard: Requires completing the "hard" ending by reaching 7-4 and defeating Hundun.
+    CO: Requires reaching a specified level in Cosmic Ocean."""
     display_name = "Goal"
     option_easy = 0
     option_hard = 1
@@ -35,8 +36,8 @@ class Goal(Choice):
 
 
 class GoalLevel(Range):
-    """Which level in Cosmic Ocean are you required to clear to consider your game as beaten.
-    This option can be ignored if your goal is not set to \"CO\""""
+    '''Which level in Cosmic Ocean are you required to clear to consider your game as beaten.
+    This option is ignored if your goal is not set to "CO"'''
     display_name = "Cosmic Ocean Goal Level"
     range_start = 10
     range_end = 99
@@ -45,21 +46,23 @@ class GoalLevel(Range):
 
 class IncludeHardLocations(Toggle):
     """Include the following more problematic journal entries as locations in the AP world:
-    Magmar, Lavamander, MechSuit, Scorpion + True Crown"""
+    Magmar, Lavamander, Mech Rider, Scorpion, True Crown."""
     display_name = "Include harder journal entries"
 
 
 class ProgressiveWorlds(DefaultOnToggle):
-    """Whether new worlds should be unlocked individually or progressively."""
+    """Progresive worlds are unlocked in order: Volcana, Jungle, Olmec's Lair, Tide Pool, Temple, Ice Caves, Neo Babylon, Sunken City, Cosmic Ocean.
+    Set this to 'false' to unlock worlds individually.
+    A world can only be accessed by going through the correct doorway, which means for example if Ice Caves is not unlocked, Neo Babylon is not accessible even if it is unlocked."""
     display_name = "Progressive Worlds"
 
 
-"""
+'''
 # Not implemented yet
 class ProgressiveShortcuts(DefaultOnToggle):
-    \"""Whether new shortcuts should be unlocked individually or progressively.\"""
+    """Whether new shortcuts should be unlocked individually or progressively."""
     display_name = "Progressive Shortcuts"
-"""
+'''
 
 
 class IncreaseStartingWallet(Toggle):
@@ -132,7 +135,7 @@ class RopeUpgrades(Range):
 
 
 class RestrictedItems(ItemSet):
-    __doc__ = f"""Items that are added to the multi-world as progressive and must be found in the multi-world before they can be obtained in the game
+    __doc__ = f"""Items that must be unlocked via the multi-world before they appear in the game.
 Options: 
 {locked_items_text}"""  # noqa: E128
     display_name = "Restricted Items"
@@ -144,9 +147,9 @@ class ItemUpgrades(ItemSet):
     __doc__ = f"""Add the following useful items in the multi-world item pool which are kept on death,
 AFTER obtaining it's journal entry if 'Journal Entry Required' is true.
 Options: 
-{item_options_text}"""  # noqa: E128
+{upgrade_items_text} | """  # noqa: E128
     display_name = "Item Upgrades"
-    valid_keys = sorted(set(item_options) | {ItemName.ALIEN_COMPASS.value})
+    valid_keys = upgrade_items
     default = powerup_options - {ItemName.TRUE_CROWN.value, ItemName.EGGPLANT_CROWN.value, ItemName.PITCHERS_MITT.value}
 
 
