@@ -207,27 +207,42 @@ function connect(server, slot, password)
 
             player_options.bypass_ankh = slot_data.bypass_ankh
 
-            set_callback(function()
-                if state.screen_level.time_till_death_screen ~= 150
-                        and state.screen_level.time_till_death_screen > 148 then
-                    local deathMessage = f"{ap:get_player_alias(ourSlot)} died due to {deathlink_reasons[state.cause_of_death]}"
-                    if player_options.amnesty_count > 0 then
-                        amnesity_death_count = amnesity_death_count + 1
-                        if amnesity_death_count < player_options.amnesty_count  then
-                            return
-                        end
+            set_post_entity_spawn(function(player)
+                player:set_pre_update_state_machine(function (_)
+                    if not test_flag(player.more_flags, ENT_MORE_FLAG.FINISHED_SPAWNING) then
+                        return
                     end
-                    if not caused_by_death_link then
-                        local data = {
-                            time = ap:get_server_time(),
-                            source = game_info.username,
-                            cause = deathMessage
-                        }
-                        ap:Bounce(data, nil, nil, {"DeathLink"})
-                        amnesity_death_count = 0
+                    clear_callback()
+                    local playerOne = get_player(1, false)
+                    if playerOne.uid == player.uid then
+                        player:set_pre_kill(function()
+                            if player:has_powerup(ENT_TYPE.ITEM_POWERUP_ANKH) then
+                                return -- Don't send deathlink, as Ankh saved us from death.
+                            else
+                                local ankhSac = state.logic.city_of_gold_ankh_sacrifice
+                                if ankhSac ~= nil and ankhSac.timer > 0 then
+                                    return -- Don't send deathlink, we ankh'd into Duat.
+                                end
+                            end
+                            if not caused_by_death_link then
+                                if player_options.amnesty_count > 0 then
+                                    amnesity_death_count = amnesity_death_count + 1
+                                    if amnesity_death_count < player_options.amnesty_count  then
+                                        return
+                                    end
+                                end
+                                local data = {
+                                    time = ap:get_server_time(),
+                                    source = game_info.username,
+                                    cause = f"{ap:get_player_alias(ourSlot)} died due to {deathlink_reasons[state.cause_of_death]}"
+                                }
+                                ap:Bounce(data, nil, nil, {"DeathLink"})
+                                amnesity_death_count = 0
+                            end
+                        end)
                     end
-                end
-            end, ON.GAMEFRAME)
+                end)
+            end, SPAWN_TYPE.ANY, MASK.PLAYER, ENT_TYPE.PLAYER)
         end
         write_last_login()
         show_delete_button = true
