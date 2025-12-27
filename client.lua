@@ -211,6 +211,9 @@ function connect(server, slot, password)
             player_options.bypass_ankh = slot_data.bypass_ankh
 
             set_post_entity_spawn(function(player)
+                if not options.deathlink_toggled then
+                    return
+                end
                 player:set_pre_update_state_machine(function (_)
                     if not test_flag(player.more_flags, ENT_MORE_FLAG.FINISHED_SPAWNING) then
                         return
@@ -432,7 +435,7 @@ function connect(server, slot, password)
     function on_bounced(bounce)
         if bounce.tags ~= nil then
             for _, tag in ipairs(bounce.tags) do
-                if tag == "DeathLink" and bounce.data.source ~= game_info.username then
+                if tag == "DeathLink" and bounce.data.source ~= game_info.username and options.deathlink_toggled then
                     queue_death_link(bounce.data.source, bounce.data.cause)
                 end
             end
