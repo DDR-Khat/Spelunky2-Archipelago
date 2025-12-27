@@ -196,7 +196,7 @@ class Spelunky2World(World):
 
         # Cosmic Ocean checkpoints
         if self.options.goal.value == Spelunky2Goal.CO:
-            for _ in range(int(self.options.goal_level.value / 10)):
+            for _ in range(int((self.options.goal_level.value - 1) / 10)):
                 spelunky2_item_pool.append(
                     self.create_item(str(ItemName.COSMIC_OCEAN_CP))
                 )
