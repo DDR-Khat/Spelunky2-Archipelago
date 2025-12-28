@@ -61,7 +61,9 @@ class IncludeHardLocations(Toggle):
 
 
 class ProgressiveWorlds(DefaultOnToggle):
-    """Whether new worlds should be unlocked individually or progressively."""
+    """Progressive worlds are unlocked in order:
+    Volcana, Jungle, Olmec's Lair, Tide Pool, Temple, Ice Caves, Neo Babylon, Sunken City, Cosmic Ocean.
+    Set this to 'false' to unlock worlds individually."""
     display_name = "Progressive Worlds"
 
 
@@ -143,7 +145,7 @@ class RopeUpgrades(Range):
 
 
 class RestrictedItems(ItemSet):
-    __doc__ = f"""Items that are added to the multi-world as progressive and must be found in the multi-world before they can be obtained in the game
+    __doc__ = f"""Items that must be unlocked in the multi-world before they appear in the game.
 (Quest items like Hou Yi's Bow will be ignored if it's not suitable for your goal)
 Options ("ALL" can be used for everything): 
 {locked_items_text}"""  # noqa: E128
