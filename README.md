@@ -23,7 +23,9 @@ You can choose one of the following goals:
 
 ## Locations / "Checks"
 Locations (also known as "Checks" in Archipelago terminology) are specific points in a game that is considered something important, and it will release an associated item into the multiworld
+
 For Spelunky2, **EVERY** Journal entry is a location (Each world, Item, Character, Enemy and Trap), for example when you "first" discover Spikes (dying in them or teleporting in them) you might send "Climbing Gloves" to another Spelunky player
+
 Inside the options you can adjust if "hard" locations are excluded (I.E -- rare ones like Scorpions or Lavamander)
 
 ## Items
@@ -40,13 +42,13 @@ Depending on how you adjust your options (there is a lot of flexibility) below i
 ## Additional options
 ### Deathlink
 This is an opt-in system where when a player dies, all other players will die also. In Spelunky2 there is some extra special customisation
-"Amnesty" -- Set a threshold of how many deaths you suffer _before_ you send a death into the multiworld
-"Bypass Ankh" -- If you receive a deathlink and this is on, the ankh will not save you
-"Grace" -- Set a threshold of how many deaths you _receive_ before you get killed
+- "Amnesty" -- Set a threshold of how many deaths you suffer _before_ you send a death into the multiworld
+- "Bypass Ankh" -- If you receive a deathlink and this is on, the ankh will not save you
+- "Grace" -- Set a threshold of how many deaths you _receive_ before you get killed
 
 The Spelunky 2 AP mod also has 2 in-game options to further fine-tune your experience which can be found in the in-game menu;
-"Deathlink Explodes" -- Instead of being instantly killed, spontaneously explode when a Deathlink is sent. Might save you, if you have more than 10 health.
-"Deathlink Enabled" --  Intended as a safety-measure, allows you to during live-play turn off/on Deathlink -- Helpful if you or others are dying too much.
+- "Deathlink Explodes" -- Instead of being instantly killed, spontaneously explode when a Deathlink is sent. Might save you, if you have more than 10 health.
+- "Deathlink Enabled" --  Intended as a safety-measure, allows you to during live-play turn off/on Deathlink -- Helpful if you or others are dying too much.
 
 ### Starting_Wallet 
 Any gold received from One-off items also increases how much gold you start each subsequent run with
