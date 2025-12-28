@@ -888,7 +888,8 @@ for _, data in pairs(Journal_to_ItemEnt) do
                 heldEnt:destroy()
             end
 
-            if entType == ENT_TYPE.ITEM_PICKUP_UDJATEYE then
+            if entType == ENT_TYPE.ITEM_PICKUP_UDJATEYE or
+               entType == ENT_TYPE.ITEM_PICKUP_ANKH then
                 local entVelX, entVelY = get_velocity(entity.uid)
                 spawn_entity(getBombOrRope(), entity.x, entity.y, entity.layer, entVelX, entVelY)
             end
