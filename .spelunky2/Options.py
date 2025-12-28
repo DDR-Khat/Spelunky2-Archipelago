@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 from Options import Toggle, DefaultOnToggle, Range, Choice, PerGameCommonOptions, DeathLink, ItemSet
 from .enums import ItemName
-from .Items import item_options, locked_items, powerup_options, equip_options, quest_items, character_options
+from .Items import (item_options, locked_items, powerup_options, equip_options, quest_items, character_options,
+                    hard_locations)
 
 
 def format_options(options, row_length=10):
@@ -17,9 +18,19 @@ def format_options(options, row_length=10):
     return "\n".join(lines)
 
 
+def list_to_string(options, row_length=3):
+    lines = []
+    options_list = list(options)
+    for i in range(0, len(options_list), row_length):
+        row = " | ".join(options_list[i:i + row_length])
+        lines.append(f"{row}")
+    return "\n".join(lines)
+
+
 item_options_text = format_options(sorted(item_options))
 locked_items_text = format_options(sorted(locked_items))
 character_options_text = format_options(sorted(character_options))
+hard_locations_text = list_to_string(sorted(hard_locations))
 
 
 class Goal(Choice):
@@ -44,8 +55,8 @@ class GoalLevel(Range):
 
 
 class IncludeHardLocations(Toggle):
-    """Include the following more problematic journal entries as locations in the AP world:
-    Magmar, Lavamander, MechSuit, Scorpion + True Crown"""
+    __doc__ = f"""Include the following more problematic journal entries as locations in the AP world:
+{hard_locations_text}"""
     display_name = "Include harder journal entries"
 
 
@@ -133,11 +144,18 @@ class RopeUpgrades(Range):
 
 class RestrictedItems(ItemSet):
     __doc__ = f"""Items that are added to the multi-world as progressive and must be found in the multi-world before they can be obtained in the game
-Options: 
+(Quest items like Hou Yi's Bow will be ignored if it's not suitable for your goal)
+Options ("ALL" can be used for everything): 
 {locked_items_text}"""  # noqa: E128
     display_name = "Restricted Items"
-    valid_keys = locked_items
+    valid_keys = locked_items + ["ALL"]
     default = quest_items
+
+    def verify(self, world, player, name="None"):
+        lowered = [item.lower() for item in self.value]
+        if "all" in lowered:
+            return
+        super().verify(world, player)
 
 
 class ItemUpgrades(ItemSet):

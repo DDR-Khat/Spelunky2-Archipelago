@@ -1,6 +1,6 @@
 from typing import Optional, NamedTuple
 from BaseClasses import Item, ItemClassification
-from .enums import ItemName, ShortcutName, WorldName
+from .enums import ItemName, ShortcutName, WorldName, JournalName
 
 ItemClassification.important_progression = ItemClassification.progression | ItemClassification.useful
 
@@ -21,6 +21,7 @@ quest_items = frozenset({ItemName.ALIEN_COMPASS.value, ItemName.ARROW_OF_LIGHT.v
     ItemName.TABLET_OF_DESTINY.value, ItemName.UDJAT_EYE.value, ItemName.USHABTI.value})  # noqa: E128
 
 item_options = sorted(powerup_options | equip_options)
+
 locked_items = sorted(powerup_options | equip_options | quest_items)
 
 character_options = frozenset({ItemName.ANA_SPELUNKY.value, ItemName.MARGARET_TUNNEL.value, ItemName.COLIN_NORTHWARD,
@@ -28,6 +29,9 @@ character_options = frozenset({ItemName.ANA_SPELUNKY.value, ItemName.MARGARET_TU
    ItemName.COCO_VON_DIAMONDS, ItemName.MANFRED_TUNNEL, ItemName.LITTLE_JAY, ItemName.TINA_FLAN, ItemName.VALERIE_CRUMP,
    ItemName.AU, ItemName.DEMI_VON_DIAMONDS, ItemName.PILOT, ItemName.PRINCESS_AIRYN, ItemName.DIRK_YAMAOKA,
    ItemName.GUY_SPELUNKY, ItemName.CLASSIC_GUY})  # noqa: E128
+
+hard_locations = frozenset({JournalName.MAGMAR.value, JournalName.LAVAMANDER.value, JournalName.MECH_RIDER.value,
+    JournalName.SCORPION, JournalName.TRUE_CROWN, JournalName.CAVEMAN_SHOPKEEPER, JournalName.QUEEN_BEE})  # noqa: E128
 # End of Master Item List
 
 

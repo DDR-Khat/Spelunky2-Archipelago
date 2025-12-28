@@ -1,17 +1,15 @@
 from typing import Mapping, Any
 from worlds.AutoWorld import World, WebWorld
 from BaseClasses import MultiWorld, Tutorial, ItemClassification, Region
-from .enums import (Spelunky2Goal, VICTORY_STRING, ItemName, JournalName, WorldName, 
+from .enums import (Spelunky2Goal, VICTORY_STRING, ItemName, WorldName,
                     LocationName, RuleNames, UPGRADE_SUFFIX)
 from .Items import (Spelunky2Item, item_data_table, filler_items, traps, filler_weights, trap_weights,
-                    characters, upgrade_items_dict, locked_items_dict, permanent_upgrades, world_unlocks, quest_items)
+                    characters, upgrade_items_dict, locked_items_dict, permanent_upgrades, world_unlocks, quest_items,
+                    locked_items, hard_locations)
 from .Locations import Spelunky2Location, location_data_table
 from .Options import Spelunky2Options
 from .Regions import region_data_table
 from .Rules import set_common_rules, set_sunken_city_rules, set_cosmic_ocean_rules, set_starter_upgrade_rules
-
-obnoxious_locations = frozenset({JournalName.MAGMAR.value, JournalName.LAVAMANDER.value, JournalName.MECH_RIDER.value,
-                                 JournalName.SCORPION, JournalName.TRUE_CROWN})
 
 
 class Spelunky2WebWorld(WebWorld):
@@ -95,7 +93,7 @@ class Spelunky2World(World):
                 location_name: self.location_name_to_id[location_name]
                 for location_name, location_data in location_data_table.items()
                 if location_data.region == region_name and location_data.goal <= self.options.goal
-                and (location_name not in obnoxious_locations or self.options.include_hard_locations)
+                and (location_name not in hard_locations or self.options.include_hard_locations)
             }, Spelunky2Location)
 
         if self.options.goal == Spelunky2Goal.HARD:
@@ -161,6 +159,8 @@ class Spelunky2World(World):
 
         # Filter restricted_items so only goal-valid quest items remain
         filtered_restricted = []
+        if any(item_name.lower() == "all" for item_name in self.options.restricted_items.value):
+            self.options.restricted_items.value = locked_items
         for item_name in self.options.restricted_items.value:
             if item_name not in quest_items or item_name in quest_item_names:
                 filtered_restricted.append(item_name)

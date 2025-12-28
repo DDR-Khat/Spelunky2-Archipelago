@@ -1860,8 +1860,10 @@ obnoxious_journal_entries = become_lookup_table
     Spel2AP.locations.bestiary.Magmar,
     Spel2AP.locations.bestiary.Lavamander,
     Spel2AP.locations.bestiary.Mech_Rider,
+    Spel2AP.locations.bestiary.Queen_Bee,
     Spel2AP.locations.bestiary.Scorpion,
     Spel2AP.locations.item.True_Crown,
+    Spel2AP.locations.people.Caveman_Shopkeeper
 })
 
 hard_journal_entries = become_lookup_table
