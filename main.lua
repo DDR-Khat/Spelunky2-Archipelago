@@ -6,6 +6,7 @@ meta = {
     unsafe = true
 }
 register_option_float('popup_time', 'Popup Timer', 'How long the "You received" or "You sent"! popup lingers.\n(Note: Higher values makes receiving items take longer)\nTime in seconds', 3.5, 0.5, 10)
+register_option_bool('deathlink_explosion', 'Deathlink Explodes', 'When you receive a deathlink have an explosion happen instead of just instantly dying.\n(This only matters if you have Deathlink on.)', false)
 register_option_bool('deathlink_toggled', 'Deathlink Enabled', 'Override if you should or should not receive/send Deathlinks\n(This only matters if you have Deathlink on.)', true)
 
 local function normalizeData(container, key, max)

@@ -700,8 +700,12 @@ function queue_death_link(dyingPlayer, deathReason)
             caused_by_death_link = true
 
             local playerX, playerY, playerL = get_position(player.uid)
-            player:kill(true, nil)
-            spawn_entity(ENT_TYPE.FX_ALIENBLAST, playerX, playerY, playerL, 0, 0)
+            if options.deathlink_explosion then
+                spawn_entity(ENT_TYPE.FX_EXPLOSION, playerX, playerY, playerL, 0, 0)
+            else
+                player:kill(true, nil)
+                spawn_entity(ENT_TYPE.FX_ALIENBLAST, playerX, playerY, playerL, 0, 0)
+            end
 
             clear_callback()
         end
