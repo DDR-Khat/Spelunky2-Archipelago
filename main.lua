@@ -445,6 +445,8 @@ set_callback(function()
         if #vlads <= 0 then
             return
         end
+    else
+        return
     end
     local coffin_uids = get_entities_by(ENT_TYPE.ITEM_COFFIN, MASK.ITEM, LAYER.BACK)
     for _, uid in ipairs(coffin_uids) do
@@ -461,7 +463,7 @@ set_post_entity_spawn(function(hiredHand)
         return
     end
     local starterCharacter = try_fetch_starter()
-    if starterCharacter ~= nil then
+    if starterCharacter == nil then
         return
     end
     hiredHand:set_pre_update_state_machine(function()
