@@ -892,7 +892,8 @@ for _, data in pairs(Journal_to_ItemEnt) do
             end
 
             if entType == ENT_TYPE.ITEM_PICKUP_UDJATEYE or
-               entType == ENT_TYPE.ITEM_PICKUP_ANKH then
+               entType == ENT_TYPE.ITEM_PICKUP_ANKH or
+               entType == ENT_TYPE.ITEM_HOUYIBOW then
                 local entVelX, entVelY = get_velocity(entity.uid)
                 spawn_entity(getBombOrRope(), entity.x, entity.y, entity.layer, entVelX, entVelY)
             end
