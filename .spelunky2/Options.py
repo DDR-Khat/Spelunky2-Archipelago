@@ -54,6 +54,10 @@ class GoalLevel(Range):
     default = 30
 
 
+class GoalIronmanMode(Toggle):
+    """Cannot enter goal level unless you started your run from the world start (Not using a shortcut)"""
+    display_name = "Ironman Goal mode"
+
 class DeathLinkBypassesAnkh(Toggle):
     """Sets whether deaths sent through Death Link will trigger the Ankh, or ignore it."""
     display_name = "Death Link Ankh Handling"
@@ -100,7 +104,8 @@ Options:
 {character_options_text}"""  # noqa: E128
     display_name = "Starting Characters"
     valid_keys = character_options
-    default = {ItemName.ANA_SPELUNKY.value, ItemName.MARGARET_TUNNEL.value, ItemName.COLIN_NORTHWARD.value, ItemName.ROFFY_D_SLOTH.value}
+    default = {ItemName.ANA_SPELUNKY.value, ItemName.MARGARET_TUNNEL.value, ItemName.COLIN_NORTHWARD.value,
+               ItemName.ROFFY_D_SLOTH.value}
 
 
 class ProgressiveWorlds(DefaultOnToggle):
@@ -385,6 +390,7 @@ class PunishBallTrapChance(Range):
 class Spelunky2Options(PerGameCommonOptions):
     goal: Goal
     goal_level: GoalLevel
+    goal_ironman: GoalIronmanMode
     death_link: DeathLink
     bypass_ankh: DeathLinkBypassesAnkh
     death_link_amnesty_count: DeathLinkAmnesty

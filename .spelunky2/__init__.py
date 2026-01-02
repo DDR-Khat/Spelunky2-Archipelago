@@ -306,6 +306,7 @@ class Spelunky2World(World):
     def fill_slot_data(self) -> Mapping[str, Any]:
         slot_data = {
             "goal": self.options.goal.value,
+            "ironman_mode": self.options.goal_ironman.value,
             "progressive_worlds": bool(self.options.progressive_worlds),
             "shortcut_mode": self.options.shortcut_mode.value,
             "increase_starting_wallet": bool(self.options.starting_wallet),

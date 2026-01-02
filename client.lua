@@ -59,6 +59,7 @@ player_options = {
     goal = 0,
     shortcut_mode = 0,
     goal_level = 30,
+    ironman_mode = false,
     increase_wallet = false,
     progressive_worlds = true,
     starting_characters = {},
@@ -205,6 +206,7 @@ function connect(server, slot, password)
         player_options.goal = slot_data.goal
         player_options.shortcut_mode = slot_data.shortcut_mode
         player_options.goal_level = slot_data.goal_level
+        player_options.ironman_mode = slot_data.ironman_mode
         player_options.starting_characters = become_lookup_table(slot_data.starting_characters)
         player_options.increase_wallet = slot_data.increase_starting_wallet
         player_options.progressive_worlds = slot_data.progressive_worlds
