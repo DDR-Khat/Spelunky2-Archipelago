@@ -320,12 +320,14 @@ set_callback(function()
     end
     for index, doorData in ipairs(shortcut_door_data) do
         local doorUnlocked = (index == 9 and ap_save.checked_locations[Spel2AP.locations.place.Cosmic_Ocean]) or false
-        if player_options.shortcut_mode == AP_Shortcut_mode.INDIVIDUAL then
-            doorUnlocked = IsWorldAvailabile(doorData[6]) and ap_save.shortcut_unlocks[doorData[7]]
-        elseif player_options.shortcut_mode == AP_Shortcut_mode.OFF then
-            doorUnlocked = IsWorldAvailabile(doorData[6])
-        else
-            doorUnlocked = IsWorldAvailabile(doorData[6]) and ap_save.shortcut_progress >= (doorData[3]-1)
+        if not doorUnlocked then
+            if player_options.shortcut_mode == AP_Shortcut_mode.INDIVIDUAL then
+                doorUnlocked = IsWorldAvailabile(doorData[6]) and (ap_save.shortcut_unlocks[doorData[7]] or false)
+            elseif player_options.shortcut_mode == AP_Shortcut_mode.OFF then
+                doorUnlocked = IsWorldAvailabile(doorData[6])
+            else
+                doorUnlocked = IsWorldAvailabile(doorData[6]) and (ap_save.shortcut_progress >= (doorData[3]-1) or false)
+            end
         end
         local doorID = spawn_entity_snapped_to_floor(ENT_TYPE.FLOOR_DOOR_STARTING_EXIT, doorData[1], doorData[2], LAYER.FRONT)
         local doorEnt = get_entity(doorID)
@@ -516,6 +518,28 @@ set_post_entity_spawn(function(hiredHand)
         hiredHand:destroy()
     end)
 end, SPAWN_TYPE.LEVEL_GEN, MASK.PLAYER, ENT_TYPE.CHAR_HIREDHAND)
+
+set_post_entity_spawn(function(damsel)
+    damsel:set_pre_update_state_machine(function()
+        if not test_flag(damsel.more_flags, ENT_MORE_FLAG.FINISHED_SPAWNING) then
+            return
+        end
+        clear_callback()
+        local entToSpawn = nil
+        if ap_save.checked_locations[Spel2AP.locations.bestiary.Monty] ~= true then
+            entToSpawn = ENT_TYPE.MONS_PET_DOG
+        elseif ap_save.checked_locations[Spel2AP.locations.bestiary.Percy] ~= true then
+            entToSpawn = ENT_TYPE.MONS_PET_CAT
+        elseif ap_save.checked_locations[Spel2AP.locations.bestiary.Poochi] ~= true then
+            entToSpawn = ENT_TYPE.MONS_PET_HAMSTER
+        end
+        if entToSpawn ~= nil then
+            local entX, entY, entL = get_position(damsel.uid)
+            spawn_entity_snapped_to_floor(entToSpawn, entX, entY, entL)
+            damsel:destroy()
+        end
+    end)
+end, SPAWN_TYPE.LEVEL_GEN, MASK.MONSTER, {ENT_TYPE.MONS_PET_DOG, ENT_TYPE.MONS_PET_CAT, ENT_TYPE.MONS_PET_HAMSTER})
 
 
 set_post_entity_spawn(function(crate)
