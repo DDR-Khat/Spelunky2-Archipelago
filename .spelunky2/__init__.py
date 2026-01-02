@@ -1,11 +1,11 @@
 from typing import Mapping, Any
 from worlds.AutoWorld import World, WebWorld
 from BaseClasses import MultiWorld, Tutorial, ItemClassification, Region
-from .enums import (Spelunky2Goal, VICTORY_STRING, ItemName, WorldName,
+from .enums import (Spelunky2Goal, Spelunky2ShortcutMode, VICTORY_STRING, ItemName, WorldName, ShortcutName,
                     LocationName, RuleNames, UPGRADE_SUFFIX)
 from .Items import (Spelunky2Item, item_data_table, filler_items, traps, filler_weights, trap_weights,
                     characters, upgrade_items_dict, locked_items_dict, permanent_upgrades, world_unlocks, quest_items,
-                    locked_items, hard_locations)
+                    locked_items, hard_locations, shortcuts)
 from .Locations import Spelunky2Location, location_data_table
 from .Options import Spelunky2Options
 from .Regions import region_data_table
@@ -49,6 +49,7 @@ class Spelunky2World(World):
     item_name_to_id.update({name: data.code for name, data in traps.items()})
     item_name_to_id.update({name: data.code for name, data in characters.items()})
     item_name_to_id.update({name: data.code for name, data in world_unlocks.items()})
+    item_name_to_id.update({name: data.code for name, data in shortcuts.items()})
     item_name_to_id.update({name: data.code for name, data in permanent_upgrades.items()})
     location_name_to_id = {name: data.address for name, data in location_data_table.items()}
 
@@ -125,9 +126,7 @@ class Spelunky2World(World):
             if self.options.goal.value > Spelunky2Goal.HARD:
                 unlock_count += 1
             for _ in range(unlock_count):
-                spelunky2_item_pool.append(
-                    self.create_item(str(WorldName.PROGRESSIVE))
-                )
+                spelunky2_item_pool.append(self.create_item(str(WorldName.PROGRESSIVE)))
         else:
             individual_worlds = [
                 WorldName.JUNGLE.value,
@@ -145,6 +144,32 @@ class Spelunky2World(World):
             spelunky2_item_pool.extend([
                 self.create_item(str(world)) for world in individual_worlds
             ])
+
+        # Handle Progressive Shortcuts
+        if self.options.shortcut_mode.value == Spelunky2ShortcutMode.PROGRESSIVE:
+            unlock_count = 4
+            if self.options.goal.value > Spelunky2Goal.EASY:
+                unlock_count += 5
+            if self.options.goal.value > Spelunky2Goal.HARD:
+                unlock_count += 6
+            for _ in range(unlock_count):
+                spelunky2_item_pool.append(self.create_item(str(ShortcutName.PROGRESSIVE.value)))
+        elif self.options.shortcut_mode.value == Spelunky2ShortcutMode.INDIVIDUAL:
+            shortcut_unlocks = [
+                ShortcutName.JUNGLE.value,
+                ShortcutName.VOLCANA.value,
+                ShortcutName.OLMECS_LAIR.value,
+                ShortcutName.TIDE_POOL.value,
+                ShortcutName.TEMPLE.value,
+                ShortcutName.ICE_CAVES.value,
+                ShortcutName.NEO_BABYLON.value,
+            ]
+            if self.options.goal.value >= Spelunky2Goal.HARD:
+                shortcut_unlocks.append(ShortcutName.SUNKEN_CITY)
+            spelunky2_item_pool.extend([
+                self.create_item(str(shortcut)) for shortcut in shortcut_unlocks
+            ])
+
         # Add all quest items that match the goal
         if self.options.goal.value == Spelunky2Goal.EASY:
             quest_item_names = quest_items - {ItemName.ARROW_OF_LIGHT.value,
@@ -282,6 +307,7 @@ class Spelunky2World(World):
         slot_data = {
             "goal": self.options.goal.value,
             "progressive_worlds": bool(self.options.progressive_worlds),
+            "shortcut_mode": self.options.shortcut_mode.value,
             "increase_starting_wallet": bool(self.options.starting_wallet),
             "starting_health": self.options.starting_health.value,
             "starting_bombs": self.options.starting_bombs.value,
@@ -309,8 +335,6 @@ class Spelunky2World(World):
             "include_hard_locations": bool(self.options.include_hard_locations),
             "journal_entry_required": bool(self.options.journal_entry_required),
             "death_link": self.options.death_link.value > 0,
-            "amnesty_count": self.options.death_link_amnesty_count.value,
-            "grace_count": self.options.death_link_grace_count.value
         }
 
         if self.options.goal.value == Spelunky2Goal.CO:
@@ -318,5 +342,7 @@ class Spelunky2World(World):
 
         if slot_data["death_link"]:
             slot_data["bypass_ankh"] = bool(self.options.bypass_ankh)
+            slot_data["amnesty_count"] = self.options.death_link_amnesty_count.value
+            slot_data["grace_count"] = self.options.death_link_grace_count.value
 
         return slot_data

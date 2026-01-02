@@ -6,8 +6,8 @@ meta = {
     unsafe = true
 }
 register_option_float('popup_time', 'Popup Timer', 'How long the "You received" or "You sent"! popup lingers.\n(Note: Higher values makes receiving items take longer)\nTime in seconds', 3.5, 0.5, 10)
-register_option_bool('deathlink_explosion', 'Deathlink Explodes', 'When you receive a deathlink have an explosion happen instead of just instantly dying.\n(This only matters if you have Deathlink on.)', false)
-register_option_bool('deathlink_toggled', 'Deathlink Enabled', 'Override if you should or should not receive/send Deathlinks\n(This only matters if you have Deathlink on.)', true)
+register_option_bool('deathlink_explosion', 'Deathlink Explodes', 'When you receive a deathlink have an explosion happen instead of just instantly dying.\n(This only matters if your YAML has Deathlink on.)', false)
+register_option_bool('deathlink_toggled', 'Deathlink Override', 'Toggle if you should or should not receive/send Deathlinks\n(This only matters if your YAML has Deathlink on.)', true)
 
 local function normalizeData(container, key, max)
     local data = container[key]
@@ -202,25 +202,37 @@ function IsWaddlerLevel()
     return state.world == 3 or state.world == 5 or state.world == 7
 end
 
-local shortcut_levels = {
-    [2] = shortcut_save_values.DWELLING, -- Jungle/Volcana
-    [3] = shortcut_save_values.OLMEC, -- Olmec
-    [4] = shortcut_save_values.OLMEC, -- ignore Tidepool/Temple, same level as Olmec
-    [5] = shortcut_save_values.ICE_CAVES, -- Ice Caves
-    [6] = shortcut_save_values.ICE_CAVES, -- Neo Babylon
-    [7] = shortcut_save_values.ICE_CAVES, -- Sunken City
-    [8] = shortcut_save_values.ICE_CAVES, -- Cosmic Ocean
-}
-
-function get_shortcut_level()
-    local currentMax
-    if player_options.progressive_worlds then
-        currentMax = ap_save.max_world
+function WorldKeyToProgressionNum(targetWorld)
+    if targetWorld == Spel2AP.world_unlocks.Jungle or targetWorld == Spel2AP.world_unlocks.Volcana then
+        print("WorldKey->2")
+        return 2
+    elseif targetWorld == Spel2AP.world_unlocks.Olmecs_Lair then
+        print("WorldKey->3")
+        return 3
+    elseif targetWorld == Spel2AP.world_unlocks.Tide_Pool or targetWorld == Spel2AP.world_unlocks.Temple then
+        print("WorldKey->4")
+        return 4
+    elseif targetWorld == Spel2AP.world_unlocks.Ice_Caves then
+        print("WorldKey->5")
+        return 5
+    elseif targetWorld == Spel2AP.world_unlocks.Neo_Babylon then
+        print("WorldKey->6")
+        return 6
+    elseif targetWorld == Spel2AP.world_unlocks.Sunken_City then
+        print("WorldKey->7")
+        return 7
     else
-        currentMax = get_unlock_world_number()
+        print("WorldKey->8")
+        return 8
     end
+end
 
-    return shortcut_levels[currentMax] or shortcut_save_values.NONE
+function IsWorldAvailabile(targetWorld)
+    if player_options.progressive_worlds then
+        return ap_save.max_world >= WorldKeyToProgressionNum(targetWorld)
+    else
+        return ap_save.world_unlocks[targetWorld] or false
+    end
 end
 
 function set_shortcut_progress(level)
@@ -245,8 +257,9 @@ set_callback(function()
     if state.screen_next == SCREEN.CAMP then
         ap_save.last_character = savegame.players[1]
         update_characters(false)
-        set_shortcut_progress(get_shortcut_level())
-    elseif ap_save.checked_locations[Spel2AP.locations.people.Terra_Tunnel] then
+    end
+
+    if ap_save.checked_locations[Spel2AP.locations.people.Terra_Tunnel] then
         set_shortcut_progress(shortcut_save_values.ICE_CAVES)
     else
         set_shortcut_progress(shortcut_save_values.NONE)
@@ -300,6 +313,34 @@ function remove_from_shop(entity)
     end
     return owner_uid
 end
+
+set_callback(function()
+    if savegame.shortcuts == shortcut_save_values.NONE then
+        return
+    end
+    for index, doorData in ipairs(shortcut_door_data) do
+        local doorUnlocked = (index == 9 and ap_save.checked_locations[Spel2AP.locations.place.Cosmic_Ocean]) or false
+        if player_options.shortcut_mode == AP_Shortcut_mode.INDIVIDUAL then
+            doorUnlocked = IsWorldAvailabile(doorData[6]) and ap_save.shortcut_unlocks[doorData[7]]
+        elseif player_options.shortcut_mode == AP_Shortcut_mode.OFF then
+            doorUnlocked = IsWorldAvailabile(doorData[6])
+        else
+            doorUnlocked = IsWorldAvailabile(doorData[6]) and ap_save.shortcut_progress >= (doorData[3]-1)
+        end
+        local doorID = spawn_entity_snapped_to_floor(ENT_TYPE.FLOOR_DOOR_STARTING_EXIT, doorData[1], doorData[2], LAYER.FRONT)
+        local doorEnt = get_entity(doorID)
+        if doorEnt ~= nil then
+            doorEnt:unlock(doorUnlocked)
+        end
+        set_door_target(doorID, doorData[3], (index == 9) and 5 or 1, doorData[4])
+        local bgDoorID = spawn_entity_snapped_to_floor(ENT_TYPE.BG_DOOR, doorData[1], doorData[2], LAYER.FRONT)
+        if bgDoorID ~= nil then
+            local bgDoorEnt = get_entity(bgDoorID)
+            bgDoorEnt:set_texture(doorData[5])
+            bgDoorEnt.animation_frame = doorUnlocked and 1 or 0
+        end
+    end
+end, ON.CAMP)
 
 -- This handles all of the permanent upgrades to give the player at the start of every run
 set_callback(function()
@@ -405,11 +446,6 @@ set_callback(function()
         state.level_start = math.floor(state.level / 10) * 10
     end
 
-    if savegame.shortcuts > ap_save.shortcut_progress then
-        ap_save.shortcut_progress = savegame.shortcuts
-        write_save()
-    end
-
     set_callback(function()
         clear_callback()
         if (ap_save.permanent_item_upgrades[Spel2AP.upgrades.Four_Leaf_Clover] or waddlerClover)
@@ -447,14 +483,6 @@ set_callback(function()
         end
     else
         return
-    end
-    local coffin_uids = get_entities_by(ENT_TYPE.ITEM_COFFIN, MASK.ITEM, LAYER.BACK)
-    for _, uid in ipairs(coffin_uids) do
-        local coffin = get_entity(uid)
-        local starterCharacter = try_fetch_starter()
-        if coffin.inside == ENT_TYPE.CHAR_HIREDHAND and starterCharacter ~= nil then
-            set_contents(coffin.uid, starterCharacter)
-        end
     end
 end, ON.POST_LEVEL_GENERATION)
 

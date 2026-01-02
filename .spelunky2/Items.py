@@ -101,17 +101,16 @@ permanent_upgrades = {
     ItemName.COSMIC_OCEAN_CP.value:          Spelunky2ItemData(404, ItemClassification.useful, 0),
 }
 
-shortcuts = {  # TODO: Maybe add more shortcuts by editing the Camp to allow specific world selection from camp
-    # ShortcutName.PROGRESSIVE.value:      Spelunky2ItemData(501, ItemClassification.useful),
-    # ShortcutName.DWELLING.value:         Spelunky2ItemData(502, ItemClassification.useful),
-    # ShortcutName.JUNGLE.value:           Spelunky2ItemData(503, ItemClassification.useful),
-    # ShortcutName.VOLCANA.value:          Spelunky2ItemData(504, ItemClassification.useful),
-    # ShortcutName.OLMECS_LAIR.value:      Spelunky2ItemData(505, ItemClassification.useful),
-    # ShortcutName.TIDE_POOL.value:        Spelunky2ItemData(506, ItemClassification.useful),
-    # ShortcutName.TEMPLE.value:           Spelunky2ItemData(507, ItemClassification.useful),
-    # ShortcutName.ICE_CAVES.value:        Spelunky2ItemData(508, ItemClassification.useful),
-    # ShortcutName.NEO_BABYLON.value:      Spelunky2ItemData(509, ItemClassification.useful),
-    # ShortcutName.SUNKEN_CITY.value:      Spelunky2ItemData(510, ItemClassification.useful),
+shortcuts = {
+    ShortcutName.PROGRESSIVE.value:      Spelunky2ItemData(501, ItemClassification.useful, 0),
+    ShortcutName.JUNGLE.value:           Spelunky2ItemData(502, ItemClassification.useful, 0),
+    ShortcutName.VOLCANA.value:          Spelunky2ItemData(503, ItemClassification.useful, 0),
+    ShortcutName.OLMECS_LAIR.value:      Spelunky2ItemData(504, ItemClassification.useful, 0),
+    ShortcutName.TIDE_POOL.value:        Spelunky2ItemData(505, ItemClassification.useful, 0),
+    ShortcutName.TEMPLE.value:           Spelunky2ItemData(506, ItemClassification.useful, 0),
+    ShortcutName.ICE_CAVES.value:        Spelunky2ItemData(507, ItemClassification.useful, 0),
+    ShortcutName.NEO_BABYLON.value:      Spelunky2ItemData(508, ItemClassification.useful, 0),
+    ShortcutName.SUNKEN_CITY.value:      Spelunky2ItemData(509, ItemClassification.useful, 0),
 }
 
 world_unlocks = {
@@ -146,7 +145,7 @@ item_data_table = {
     **upgrade_items_dict,
     **permanent_upgrades,
     **world_unlocks,
-    # **shortcuts,
+    **shortcuts,
     **traps
 }
 

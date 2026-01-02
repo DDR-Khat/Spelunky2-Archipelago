@@ -47,6 +47,7 @@ function initialize_save(playerGoal, includeHardLocations)
         checked_locations = {},
 
         max_world = 1,
+        max_depth = 1,
         shortcut_progress = 0,
 
         character_unlocks = {},

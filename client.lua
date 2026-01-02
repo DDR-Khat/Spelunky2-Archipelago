@@ -57,6 +57,7 @@ local show_delete_button = false
 player_options = {
     seed = "BACKUP",
     goal = 0,
+    shortcut_mode = 0,
     goal_level = 30,
     increase_wallet = false,
     progressive_worlds = true,
@@ -69,7 +70,7 @@ player_options = {
     death_link = false,
     bypass_ankh = false,
     amnesty_count = 0,
-    grave_Count = 0,
+    grace_count = 0,
     include_hard_locations = false,
     journal_entry_required = true
 }
@@ -142,6 +143,19 @@ set_callback(function()
     end
 end, ON.GUIFRAME)
 
+local function dump(o, indent)
+    indent = indent or 0
+    if type(o) == "table" then
+        local s = string.rep(" ", indent) .. "{\n"
+        for k, v in pairs(o) do
+            s = s .. string.rep(" ", indent + 2) .. tostring(k) .. " = " .. dump(v, indent + 2) .. "\n"
+        end
+        return s .. string.rep(" ", indent) .. "}"
+    else
+        return tostring(o)
+    end
+end
+
 function connect(server, slot, password)
     function on_socket_connected()
         print(f"Socket connected")
@@ -189,6 +203,7 @@ function connect(server, slot, password)
         end
         player_options.seed = ap:get_seed()
         player_options.goal = slot_data.goal
+        player_options.shortcut_mode = slot_data.shortcut_mode
         player_options.goal_level = slot_data.goal_level
         player_options.starting_characters = become_lookup_table(slot_data.starting_characters)
         player_options.increase_wallet = slot_data.increase_starting_wallet
@@ -199,8 +214,6 @@ function connect(server, slot, password)
         player_options.starter_upgrades = become_lookup_table(slot_data.item_upgrades)
         player_options.waddler_upgrades = become_lookup_table(slot_data.waddler_upgrades)
         player_options.death_link = slot_data.death_link
-        player_options.amnesty_count = slot_data.amnesty_count
-        player_options.grace_count = slot_data.grace_count
         player_options.include_hard_locations = slot_data.include_hard_locations
         player_options.journal_entry_required = slot_data.journal_entry_required
         ap:Set(f"{ourSlot}_{ourTeam}_worldTab", "Entire map", false, { { operation = "add", value = "Entire map" } }, nil)
@@ -209,6 +222,8 @@ function connect(server, slot, password)
             ap:ConnectUpdate(nil, {"Lua-APClientPP", "NoText", "DeathLink"})
 
             player_options.bypass_ankh = slot_data.bypass_ankh
+            player_options.amnesty_count = slot_data.amnesty_count
+            player_options.grace_count = slot_data.grace_count
 
             set_post_entity_spawn(function(player)
                 if not options.deathlink_toggled then
@@ -329,6 +344,7 @@ function connect(server, slot, password)
                     table.insert(item_queue, insertIndex, {item = data.item,player = sender,priority = priority})
                 end
                 ap_save.last_index = data.index
+                write_save()
             end
         end
     end
@@ -663,7 +679,13 @@ function item_handler(itemID, isQueued)
         end
         return true
     elseif category == Spel2AP.shortcuts and not isQueued then
-        ap_save.shortcut_unlocks[itemID] = true
+        if player_options.shortcut_mode == AP_Shortcut_mode.PROGRESSIVE then
+            if itemID == Spel2AP.shortcuts.Progressive then
+                ap_save.shortcut_progress = math.min(ap_save.shortcut_progress + 1, 6)
+            end
+        else
+            ap_save.shortcut_unlocks[itemID] = true
+        end
         write_save()
         return true
     elseif category == Spel2AP.traps and isQueued then

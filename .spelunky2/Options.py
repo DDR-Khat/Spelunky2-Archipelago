@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from Options import Toggle, DefaultOnToggle, Range, Choice, PerGameCommonOptions, DeathLink, ItemSet
-from .enums import ItemName
+from .enums import ItemName, Spelunky2Goal, Spelunky2ShortcutMode
 from .Items import (item_options, locked_items, powerup_options, equip_options, quest_items, character_options,
                     hard_locations)
 
@@ -39,10 +39,10 @@ class Goal(Choice):
     Hard: Requires completing the "hard" ending by reaching 7-4 and defeating Hundun
     CO: Requires reaching a specified level in Cosmic Ocean"""
     display_name = "Goal"
-    option_easy = 0
-    option_hard = 1
-    option_co = 2
-    default = 0
+    option_easy = Spelunky2Goal.EASY
+    option_hard = Spelunky2Goal.HARD
+    option_co = Spelunky2Goal.CO
+    default = Spelunky2Goal.EASY
 
 
 class GoalLevel(Range):
@@ -67,12 +67,14 @@ class ProgressiveWorlds(DefaultOnToggle):
     display_name = "Progressive Worlds"
 
 
-"""
-# Not implemented yet
-class ProgressiveShortcuts(DefaultOnToggle):
-    \"""Whether new shortcuts should be unlocked individually or progressively.\"""
-    display_name = "Progressive Shortcuts"
-"""
+class ShortcutsMode(Choice):
+    """Should shortcuts unlock as you gain worlds, or instead receive them from the multiworld
+    (You still the associated world for the shortcut to be open when you receive it from the multiworld)"""
+    display_name = "Shortcut Mode"
+    option_off = Spelunky2ShortcutMode.OFF
+    option_progressive = Spelunky2ShortcutMode.PROGRESSIVE
+    option_individual = Spelunky2ShortcutMode.INDIVIDUAL
+    default = Spelunky2ShortcutMode.OFF
 
 
 class IncreaseStartingWallet(Toggle):
@@ -84,6 +86,7 @@ class IncreaseStartingWallet(Toggle):
 class JournalEntryRequired(DefaultOnToggle):
     """Should the Journal Entry of an item be required for its Item/Waddler upgrade to take effect?"""
     display_name = "Journal Entry Required"
+
 
 class StartingCharacters(ItemSet):
     __doc__ = f"""Characters that are immediately selectable. Adding more or less to this will adjust how many character locations you need to visit.
@@ -391,7 +394,7 @@ class Spelunky2Options(PerGameCommonOptions):
     starting_wallet: IncreaseStartingWallet
     starting_characters: StartingCharacters
     progressive_worlds: ProgressiveWorlds
-    # progressive_shortcuts: ProgressiveShortcuts - Not implemented yet
+    shortcut_mode: ShortcutsMode
     starting_health: StartingHealth
     health_upgrades: HealthUpgrades
     starting_bombs: StartingBombs

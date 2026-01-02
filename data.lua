@@ -1583,9 +1583,9 @@ item_ids = {
         TileY = 0,
         priority = PRIORITY.WORLD
     },
-    [Spel2AP.shortcuts.Dwelling] = {
+    [Spel2AP.shortcuts.Progressive] = {
         type = Spel2AP.shortcuts,
-        name = "Dwelling Shortcut",
+        name = "Progressive Shortcut",
         display = TEXTURE.DATA_TEXTURES_ITEMS_0,
         TileX = 0,
         TileY = 0,
@@ -1733,6 +1733,12 @@ AP_Goal = {
     EASY = 0,
     HARD = 1,
     CO = 2
+}
+
+AP_Shortcut_mode = {
+    OFF = 0,
+    PROGRESSIVE = 1,
+    INDIVIDUAL = 2
 }
 
 ItemCode_to_Index = {
@@ -1918,4 +1924,16 @@ deathlink_reasons = {
     [CAUSE_OF_DEATH.STILL_FALLING] = "finding a VERY big hole",
     [CAUSE_OF_DEATH.MISSED] = "teleporting into terrain",
     [CAUSE_OF_DEATH.POISONED] = "not curing their poison",
+}
+
+shortcut_door_data = {
+    [1] = {26, 84, 2, THEME.JUNGLE,       TEXTURE.DATA_TEXTURES_FLOOR_JUNGLE_1,   Spel2AP.world_unlocks.Jungle,      Spel2AP.shortcuts.Jungle},
+    [2] = {23, 84, 2, THEME.VOLCANA,      TEXTURE.DATA_TEXTURES_FLOOR_VOLCANO_2,  Spel2AP.world_unlocks.Volcana,     Spel2AP.shortcuts.Volcana},
+    [3] = {20, 84, 3, THEME.OLMEC,        TEXTURE.DATA_TEXTURES_DECO_JUNGLE_2,    Spel2AP.world_unlocks.Olmecs_Lair, Spel2AP.shortcuts.Olmecs_Lair},
+    [4] = {26, 87, 4, THEME.TIDE_POOL,    TEXTURE.DATA_TEXTURES_FLOOR_TIDEPOOL_3, Spel2AP.world_unlocks.Tide_Pool,   Spel2AP.shortcuts.Tide_Pool},
+    [5] = {23, 87, 4, THEME.TEMPLE,       TEXTURE.DATA_TEXTURES_FLOOR_TEMPLE_1,   Spel2AP.world_unlocks.Temple,      Spel2AP.shortcuts.Temple},
+    [6] = {20, 87, 5, THEME.ICE_CAVES,    TEXTURE.DATA_TEXTURES_FLOOR_ICE_1,      Spel2AP.world_unlocks.Ice_Caves,   Spel2AP.shortcuts.Ice_Caves},
+    [7] = {26, 90, 6, THEME.NEO_BABYLON,  TEXTURE.DATA_TEXTURES_FLOOR_BABYLON_1,  Spel2AP.world_unlocks.Neo_Babylon, Spel2AP.shortcuts.Neo_Babylon},
+    [8] = {23, 90, 7, THEME.SUNKEN_CITY,  TEXTURE.DATA_TEXTURES_FLOOR_SUNKEN_3,   Spel2AP.world_unlocks.Sunken_City, Spel2AP.shortcuts.Sunken_City},
+    [9] = {20, 90, 7, THEME.COSMIC_OCEAN, TEXTURE.DATA_TEXTURES_FLOOR_CAVE_2},
 }
