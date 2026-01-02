@@ -54,10 +54,53 @@ class GoalLevel(Range):
     default = 30
 
 
+class DeathLinkBypassesAnkh(Toggle):
+    """Sets whether deaths sent through Death Link will trigger the Ankh, or ignore it."""
+    display_name = "Death Link Ankh Handling"
+
+
+class DeathLinkAmnesty(Range):
+    """A \"grace\" count of how many deaths you are allowed before you send a Deathlink out to the multiworld."""
+    display_name = "Death Link Amnesty"
+    range_start = 0
+    range_end = 10
+    default = 2
+
+
+class DeathLinkGrace(Range):
+    """How many deaths you receive before you fall victim to a Deathlink from the multiworld."""
+    display_name = "Death Link Grace"
+    range_start = 0
+    range_end = 10
+    default = 2
+
+
 class IncludeHardLocations(Toggle):
     __doc__ = f"""Include the following more problematic journal entries as locations in the AP world:
 {hard_locations_text}"""
     display_name = "Include harder journal entries"
+
+
+class JournalEntryRequired(DefaultOnToggle):
+    """Should the Journal Entry of an item be required for its Item/Waddler upgrade to take effect?"""
+    display_name = "Journal Entry Required"
+
+
+class IncreaseStartingWallet(Toggle):
+    """Should treasure (gold/emerald/sapphire/ruby/diamond) you receive from other players
+    increase the amount of gold you begin with after death."""
+    display_name = "Increase Starting Wallet"
+
+
+class StartingCharacters(ItemSet):
+    __doc__ = f"""Characters that are immediately selectable. Adding more or less to this will adjust how many character locations you need to visit.
+Normally unlocked characters (Ana/Margaret/Colin/Roffy) will show up in shopkeeper locked cages if a hired hand would be there -OR- in Vlad's Castle
+If you do not specify ANY then Ana will be the only unlocked character
+Options: 
+{character_options_text}"""  # noqa: E128
+    display_name = "Starting Characters"
+    valid_keys = character_options
+    default = {ItemName.ANA_SPELUNKY.value, ItemName.MARGARET_TUNNEL.value, ItemName.COLIN_NORTHWARD.value, ItemName.ROFFY_D_SLOTH.value}
 
 
 class ProgressiveWorlds(DefaultOnToggle):
@@ -75,28 +118,6 @@ class ShortcutsMode(Choice):
     option_progressive = Spelunky2ShortcutMode.PROGRESSIVE
     option_individual = Spelunky2ShortcutMode.INDIVIDUAL
     default = Spelunky2ShortcutMode.OFF
-
-
-class IncreaseStartingWallet(Toggle):
-    """Should treasure (gold/emerald/sapphire/ruby/diamond) you receive from other players
-    increase the amount of gold you begin with after death."""
-    display_name = "Increase Starting Wallet"
-
-
-class JournalEntryRequired(DefaultOnToggle):
-    """Should the Journal Entry of an item be required for its Item/Waddler upgrade to take effect?"""
-    display_name = "Journal Entry Required"
-
-
-class StartingCharacters(ItemSet):
-    __doc__ = f"""Characters that are immediately selectable. Adding more or less to this will adjust how many character locations you need to visit.
-Normally unlocked characters (Ana/Margaret/Colin/Roffy) will show up in shopkeeper locked cages if a hired hand would be there -OR- in Vlad's Castle
-If you do not specify ANY then Ana will be the only unlocked character
-Options: 
-{character_options_text}"""  # noqa: E128
-    display_name = "Starting Characters"
-    valid_keys = character_options
-    default = {ItemName.ANA_SPELUNKY.value, ItemName.MARGARET_TUNNEL.value, ItemName.COLIN_NORTHWARD.value, ItemName.ROFFY_D_SLOTH.value}
 
 
 class StartingHealth(Range):
@@ -183,45 +204,24 @@ Options (any selected here override options in item_upgrades):
     default = equip_options - {ItemName.TRUE_CROWN.value, ItemName.EGGPLANT_CROWN.value, ItemName.PASTE.value}
 
 
-class DeathLinkBypassesAnkh(Toggle):
-    """Sets whether deaths sent through Death Link will trigger the Ankh, or ignore it."""
-    display_name = "Death Link Ankh Handling"
-
-
-class DeathLinkAmnesty(Range):
-    """A \"grace\" count of how many deaths you are allowed before you send a Deathlink out to the multiworld."""
-    display_name = "Death Link Amnesty"
-    range_start = 0
-    range_end = 10
-    default = 2
-
-
-class DeathLinkGrace(Range):
-    """How many deaths you receive before you fall victim to a Deathlink from the multiworld."""
-    display_name = "Death Link Grace"
-    range_start = 0
-    range_end = 10
-    default = 2
+class AnkhSkipLogic(Toggle):
+    """Sets if progression logic should assume you can perform Ankh skipping in Tidepool"""
 
 
 class UdjatSkipLogic(Toggle):
     """Sets if progression logic should assume you can perform Udjat skipping to get into Black Market/Vlad's Castle"""
 
 
-class AnkhSkipLogic(Toggle):
-    """Sets if progression logic should assume you can perform Ankh skipping in Tidepool"""
-
-
 class QilinSkipLogic(Toggle):
     """Sets if progression logic should assume you can perform Qilin skip"""
 
 
-class AlienCompassSkipLogic(Toggle):
-    """Sets if progression should assume you know how to find the Mothership without Alien Compass"""
-
-
 class KinguExcaliburSkipLogic(Toggle):
     """Sets if progression should assume you can kill Kingu without needing Excalibur to break the shell"""
+
+
+class AlienCompassSkipLogic(Toggle):
+    """Sets if progression should assume you know how to find the Mothership without Alien Compass"""
 
 
 class RopePileWeight(Range):
