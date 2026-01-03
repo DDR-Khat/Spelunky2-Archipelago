@@ -228,7 +228,7 @@ function connect(server, slot, password)
             player_options.grace_count = slot_data.grace_count
 
             set_post_entity_spawn(function(player)
-                if not options.deathlink_toggled then
+                if not options.deathlink_toggled or state.screen ~= SCREEN.LEVEL then
                     return
                 end
                 player:set_pre_update_state_machine(function (_)
