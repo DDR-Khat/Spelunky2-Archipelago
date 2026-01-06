@@ -16,7 +16,7 @@ local item_queue = {}
 local send_item_queue = {}
 local ready_for_item = true
 local caused_by_death_link = false
-local amnesity_death_count = 0
+local amnesty_death_count = 0
 local grace_death_count = 0
 local id
 ourSlot = nil
@@ -249,8 +249,10 @@ function connect(server, slot, password)
                             end
                             if not caused_by_death_link then
                                 if player_options.amnesty_count > 0 then
-                                    amnesity_death_count = amnesity_death_count + 1
-                                    if amnesity_death_count < player_options.amnesty_count  then
+                                    amnesty_death_count = amnesty_death_count + 1
+                                    local amnesty_remaining = player_options.amnesty_count - amnesty_death_count
+                                    if amnesty_remaining > 0 then
+                                        print(f"Deathlink prevented! {amnesty_remaining} Amnesty remaining")
                                         return
                                     end
                                 end
@@ -260,7 +262,7 @@ function connect(server, slot, password)
                                     cause = f"{ap:get_player_alias(ourSlot)} died due to {deathlink_reasons[state.cause_of_death]}"
                                 }
                                 ap:Bounce(data, nil, nil, {"DeathLink"})
-                                amnesity_death_count = 0
+                                amnesty_death_count = 0
                             else
                                 caused_by_death_link = false
                             end
@@ -705,8 +707,9 @@ function queue_death_link(dyingPlayer, deathReason)
     end
     if player_options.grace_count > 0 then
         grace_death_count = grace_death_count + 1
-        if grace_death_count < player_options.grace_count then
-            print(f"Protected from {deathMessage}")
+        local remaining_grace = player_options.grace_count - grace_death_count
+        if remaining_grace > 1 then
+            print(f"Protected from {deathMessage} ({remaining_grace} remaining)")
             return
         else
             print(f"Received {deathMessage}")
