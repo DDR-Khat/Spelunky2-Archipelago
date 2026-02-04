@@ -94,6 +94,7 @@ done16Favour = false
 nextWorldUnlocked = false
 hudLevelIcon = nil
 usedShortcut = false
+deepestCo = 5
 local hudXOffset    = -0.02
 local hudYOffset    = 0.55
 local bombOrRope = false
@@ -359,7 +360,7 @@ set_callback(function()
         if doorEnt ~= nil then
             doorEnt:unlock(doorUnlocked)
         end
-        set_door_target(doorID, doorData[3], (index == 9) and 5 or 1, doorData[4])
+        set_door_target(doorID, doorData[3], (index == 9) and deepestCo or 1, doorData[4])
         local bgDoorID = spawn_entity_snapped_to_floor(ENT_TYPE.BG_DOOR, doorData[1], doorData[2], LAYER.FRONT)
         if bgDoorID ~= nil then
             local bgDoorEnt = get_entity(bgDoorID)
@@ -473,6 +474,7 @@ set_callback(function()
         state.world_start = 7
         state.theme_start = THEME.COSMIC_OCEAN
         state.level_start = math.floor(state.level / 10) * 10
+        deepestCo = state.level_start
     end
 
     set_callback(function()
