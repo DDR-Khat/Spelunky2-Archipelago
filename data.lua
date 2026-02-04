@@ -1937,3 +1937,19 @@ shortcut_door_data = {
     [8] = {23, 90, 7, THEME.SUNKEN_CITY,  TEXTURE.DATA_TEXTURES_FLOOR_SUNKEN_3,   Spel2AP.world_unlocks.Sunken_City, Spel2AP.shortcuts.Sunken_City},
     [9] = {20, 90, 7, THEME.COSMIC_OCEAN, TEXTURE.DATA_TEXTURES_FLOOR_CAVE_2},
 }
+
+function update_locked_characters()
+    for locationID, _ in pairs(ap_save.checked_locations) do
+        local starterEntity = starter_lookup[locationID]
+        if starterEntity == nil then
+            goto continue
+        end
+        for i = #locked_starters, 1, -1 do
+            if locked_starters[i] == starterEntity then
+                table.remove(locked_starters, i)
+                break
+            end
+        end
+        ::continue::
+    end
+end

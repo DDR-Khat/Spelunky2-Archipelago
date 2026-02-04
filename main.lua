@@ -339,6 +339,11 @@ end
 
 set_callback(function()
     for index, doorData in ipairs(shortcut_door_data) do
+        if index == 8 and player_options.goal < AP_Goal.HARD then
+            goto continue
+        elseif index == 9 and player_options.goal < AP_Goal.CO then
+            goto continue
+        end
         local doorUnlocked = (index == 9 and ap_save.checked_locations[Spel2AP.locations.place.Cosmic_Ocean]) or false
         if not doorUnlocked then
             if player_options.shortcut_mode == AP_Shortcut_mode.INDIVIDUAL then
@@ -361,6 +366,7 @@ set_callback(function()
             bgDoorEnt:set_texture(doorData[5])
             bgDoorEnt.animation_frame = doorUnlocked and 1 or 0
         end
+        ::continue::
     end
 end, ON.CAMP)
 
@@ -506,6 +512,14 @@ set_callback(function()
         end
     else
         return
+    end
+    local coffin_uids = get_entities_by(ENT_TYPE.ITEM_COFFIN, MASK.ITEM, LAYER.BACK)
+    for _, uid in ipairs(coffin_uids) do
+        local coffin = get_entity(uid)
+        local starterCharacter = try_fetch_starter()
+        if coffin.inside == ENT_TYPE.CHAR_HIREDHAND and starterCharacter ~= nil then
+            set_contents(coffin.uid, starterCharacter)
+        end
     end
 end, ON.POST_LEVEL_GENERATION)
 

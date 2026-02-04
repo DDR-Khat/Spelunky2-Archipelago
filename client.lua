@@ -305,6 +305,7 @@ function connect(server, slot, password)
             end
             ::continue::
         end
+        update_locked_characters()
         refresh_session_starters()
     end
 
