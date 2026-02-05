@@ -210,9 +210,9 @@ end
 
 function IsCosmicLevel(checkNext)
     if checkNext == true then
-        return state.world_next == 8
+        return state.level_next > 4
     else
-        return state.world == 8
+        return state.level > 4
     end
 end
 
