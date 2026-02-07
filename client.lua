@@ -205,7 +205,7 @@ function connect(server, slot, password)
         player_options.seed = ap:get_seed()
         player_options.goal = slot_data.goal
         player_options.shortcut_mode = slot_data.shortcut_mode
-        player_options.goal_level = slot_data.goal_level
+        player_options.goal_level = slot_data.goal_level or 5
         player_options.ironman_mode = slot_data.goal_ironman
         player_options.starting_characters = become_lookup_table(slot_data.starting_characters)
         player_options.increase_wallet = slot_data.increase_starting_wallet
@@ -249,18 +249,20 @@ function connect(server, slot, password)
                             end
                             if not caused_by_death_link then
                                 if player_options.amnesty_count > 0 then
-                                    amnesty_death_count = amnesty_death_count + 1
                                     local amnesty_remaining = player_options.amnesty_count - amnesty_death_count
                                     if amnesty_remaining > 0 then
-                                        print(f"Deathlink prevented! {amnesty_remaining} Amnesty remaining")
+                                        amnesty_death_count = amnesty_death_count + 1
+                                        print(f"Deathlink prevented! {amnesty_remaining - 1} Amnesty remaining")
                                         return
                                     end
                                 end
+                                local deathCause = f"{ap:get_player_alias(ourSlot)} died due to {deathlink_reasons[state.cause_of_death]}"
                                 local data = {
                                     time = ap:get_server_time(),
                                     source = game_info.username,
-                                    cause = f"{ap:get_player_alias(ourSlot)} died due to {deathlink_reasons[state.cause_of_death]}"
+                                    cause = deathCause
                                 }
+                                print(deathCause)
                                 ap:Bounce(data, nil, nil, {"DeathLink"})
                                 amnesty_death_count = 0
                             else
@@ -704,39 +706,56 @@ end
 function queue_death_link(dyingPlayer, deathReason)
     local deathMessage = f"deathlink received by {dyingPlayer}"
     if deathReason ~= nil then
-        deathMessage = deathMessage .. f"due to {deathReason}"
+        deathMessage = deathReason
     end
     if player_options.grace_count > 0 then
-        grace_death_count = grace_death_count + 1
         local remaining_grace = player_options.grace_count - grace_death_count
-        if remaining_grace > 1 then
-            print(f"Protected from {deathMessage} ({remaining_grace} remaining)")
+        if remaining_grace > 0 then
+            grace_death_count = grace_death_count + 1
+            print(f"Protected from {dyingPlayer}'s death ({remaining_grace - 1} remaining)")
             return
         else
-            print(f"Received {deathMessage}")
+            print(deathMessage)
             grace_death_count = 0
         end
     end
     set_global_interval(function()
-        if state.screen == SCREEN.LEVEL then
-            local player = get_player(1, false)
-
-            if player_options.bypass_ankh and player:has_powerup(ENT_TYPE.ITEM_POWERUP_ANKH) then
-                player:remove_powerup(ENT_TYPE.ITEM_POWERUP_ANKH)
-            end
-
-            caused_by_death_link = true
-
-            local playerX, playerY, playerL = get_position(player.uid)
-            if options.deathlink_explosion then
-                spawn_entity(ENT_TYPE.FX_EXPLOSION, playerX, playerY, playerL, 0, 0)
-            else
-                player:kill(true, nil)
-                spawn_entity(ENT_TYPE.FX_ALIENBLAST, playerX, playerY, playerL, 0, 0)
-            end
-
-            clear_callback()
+        if state.screen ~= SCREEN.LEVEL then
+            return
         end
+        local currentPlayer = get_player(1)
+        if currentPlayer == nil then
+            return
+        end
+        local playerState = currentPlayer.state
+        local isInDoor = playerState == CHAR_STATE.ENTERING or playerState == CHAR_STATE.EXITING
+        local isDead = test_flag(currentPlayer.flags, ENT_FLAG.DEAD)
+        local inPipe = false
+        if currentPlayer.overlay then
+            inPipe = currentPlayer.overlay.type.id == ENT_TYPE.FLOOR_PIPE
+        end
+        if isInDoor or inPipe or isDead then
+            return
+        end
+        local player = get_player(1, false)
+
+        if player_options.bypass_ankh and player:has_powerup(ENT_TYPE.ITEM_POWERUP_ANKH) then
+            player:remove_powerup(ENT_TYPE.ITEM_POWERUP_ANKH)
+        end
+
+        caused_by_death_link = true
+
+        local playerX, playerY, playerL = get_position(player.uid)
+        if options.deathlink_explosion then
+            spawn_entity(ENT_TYPE.FX_EXPLOSION, playerX, playerY, playerL, 0, 0)
+        else
+            player:kill(true, nil)
+            spawn_entity(ENT_TYPE.FX_ALIENBLAST, playerX, playerY, playerL, 0, 0)
+        end
+
+        caused_by_death_link = false
+
+        clear_callback()
     end, 1)
 end
 
