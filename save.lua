@@ -19,6 +19,7 @@ locked_starters = {ENT_TYPE.CHAR_ANA_SPELUNKY, ENT_TYPE.CHAR_MARGARET_TUNNEL,
 session_locked_starters = {}
 
 function refresh_session_starters()
+    update_locked_characters()
     session_locked_starters = {}
     for index, value in ipairs(locked_starters) do
         session_locked_starters[index] = value
@@ -47,6 +48,7 @@ function initialize_save(playerGoal, includeHardLocations)
         checked_locations = {},
 
         max_world = 1,
+        max_depth = 1,
         shortcut_progress = 0,
 
         character_unlocks = {},

@@ -137,15 +137,14 @@ Spel2AP.permanent_upgrades = {
 
 Spel2AP.shortcuts = {
     Progressive = 501,
-    Dwelling = 502,
-    Jungle = 503,
-    Volcana = 504,
-    Olmecs_Lair = 505,
-    Tide_Pool = 506,
-    Temple = 507,
-    Ice_Caves = 508,
-    Neo_Babylon = 509,
-    Sunken_City = 510,
+    Jungle = 502,
+    Volcana = 503,
+    Olmecs_Lair = 504,
+    Tide_Pool = 505,
+    Temple = 506,
+    Ice_Caves = 507,
+    Neo_Babylon = 508,
+    Sunken_City = 509,
 }
 
 Spel2AP.world_unlocks = {

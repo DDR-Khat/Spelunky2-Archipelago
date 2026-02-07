@@ -1275,7 +1275,7 @@ item_ids = {
         type = Spel2AP.upgrades,
         name = "Hedjet Upgrade",
         display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_ITEMS_0,
-        TileY = 0,
+        TileY = 1,
         TileX = 3,
         priority = PRIORITY.UPGRADES
     },
@@ -1514,87 +1514,87 @@ item_ids = {
     [Spel2AP.world_unlocks.Jungle] = {
         type = Spel2AP.world_unlocks,
         name = "Jungle Unlocked",
-        display = TEXTURE.DATA_TEXTURES_MENU_DEATHMATCH5_0,
-        TileY = 0,
-        TileX = 1,
+        display = TEXTURE.DATA_TEXTURES_FLOOR_JUNGLE_0,
+        TileY = 2,
+        TileX = 10,
         priority = PRIORITY.WORLD
     },
     [Spel2AP.world_unlocks.Volcana] = {
         type = Spel2AP.world_unlocks,
         name = "Volcana Unlocked",
-        display = TEXTURE.DATA_TEXTURES_MENU_DEATHMATCH5_0,
-        TileY = 0,
-        TileX = 2,
+        display = TEXTURE.DATA_TEXTURES_FLOOR_VOLCANO_0,
+        TileY = 6,
+        TileX = 3,
         priority = PRIORITY.WORLD
     },
     [Spel2AP.world_unlocks.Olmecs_Lair] = {
         type = Spel2AP.world_unlocks,
         name = "Olmec's Lair Unlocked",
-        display = TEXTURE.DATA_TEXTURES_JOURNAL_ENTRY_MONS_BIG_0,
-        TileY = 0,
-        TileX = 1,
+        display = TEXTURE.DATA_TEXTURES_FLOORSTYLED_STONE_2,
+        TileY = 1,
+        TileX = 7,
         priority = PRIORITY.WORLD
     },
     [Spel2AP.world_unlocks.Tide_Pool] = {
         type = Spel2AP.world_unlocks,
         name = "Tide Pool Unlocked",
-        display = TEXTURE.DATA_TEXTURES_MENU_DEATHMATCH5_0,
+        display = TEXTURE.DATA_TEXTURES_FLOOR_TIDEPOOL_0,
         TileY = 0,
-        TileX = 3,
+        TileX = 2,
         priority = PRIORITY.WORLD
     },
     [Spel2AP.world_unlocks.Temple] = {
         type = Spel2AP.world_unlocks,
         name = "Temple Unlocked",
-        display = TEXTURE.DATA_TEXTURES_MENU_DEATHMATCH5_0,
-        TileY = 1,
-        TileX = 0,
+        display = TEXTURE.DATA_TEXTURES_FLOOR_TEMPLE_0,
+        TileY = 0,
+        TileX = 7,
         priority = PRIORITY.WORLD
     },
     [Spel2AP.world_unlocks.Ice_Caves] = {
         type = Spel2AP.world_unlocks,
         name = "Ice Caves Unlocked",
-        display = TEXTURE.DATA_TEXTURES_MENU_DEATHMATCH5_0,
+        display = TEXTURE.DATA_TEXTURES_FLOOR_ICE_0,
         TileY = 1,
-        TileX = 1,
+        TileX = 7,
         priority = PRIORITY.WORLD
     },
     [Spel2AP.world_unlocks.Neo_Babylon] = {
         type = Spel2AP.world_unlocks,
         name = "Neo Babylon Unlocked",
-        display = TEXTURE.DATA_TEXTURES_MENU_DEATHMATCH5_0,
-        TileY = 1,
-        TileX = 2,
+        display = TEXTURE.DATA_TEXTURES_FLOORSTYLED_BABYLON_0,
+        TileY = 2,
+        TileX = 7,
         priority = PRIORITY.WORLD
     },
     [Spel2AP.world_unlocks.Sunken_City] = {
         type = Spel2AP.world_unlocks,
         name = "Sunken City Unlocked",
-        display = TEXTURE.DATA_TEXTURES_MENU_DEATHMATCH5_0,
-        TileY = 1,
-        TileX = 3,
+        display = TEXTURE.DATA_TEXTURES_FLOOR_SUNKEN_0,
+        TileY = 5,
+        TileX = 2,
         priority = PRIORITY.WORLD
     },
     [Spel2AP.world_unlocks.Cosmic_Ocean] = {
         type = Spel2AP.world_unlocks,
         name = "Cosmic Ocean Unlocked",
-        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
-        TileX = 0,
-        TileY = 0,
+        display = TEXTURE.DATA_TEXTURES_FX_BIG_0,
+        TileX = 2,
+        TileY = 2,
         priority = PRIORITY.WORLD
     },
-    [Spel2AP.shortcuts.Dwelling] = {
+    [Spel2AP.shortcuts.Progressive] = {
         type = Spel2AP.shortcuts,
-        name = "Dwelling Shortcut",
-        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
-        TileX = 0,
-        TileY = 0,
+        name = "Progressive Shortcut",
+        display = TEXTURE.DATA_TEXTURES_FX_SMALL2_0,
+        TileX = 2,
+        TileY = 7,
         priority = PRIORITY.SHORTCUT
     },
     [Spel2AP.shortcuts.Jungle] = {
         type = Spel2AP.shortcuts,
         name = "Jungle Shortcut",
-        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        display = TEXTURE.DATA_TEXTURES_FLOOR_JUNGLE_2,
         TileX = 0,
         TileY = 0,
         priority = PRIORITY.SHORTCUT
@@ -1602,7 +1602,7 @@ item_ids = {
     [Spel2AP.shortcuts.Volcana] = {
         type = Spel2AP.shortcuts,
         name = "Volcana Shortcut",
-        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        display = TEXTURE.DATA_TEXTURES_FLOOR_VOLCANO_3,
         TileX = 0,
         TileY = 0,
         priority = PRIORITY.SHORTCUT
@@ -1610,15 +1610,15 @@ item_ids = {
     [Spel2AP.shortcuts.Olmecs_Lair] = {
         type = Spel2AP.shortcuts,
         name = "Olmec's Lair Shortcut",
-        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
-        TileX = 0,
-        TileY = 0,
+        display = TEXTURE.DATA_TEXTURES_FLOORSTYLED_STONE_2,
+        TileY = 1,
+        TileX = 7,
         priority = PRIORITY.SHORTCUT
     },
     [Spel2AP.shortcuts.Tide_Pool] = {
         type = Spel2AP.shortcuts,
         name = "Tide Pool Shortcut",
-        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        display = TEXTURE.DATA_TEXTURES_FLOOR_TIDEPOOL_4,
         TileX = 0,
         TileY = 0,
         priority = PRIORITY.SHORTCUT
@@ -1626,7 +1626,7 @@ item_ids = {
     [Spel2AP.shortcuts.Temple] = {
         type = Spel2AP.shortcuts,
         name = "Temple Shortcut",
-        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        display = TEXTURE.DATA_TEXTURES_FLOOR_TEMPLE_2,
         TileX = 0,
         TileY = 0,
         priority = PRIORITY.SHORTCUT
@@ -1634,7 +1634,7 @@ item_ids = {
     [Spel2AP.shortcuts.Ice_Caves] = {
         type = Spel2AP.shortcuts,
         name = "Ice Caves Shortcut",
-        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        display = TEXTURE.DATA_TEXTURES_FLOOR_ICE_2,
         TileX = 0,
         TileY = 0,
         priority = PRIORITY.SHORTCUT
@@ -1642,7 +1642,7 @@ item_ids = {
     [Spel2AP.shortcuts.Neo_Babylon] = {
         type = Spel2AP.shortcuts,
         name = "Neo Babylon Shortcut",
-        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        display = TEXTURE.DATA_TEXTURES_FLOOR_EGGPLANT_3,
         TileX = 0,
         TileY = 0,
         priority = PRIORITY.SHORTCUT
@@ -1650,7 +1650,7 @@ item_ids = {
     [Spel2AP.shortcuts.Sunken_City] = {
         type = Spel2AP.shortcuts,
         name = "Sunken City Shortcut",
-        display = TEXTURE.DATA_TEXTURES_ITEMS_0,
+        display = TEXTURE.DATA_TEXTURES_FLOOR_SUNKEN_4,
         TileX = 0,
         TileY = 0,
         priority = PRIORITY.SHORTCUT
@@ -1733,6 +1733,12 @@ AP_Goal = {
     EASY = 0,
     HARD = 1,
     CO = 2
+}
+
+AP_Shortcut_mode = {
+    OFF = 0,
+    PROGRESSIVE = 1,
+    INDIVIDUAL = 2
 }
 
 ItemCode_to_Index = {
@@ -1860,8 +1866,10 @@ obnoxious_journal_entries = become_lookup_table
     Spel2AP.locations.bestiary.Magmar,
     Spel2AP.locations.bestiary.Lavamander,
     Spel2AP.locations.bestiary.Mech_Rider,
+    Spel2AP.locations.bestiary.Queen_Bee,
     Spel2AP.locations.bestiary.Scorpion,
     Spel2AP.locations.item.True_Crown,
+    Spel2AP.locations.people.Caveman_Shopkeeper
 })
 
 hard_journal_entries = become_lookup_table
@@ -1917,3 +1925,31 @@ deathlink_reasons = {
     [CAUSE_OF_DEATH.MISSED] = "teleporting into terrain",
     [CAUSE_OF_DEATH.POISONED] = "not curing their poison",
 }
+
+shortcut_door_data = {
+    [1] = {26, 84, 2, THEME.JUNGLE,       TEXTURE.DATA_TEXTURES_FLOOR_JUNGLE_1,   Spel2AP.world_unlocks.Jungle,      Spel2AP.shortcuts.Jungle},
+    [2] = {23, 84, 2, THEME.VOLCANA,      TEXTURE.DATA_TEXTURES_FLOOR_VOLCANO_2,  Spel2AP.world_unlocks.Volcana,     Spel2AP.shortcuts.Volcana},
+    [3] = {20, 84, 3, THEME.OLMEC,        TEXTURE.DATA_TEXTURES_DECO_JUNGLE_2,    Spel2AP.world_unlocks.Olmecs_Lair, Spel2AP.shortcuts.Olmecs_Lair},
+    [4] = {26, 87, 4, THEME.TIDE_POOL,    TEXTURE.DATA_TEXTURES_FLOOR_TIDEPOOL_3, Spel2AP.world_unlocks.Tide_Pool,   Spel2AP.shortcuts.Tide_Pool},
+    [5] = {23, 87, 4, THEME.TEMPLE,       TEXTURE.DATA_TEXTURES_FLOOR_TEMPLE_1,   Spel2AP.world_unlocks.Temple,      Spel2AP.shortcuts.Temple},
+    [6] = {20, 87, 5, THEME.ICE_CAVES,    TEXTURE.DATA_TEXTURES_FLOOR_ICE_1,      Spel2AP.world_unlocks.Ice_Caves,   Spel2AP.shortcuts.Ice_Caves},
+    [7] = {26, 90, 6, THEME.NEO_BABYLON,  TEXTURE.DATA_TEXTURES_FLOOR_BABYLON_1,  Spel2AP.world_unlocks.Neo_Babylon, Spel2AP.shortcuts.Neo_Babylon},
+    [8] = {23, 90, 7, THEME.SUNKEN_CITY,  TEXTURE.DATA_TEXTURES_FLOOR_SUNKEN_3,   Spel2AP.world_unlocks.Sunken_City, Spel2AP.shortcuts.Sunken_City},
+    [9] = {20, 90, 7, THEME.COSMIC_OCEAN, TEXTURE.DATA_TEXTURES_FLOOR_CAVE_2},
+}
+
+function update_locked_characters()
+    for locationID, _ in pairs(ap_save.checked_locations) do
+        local starterEntity = starter_lookup[locationID]
+        if starterEntity == nil then
+            goto continue
+        end
+        for i = #locked_starters, 1, -1 do
+            if locked_starters[i] == starterEntity then
+                table.remove(locked_starters, i)
+                break
+            end
+        end
+        ::continue::
+    end
+end

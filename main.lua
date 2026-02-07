@@ -2,10 +2,12 @@ meta = {
     name = "Spelunky 2 Archipelago",
     description = "Adds Archipelago Multiworld Randomizer support!",
     author = "DDRKhat\nOriginal: Eszenn",
-    version = "0.3.8",
+    version = "0.3.9",
     unsafe = true
 }
 register_option_float('popup_time', 'Popup Timer', 'How long the "You received" or "You sent"! popup lingers.\n(Note: Higher values makes receiving items take longer)\nTime in seconds', 3.5, 0.5, 10)
+register_option_bool('deathlink_explosion', 'Deathlink Explodes', 'When you receive a deathlink have an explosion happen instead of just instantly dying.\n(This only matters if your YAML has Deathlink on.)', false)
+register_option_bool('deathlink_toggled', 'Deathlink Override', 'Toggle if you should or should not receive/send Deathlinks\n(This only matters if your YAML has Deathlink on.)', true)
 
 local function normalizeData(container, key, max)
     local data = container[key]
@@ -91,6 +93,8 @@ done8Favour = false
 done16Favour = false
 nextWorldUnlocked = false
 hudLevelIcon = nil
+usedShortcut = false
+deepestCo = 5
 local hudXOffset    = -0.02
 local hudYOffset    = 0.55
 local bombOrRope = false
@@ -188,37 +192,58 @@ function IsInGame()
            state.screen <= SCREEN.RECAP
 end
 
-function IsTiamatLevel()
-    return state.theme_info:get_theme_id() == THEME.TIAMAT
+function IsTiamatLevel(checkNext)
+    if checkNext == true then
+        return state.world_next == 6 and state.level_next == 4
+    else
+        return state.world == 6 and state.level == 4
+    end
 end
 
-function IsHundunLevel()
-    return state.theme_info:get_theme_id() == THEME.HUNDUN
+function IsHundunLevel(checkNext)
+    if checkNext == true then
+        return state.world_next == 7 and state.level_next == 4
+    else
+        return state.world == 7 and state.level == 4
+    end
+end
+
+function IsCosmicLevel(checkNext)
+    if checkNext == true then
+        return state.level_next > 4
+    else
+        return state.level > 4
+    end
 end
 
 function IsWaddlerLevel()
     return state.world == 3 or state.world == 5 or state.world == 7
 end
 
-local shortcut_levels = {
-    [2] = shortcut_save_values.DWELLING, -- Jungle/Volcana
-    [3] = shortcut_save_values.OLMEC, -- Olmec
-    [4] = shortcut_save_values.OLMEC, -- ignore Tidepool/Temple, same level as Olmec
-    [5] = shortcut_save_values.ICE_CAVES, -- Ice Caves
-    [6] = shortcut_save_values.ICE_CAVES, -- Neo Babylon
-    [7] = shortcut_save_values.ICE_CAVES, -- Sunken City
-    [8] = shortcut_save_values.ICE_CAVES, -- Cosmic Ocean
-}
-
-function get_shortcut_level()
-    local currentMax
-    if player_options.progressive_worlds then
-        currentMax = ap_save.max_world
+function WorldKeyToProgressionNum(targetWorld)
+    if targetWorld == Spel2AP.world_unlocks.Jungle or targetWorld == Spel2AP.world_unlocks.Volcana then
+        return 2
+    elseif targetWorld == Spel2AP.world_unlocks.Olmecs_Lair then
+        return 3
+    elseif targetWorld == Spel2AP.world_unlocks.Tide_Pool or targetWorld == Spel2AP.world_unlocks.Temple then
+        return 4
+    elseif targetWorld == Spel2AP.world_unlocks.Ice_Caves then
+        return 5
+    elseif targetWorld == Spel2AP.world_unlocks.Neo_Babylon then
+        return 6
+    elseif targetWorld == Spel2AP.world_unlocks.Sunken_City then
+        return 7
     else
-        currentMax = get_unlock_world_number()
+        return 8
     end
+end
 
-    return shortcut_levels[currentMax] or shortcut_save_values.NONE
+function IsWorldAvailable(targetWorld)
+    if player_options.progressive_worlds then
+        return ap_save.max_world >= WorldKeyToProgressionNum(targetWorld)
+    else
+        return ap_save.world_unlocks[targetWorld] or false
+    end
 end
 
 function set_shortcut_progress(level)
@@ -236,6 +261,18 @@ set_callback(function()
         state.world_next = state.world_start
     end
 
+    if player_options.ironman_mode then
+        local tiamatGoal = IsTiamatLevel(true) and player_options.goal == AP_Goal.EASY
+        local hundunGoal = IsHundunLevel(true) and player_options.goal == AP_Goal.HARD
+        local coGoal = IsCosmicLevel(true) and player_options.goal == AP_Goal.CO
+        if (tiamatGoal or hundunGoal or coGoal) and usedShortcut then
+            run_reset()
+            state.theme_next = state.theme_start
+            state.world_next = state.world_start
+            state.level_next = state.level_start
+        end
+    end
+
     if state.screen_next == SCREEN.CHARACTER_SELECT then
         update_characters(true)
     end
@@ -243,11 +280,13 @@ set_callback(function()
     if state.screen_next == SCREEN.CAMP then
         ap_save.last_character = savegame.players[1]
         update_characters(false)
-        set_shortcut_progress(get_shortcut_level())
-    elseif ap_save.checked_locations[Spel2AP.locations.people.Terra_Tunnel] then
         set_shortcut_progress(shortcut_save_values.ICE_CAVES)
     else
-        set_shortcut_progress(shortcut_save_values.NONE)
+        if ap_save.checked_locations[Spel2AP.locations.people.Terra_Tunnel] then
+            set_shortcut_progress(shortcut_save_values.ICE_CAVES)
+        else
+            set_shortcut_progress(shortcut_save_values.NONE)
+        end
     end
 
     if (state.screen_next == SCREEN.CAMP
@@ -299,10 +338,44 @@ function remove_from_shop(entity)
     return owner_uid
 end
 
+set_callback(function()
+    for index, doorData in ipairs(shortcut_door_data) do
+        if index == 8 and player_options.goal < AP_Goal.HARD then
+            goto continue
+        elseif index == 9 and player_options.goal < AP_Goal.CO then
+            goto continue
+        end
+        local doorUnlocked = (index == 9 and ap_save.checked_locations[Spel2AP.locations.place.Cosmic_Ocean]) or false
+        if not doorUnlocked then
+            if player_options.shortcut_mode == AP_Shortcut_mode.INDIVIDUAL then
+                doorUnlocked = IsWorldAvailable(doorData[6]) and (ap_save.shortcut_unlocks[doorData[7]] or false)
+            elseif player_options.shortcut_mode == AP_Shortcut_mode.OFF then
+                doorUnlocked = IsWorldAvailable(doorData[6])
+            else
+                doorUnlocked = IsWorldAvailable(doorData[6]) and (ap_save.shortcut_progress >= (doorData[3]-1) or false)
+            end
+        end
+        local doorID = spawn_entity_snapped_to_floor(ENT_TYPE.FLOOR_DOOR_STARTING_EXIT, doorData[1], doorData[2], LAYER.FRONT)
+        local doorEnt = get_entity(doorID)
+        if doorEnt ~= nil then
+            doorEnt:unlock(doorUnlocked)
+        end
+        set_door_target(doorID, doorData[3], (index == 9) and deepestCo or 1, doorData[4])
+        local bgDoorID = spawn_entity_snapped_to_floor(ENT_TYPE.BG_DOOR, doorData[1], doorData[2], LAYER.FRONT)
+        if bgDoorID ~= nil then
+            local bgDoorEnt = get_entity(bgDoorID)
+            bgDoorEnt:set_texture(doorData[5])
+            bgDoorEnt.animation_frame = doorUnlocked and 1 or 0
+        end
+        ::continue::
+    end
+end, ON.CAMP)
+
 -- This handles all of the permanent upgrades to give the player at the start of every run
 set_callback(function()
     debug_print("START")
-
+    usedShortcut = state.world ~= 1
+    debug_print(f"[IRON_MAN] State: {usedShortcut}")
     done8Favour = false
     done16Favour = false
     apPlayer = get_player(1)
@@ -401,11 +474,7 @@ set_callback(function()
         state.world_start = 7
         state.theme_start = THEME.COSMIC_OCEAN
         state.level_start = math.floor(state.level / 10) * 10
-    end
-
-    if savegame.shortcuts > ap_save.shortcut_progress then
-        ap_save.shortcut_progress = savegame.shortcuts
-        write_save()
+        deepestCo = state.level_start
     end
 
     set_callback(function()
@@ -443,6 +512,8 @@ set_callback(function()
         if #vlads <= 0 then
             return
         end
+    else
+        return
     end
     local coffin_uids = get_entities_by(ENT_TYPE.ITEM_COFFIN, MASK.ITEM, LAYER.BACK)
     for _, uid in ipairs(coffin_uids) do
@@ -459,7 +530,7 @@ set_post_entity_spawn(function(hiredHand)
         return
     end
     local starterCharacter = try_fetch_starter()
-    if starterCharacter ~= nil then
+    if starterCharacter == nil then
         return
     end
     hiredHand:set_pre_update_state_machine(function()
@@ -484,6 +555,28 @@ set_post_entity_spawn(function(hiredHand)
         hiredHand:destroy()
     end)
 end, SPAWN_TYPE.LEVEL_GEN, MASK.PLAYER, ENT_TYPE.CHAR_HIREDHAND)
+
+set_post_entity_spawn(function(damsel)
+    damsel:set_pre_update_state_machine(function()
+        if not test_flag(damsel.more_flags, ENT_MORE_FLAG.FINISHED_SPAWNING) then
+            return
+        end
+        clear_callback()
+        local entToSpawn = nil
+        if ap_save.checked_locations[Spel2AP.locations.bestiary.Monty] ~= true then
+            entToSpawn = ENT_TYPE.MONS_PET_DOG
+        elseif ap_save.checked_locations[Spel2AP.locations.bestiary.Percy] ~= true then
+            entToSpawn = ENT_TYPE.MONS_PET_CAT
+        elseif ap_save.checked_locations[Spel2AP.locations.bestiary.Poochi] ~= true then
+            entToSpawn = ENT_TYPE.MONS_PET_HAMSTER
+        end
+        if entToSpawn ~= nil then
+            local entX, entY, entL = get_position(damsel.uid)
+            spawn_entity_snapped_to_floor(entToSpawn, entX, entY, entL)
+            damsel:destroy()
+        end
+    end)
+end, SPAWN_TYPE.LEVEL_GEN, MASK.MONSTER, {ENT_TYPE.MONS_PET_DOG, ENT_TYPE.MONS_PET_CAT, ENT_TYPE.MONS_PET_HAMSTER})
 
 
 set_post_entity_spawn(function(crate)
@@ -530,7 +623,7 @@ set_post_entity_spawn(function (door)
         return
     end
     local isHunDunWorld = IsHundunLevel()
-    local isCosmicOcean = state.level > 4
+    local isCosmicOcean = IsCosmicLevel()
     if player_options.goal == AP_Goal.CO and isCosmicOcean and state.level < player_options.goal_level - 1 then
         return
     end
@@ -694,20 +787,20 @@ set_callback(function(ctx, type, page)
     end
 end, ON.RENDER_POST_JOURNAL_PAGE)
 
+function run_reset()
+    state.quests.yang_state = 0
+    state.quests.jungle_sisters_flags = 0
+    state.quests.van_horsing_state = 0
+    state.quests.sparrow_state = 0
+    state.quests.madame_tusk_state = 0
+    state.quests.beg_state = 0
+    state.kali_altars_destroyed = 0
+    state.kali_gifts = 0
+    state.quest_flags = QUEST_FLAG.RESET
+end
+
 set_callback(function()
     debug_print("TRANSITION")
-
-    local function run_reset()
-        state.quests.yang_state = 0
-        state.quests.jungle_sisters_flags = 0
-        state.quests.van_horsing_state = 0
-        state.quests.sparrow_state = 0
-        state.quests.madame_tusk_state = 0
-        state.quests.beg_state = 0
-        state.kali_altars_destroyed = 0
-        state.kali_gifts = 0
-        state.quest_flags = QUEST_FLAG.RESET
-    end
 
     change_diceshop_prizes(get_filtered_dice_prizes())
 
@@ -887,7 +980,9 @@ for _, data in pairs(Journal_to_ItemEnt) do
                 heldEnt:destroy()
             end
 
-            if entType == ENT_TYPE.ITEM_PICKUP_UDJATEYE then
+            if entType == ENT_TYPE.ITEM_PICKUP_UDJATEYE or
+               entType == ENT_TYPE.ITEM_PICKUP_ANKH or
+               entType == ENT_TYPE.ITEM_HOUYIBOW then
                 local entVelX, entVelY = get_velocity(entity.uid)
                 spawn_entity(getBombOrRope(), entity.x, entity.y, entity.layer, entVelX, entVelY)
             end
