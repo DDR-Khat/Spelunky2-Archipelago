@@ -744,6 +744,9 @@ function queue_death_link(dyingPlayer, deathReason)
         end
 
         caused_by_death_link = true
+        set_global_timeout(function()
+            caused_by_death_link = false
+        end, 30)
 
         local playerX, playerY, playerL = get_position(player.uid)
         if options.deathlink_explosion then
@@ -752,8 +755,6 @@ function queue_death_link(dyingPlayer, deathReason)
             player:kill(true, nil)
             spawn_entity(ENT_TYPE.FX_ALIENBLAST, playerX, playerY, playerL, 0, 0)
         end
-
-        caused_by_death_link = false
 
         clear_callback()
     end, 1)
