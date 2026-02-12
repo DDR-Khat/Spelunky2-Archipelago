@@ -186,7 +186,7 @@ Options ("ALL" can be used for everything):
         lowered = [item.lower() for item in self.value]
         if "all" in lowered:
             return
-        super().verify(world, player)
+        super().verify(world, player, None)
 
 
 class ItemUpgrades(ItemSet):
