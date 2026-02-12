@@ -182,11 +182,11 @@ Options ("ALL" can be used for everything):
     valid_keys = locked_items + ["ALL"]
     default = quest_items
 
-    def verify(self, world, player, name="None"):
+    def verify(self, world, player, plando_options, name="None"):
         lowered = [item.lower() for item in self.value]
         if "all" in lowered:
             return
-        super().verify(world, player)
+        super().verify(world, player, plando_options)
 
 
 class ItemUpgrades(ItemSet):
