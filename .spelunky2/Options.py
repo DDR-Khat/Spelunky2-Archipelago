@@ -182,11 +182,11 @@ Options ("ALL" can be used for everything):
     valid_keys = locked_items + ["ALL"]
     default = quest_items
 
-    def verify(self, world, player, name="None"):
+    def verify(self, world, player, plando_options, name="None"):
         lowered = [item.lower() for item in self.value]
         if "all" in lowered:
             return
-        super().verify(world, player)
+        super().verify(world, player, plando_options)
 
 
 class ItemUpgrades(ItemSet):
@@ -206,7 +206,8 @@ Options (any selected here override options in item_upgrades):
 {locked_items_text}"""  # noqa: E128
     display_name = "Waddler Items"
     valid_keys = locked_items
-    default = equip_options - {ItemName.TRUE_CROWN.value, ItemName.EGGPLANT_CROWN.value, ItemName.PASTE.value}
+    default = equip_options - {ItemName.TRUE_CROWN.value, ItemName.EGGPLANT_CROWN.value,
+                               ItemName.PASTE.value, ItemName.SHIELD.value}
 
 
 class AnkhSkipLogic(Toggle):
