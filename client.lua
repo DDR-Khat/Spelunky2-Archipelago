@@ -239,6 +239,9 @@ function connect(server, slot, password)
                     local playerOne = get_player(1, false)
                     if playerOne.uid == player.uid then
                         player:set_pre_kill(function()
+                            if options.deathlink_toggled ~= true then
+                                return
+                            end
                             if player:has_powerup(ENT_TYPE.ITEM_POWERUP_ANKH) then
                                 return -- Don't send deathlink, as Ankh saved us from death.
                             else
