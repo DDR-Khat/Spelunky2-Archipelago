@@ -1,4 +1,4 @@
-from logging import info, warning
+from logging import warning
 from typing import Mapping, Any
 from worlds.AutoWorld import World, WebWorld
 from BaseClasses import MultiWorld, Tutorial, ItemClassification, Region
@@ -257,6 +257,8 @@ class Spelunky2World(World):
 
         if sum(self.filler_weights.values()) <= 0:
             self.filler_weights = {ItemName.GOLD_BAR.value: 1}
+            warning(f"!WARNING! NO filler items found with a value, \"{self.player_name}\" may want to check their YAML."
+                    f"\n---Assigning Gold bar as filler.")
 
         if self.options.enable_traps.value:
             self.trap_count = int(self.filler_count * (self.options.trap_weight.value / 100))
@@ -269,6 +271,11 @@ class Spelunky2World(World):
             self.trap_weights[ItemName.LOOSE_BOMBS_TRAP.value] = self.options.bomb_weight.value
             self.trap_weights[ItemName.BLINDNESS_TRAP.value]   = self.options.blind_weight.value
             self.trap_weights[ItemName.PUNISH_BALL_TRAP.value] = self.options.punish_weight.value
+
+            if sum(self.trap_weights.values()) <= 0:
+                self.trap_weights = {ItemName.BLINDNESS_TRAP.value: 1}
+                warning(f"!WARNING! NO traps items found with a value and traps is on, \"{self.player_name}\" may want to check their YAML."
+                        f"\n---Assigning Blindness as traps.")
 
             for _ in range(self.trap_count):
                 spelunky2_item_pool.append(self.create_trap())
