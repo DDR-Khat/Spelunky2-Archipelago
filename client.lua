@@ -458,7 +458,9 @@ function connect(server, slot, password)
     function on_bounced(bounce)
         if bounce.tags ~= nil then
             for _, tag in ipairs(bounce.tags) do
-                if tag == "DeathLink" and bounce.data.source ~= game_info.username and options.deathlink_toggled then
+                if tag == "DeathLink" and bounce.data.source ~= game_info.username
+                        and options.deathlink_toggled
+                        and IsInPlay() then
                     queue_death_link(bounce.data.source, bounce.data.cause)
                 end
             end
@@ -796,6 +798,11 @@ function verify_locations(location_list)
             send_location(location_id)
         end
     end
+end
+
+function IsInPlay()
+    return state.screen >= SCREEN.LEVEL and
+           state.screen <= SCREEN.DEATH
 end
 
 -- If we close the game, tidy up after ourselves.
