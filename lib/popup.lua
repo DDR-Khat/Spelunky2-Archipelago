@@ -34,7 +34,6 @@ function RGB2Color(r, g, b, a)
 end
 
 -- State for feat box
-featBoxTimer = 0
 featBoxData = nil
 
 -- Call this to show a feat box
@@ -47,9 +46,8 @@ function ShowFeatBox(texture, title, description, durationFrames, spriteIndex, s
         tileY = spriteOffset,
         title = title,
         description = description,
-        duration = durationFrames
+        endTime = state.time_startup + durationFrames
     }
-    featBoxTimer = durationFrames
 end
 
 -- Set anchor
@@ -102,7 +100,7 @@ local layoutData = {
 }
 
 set_callback(function(renderCtx)
-    if featBoxTimer > 0 and featBoxData then
+    if featBoxData ~= nil then
         -- Main Window
         draw_outlined_rect(renderCtx, layoutData.bgX, layoutData.bgY, layoutData.bgX + layoutData.bgWidth, layoutData.bgY + layoutData.bgHeight,RGB2Color(240,230,210,255))
 
@@ -142,7 +140,8 @@ set_callback(function(renderCtx)
                 VANILLA_TEXT_ALIGNMENT.LEFT, VANILLA_FONT_STYLE.NORMAL
         )
 
-        featBoxTimer = featBoxTimer - 1
-        if featBoxTimer <= 0 then featBoxData = nil end
+        if state.time_startup >= featBoxData.endTime then
+            featBoxData = nil
+        end
     end
 end, ON.RENDER_POST_HUD)
