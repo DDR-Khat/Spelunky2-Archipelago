@@ -515,7 +515,11 @@ end
 
 function set_ap_callbacks()
     set_callback(function()
-        local popupFrames = math.ceil(options.popup_time*60)
+        local freqNum = get_setting(4)
+        local freqDeno = get_setting(5)
+        local targetFramerate = freqNum / freqDeno
+        local popupFrames = math.ceil(options.popup_time * targetFramerate) -- adjust popup time for users framerate
+        local intervalFrames = math.ceil(options.popup_time * 60) -- the interval always runs at 60
         local currentPlayer = get_player(1)
         if currentPlayer == nil then
             goto continue
@@ -581,7 +585,7 @@ function set_ap_callbacks()
         set_interval(function()
             ready_for_item = true
             return false
-        end, popupFrames)
+        end, intervalFrames)
 
         ShowFeatBox(display, msgTitle, msgDesc, popupFrames, item.TileX, item.TileY)
         ::continue::
