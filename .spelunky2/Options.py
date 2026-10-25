@@ -49,7 +49,7 @@ class GoalLevel(Range):
     """Which level in Cosmic Ocean are you required to clear to consider your game as beaten.
     This option can be ignored if your goal is not set to \"CO\""""
     display_name = "Cosmic Ocean Goal Level"
-    range_start = 10
+    range_start = 5
     range_end = 99
     default = 30
 
@@ -58,13 +58,14 @@ class GoalIronmanMode(Toggle):
     """Cannot enter goal level unless you started your run from the world start (Not using a shortcut)"""
     display_name = "Ironman Goal mode"
 
+
 class DeathLinkBypassesAnkh(Toggle):
     """Sets whether deaths sent through Death Link will trigger the Ankh, or ignore it."""
     display_name = "Death Link Ankh Handling"
 
 
 class DeathLinkAmnesty(Range):
-    """A \"grace\" count of how many deaths you are allowed before you send a Deathlink out to the multiworld."""
+    """How many times YOU can die before you send a Deathlink out to the multiworld."""
     display_name = "Death Link Amnesty"
     range_start = 0
     range_end = 10
@@ -72,7 +73,7 @@ class DeathLinkAmnesty(Range):
 
 
 class DeathLinkGrace(Range):
-    """How many deaths you receive before you fall victim to a Deathlink from the multiworld."""
+    """How many times OTHERS in the multiworld die before YOU get killed."""
     display_name = "Death Link Grace"
     range_start = 0
     range_end = 10
@@ -123,6 +124,12 @@ class ShortcutsMode(Choice):
     option_progressive = Spelunky2ShortcutMode.PROGRESSIVE
     option_individual = Spelunky2ShortcutMode.INDIVIDUAL
     default = Spelunky2ShortcutMode.OFF
+
+
+class MustVisitWorld(Toggle):
+    """Must actually visit the world for the first time through normal gameplay before
+    a shortcut door will be available (this is in addition to your 'Shortcut Mode' setting)"""
+    display_name = "Must Visit World"
 
 
 class StartingHealth(Range):
@@ -387,6 +394,24 @@ class PunishBallTrapChance(Range):
     default = 10
 
 
+class AmnesiaTrapChance(Range):
+    """Sets the likelihood of a trap being an Amnesia Trap relative to other traps.
+    This trips you over and sends you back to the beginning of the level"""
+    display_name = "Amnesia Trap Weight"
+    range_start = 0
+    range_end = 100
+    default = 10
+
+
+class AngryShopkeepersChance(Range):
+    """Sets the likelihood of a trap being Angry Shopkeepers relative to other traps.
+    Proto shopkeepers will show up at the start and exits"""
+    display_name = "Angry Shopkeeper Trap Weight"
+    range_start = 0
+    range_end = 100
+    default = 10
+
+
 @dataclass
 class Spelunky2Options(PerGameCommonOptions):
     goal: Goal
@@ -402,6 +427,7 @@ class Spelunky2Options(PerGameCommonOptions):
     starting_characters: StartingCharacters
     progressive_worlds: ProgressiveWorlds
     shortcut_mode: ShortcutsMode
+    must_visit_world: MustVisitWorld
     starting_health: StartingHealth
     health_upgrades: HealthUpgrades
     starting_bombs: StartingBombs
@@ -435,3 +461,5 @@ class Spelunky2Options(PerGameCommonOptions):
     bomb_weight: LooseBombsTrapChance
     blind_weight: BlindnessTrapChance
     punish_weight: PunishBallTrapChance
+    amnesia_weight: AmnesiaTrapChance
+    shoppie_weight: AngryShopkeepersChance
