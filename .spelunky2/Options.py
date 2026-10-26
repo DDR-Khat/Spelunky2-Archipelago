@@ -39,10 +39,10 @@ class Goal(Choice):
     Hard: Requires completing the "hard" ending by reaching 7-4 and defeating Hundun
     CO: Requires reaching a specified level in Cosmic Ocean"""
     display_name = "Goal"
-    option_easy = Spelunky2Goal.EASY
-    option_hard = Spelunky2Goal.HARD
-    option_co = Spelunky2Goal.CO
-    default = Spelunky2Goal.EASY
+    option_easy = Spelunky2Goal.EASY.value
+    option_hard = Spelunky2Goal.HARD.value
+    option_co = Spelunky2Goal.CO.value
+    default = Spelunky2Goal.EASY.value
 
 
 class GoalLevel(Range):
@@ -120,10 +120,10 @@ class ShortcutsMode(Choice):
     """Should shortcuts unlock as you gain worlds, or instead receive them from the multiworld
     (You still the associated world for the shortcut to be open when you receive it from the multiworld)"""
     display_name = "Shortcut Mode"
-    option_off = Spelunky2ShortcutMode.OFF
-    option_progressive = Spelunky2ShortcutMode.PROGRESSIVE
-    option_individual = Spelunky2ShortcutMode.INDIVIDUAL
-    default = Spelunky2ShortcutMode.OFF
+    option_off = Spelunky2ShortcutMode.OFF.value
+    option_progressive = Spelunky2ShortcutMode.PROGRESSIVE.value
+    option_individual = Spelunky2ShortcutMode.INDIVIDUAL.value
+    default = Spelunky2ShortcutMode.OFF.value
 
 
 class MustVisitWorld(Toggle):
