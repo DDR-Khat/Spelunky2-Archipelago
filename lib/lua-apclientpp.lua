@@ -9,6 +9,10 @@
 ---@class APClient
 APClient = {}
 
+---Version string (ma.mi.re) of the apclientpp version used to build this lua-apclientpp.
+---@type string
+APClient._VERSION = "0.6.6"
+
 
 -- Functions --
 
@@ -16,8 +20,9 @@ APClient = {}
 ---@param uuid string a string identifying connection or `""`
 ---@param game string name of the game this client will connect for
 ---@param host string URL or `host:port` to connect to
+---@param skip_get_datapackage boolean? optional, set to true to skip getting data package
 ---@return APClient
-function APClient.__call(uuid, game, host) end
+function APClient.__call(uuid, game, host, skip_get_datapackage) end
 
 
 -- Methods --
@@ -39,9 +44,13 @@ function APClient:get_player_alias(slot) end
 ---@return string game
 function APClient:get_player_game(slot) end
 
+---Get currently played game.
+---@return string game
+function APClient:get_game() end
+
 ---Get name of location from ID.
 ---@param code integer ID of the location
----@param game string game the location ID is from (required for overlapping IDs)
+---@param game string? game the location ID is from; use nil for own location
 ---@return string name of the location
 function APClient:get_location_name(code, game) end
 
@@ -52,7 +61,7 @@ function APClient:get_location_id(name) end
 
 ---Get name of item from ID.
 ---@param code integer ID of the item
----@param game string game the item ID is from (required for overlapping IDs)
+---@param game string? game the item ID is from; use nil for own item
 ---@return string name of the item
 function APClient:get_item_name(code, game) end
 
@@ -110,6 +119,15 @@ function APClient:get_server_time() end
 ---Get list of players of connected game.
 ---@return NetworkPlayer[]
 function APClient:get_players() end
+
+---Get map of permissions.
+---@return {[string]: permission}
+function APClient:get_permissions() end
+
+---Get value of a permission or nil if unknown.
+---@param key string
+---@return permission?
+function APClient:get_permission(key) end
 
 
 -- Member variables --
@@ -206,8 +224,9 @@ function APClient:Say(text) end
 ---@param items_handling ItemsHandling describes which items to receive from the server
 ---@param tags string[]? optional list of tags to use, e.g. `{"DeathLink"}`
 ---@param version integer[]? optional client version in the format of `{major, minor, build}`, e.g. `{0, 5, 0}`
+---@param skip_slot_data boolean? optional, set to true to skip getting slot data
 ---@return boolean true if connect was queued, false if state was invalid
-function APClient:ConnectSlot(name, password, items_handling, tags, version) end
+function APClient:ConnectSlot(name, password, items_handling, tags, version, skip_slot_data) end
 
 ---Update a connection.
 ---@param items_handling? ItemsHandling Unchanged if `nil`. See ConnectSlot.
@@ -238,15 +257,29 @@ function APClient:StatusUpdate(status) end
 ---@return boolean true if message was queued
 function APClient:LocationChecks(locations) end
 
----Query the server for location details. Server will send LocationInfo asynchronously. 
+---Query the server for location details. Server will send LocationInfo asynchronously.
 ---@param locations integer[] location IDs to be scouted
 ---@param create_as_hint CreateAsHint?
 ---@return boolean true if message was queued
 function APClient:LocationScouts(locations, create_as_hint) end
 
+---Sends UpdateHint to the server to update hint status/priority.
+---@param player integer owner of the location
+---@param location integer location ID to be hinted
+---@param status hintstatus status/priority of the hint
+---@return boolean true if message was queued
+function APClient:UpdateHint(player, location, status) end
+
+---Sends CreateHints to the server, if supported, to create hints with optional status/priority.
+---@param locations integer[] location IDs to be hinted
+---@param target_player integer? owner of the locations, or nil or -1 for current player
+---@param status hintstatus? status/priority of the hints, or nil for default (HINT_UNSPECIFIED)
+---@return boolean true if message was queued, false if unsupported
+function APClient:CreateHints(locations, target_player, status) end
+
 ---Query the server for keys in data storage. Server will asynchronously reply with Retrieved.
 ---@param keys string[] keys to query
----@param extra {[string]: any}? Additional data to send in the command. Will be included in Retrieved. 
+---@param extra {[string]: any}? Additional data to send in the command. Will be included in Retrieved.
 ---@return boolean true if message was queued
 function APClient:Get(keys, extra) end
 
@@ -270,6 +303,7 @@ function APClient:Set(key, default, want_reply, operations, extra) end
 ---@enum clientstatus
 APClient.ClientStatus = {
     UNKNOWN = 0,
+    CONNECTED = 5,
     READY = 10,
     PLAYING = 20,
     GOAL = 30,
@@ -297,6 +331,25 @@ APClient.State = {
     SOCKET_CONNECTED = 2,
     ROOM_INFO = 3,
     SLOT_CONNECTED = 4,
+}
+
+---@enum permission
+APClient.Permission = {
+    DISABLED = 0,     -- Completely disables access
+    ENABLED = 1,      -- Allows manual use
+    GOAL = 2,         -- Allows manual use after goal completion
+    FORCED = 4,       -- Forces usage
+    AUTO = 6,         -- Forces use after goal completion, only works for release and collect
+    AUTO_ENABLED = 7, -- Forces use after goal completion, allows manual use any time
+}
+
+---@enum hintstatus
+APClient.HintStatus = {
+    HINT_UNSPECIFIED = 0,  -- The receiving player has not specified any status
+    HINT_NO_PRIORITY = 10, -- The receiving player has specified that the item is unneeded
+    HINT_AVOID = 20,       -- The receiving player has specified that the item is detrimental
+    HINT_PRIORITY = 30,    -- The receiving player has specified that the item is needed
+    HINT_FOUND = 40,       -- The location has been collected. Status cannot be changed once found.
 }
 
 ---@alias ItemsHandling integer
