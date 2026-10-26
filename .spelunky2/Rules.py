@@ -1,5 +1,6 @@
+from logging import warning
 from typing import TYPE_CHECKING
-from .enums import WorldName, RuleNames, ItemName, LocationName, JournalName, UPGRADE_SUFFIX
+from .enums import WorldName, RuleNames, ItemName, LocationName, JournalName, JOURNAL_SUFFIX
 
 from BaseClasses import CollectionState
 from worlds.generic.Rules import set_rule
@@ -17,10 +18,17 @@ def has_or_unrestricted(world, state, player, item_name: str) -> bool:
 
 
 def set_common_rules(world: "Spelunky2World", player: int):
-    # Primary Regions -- note starting from shortcuts is not currently in logic. When this is added, it might break certain entries (e.g. The Tusk Idol and chain requirements) # noqa: E128
     set_rule(world.get_entrance(RuleNames.MENU_TO_DWELLING), lambda state: True)
-    # set_rule(world.get_entrance(RuleNames.MENU_TO_OLMECS_LAIR), lambda state: state.has(ShortcutName.OLMECS_LAIR, player) or state.has(ShortcutName.PROGRESSIVE, player, 2))  # Not implemented yet # noqa: E128
-    # set_rule(world.get_entrance(RuleNames.MENU_TO_ICE_CAVES), lambda state: state.has(ShortcutName.ICE_CAVES, player) or state.has(ShortcutName.PROGRESSIVE, player, 3))  # Not implemented yet # noqa: E128
+
+    if world.options.death_link:
+        set_rule(world.get_location(JournalName.GHOST),
+                 lambda state: has_or_unrestricted(world, state, player, ItemName.ANKH))
+        set_rule(world.get_location(JournalName.SPIKES),
+                 lambda state:
+                 (
+                         has_or_unrestricted(world, state, player, ItemName.ANKH)
+                         or has_or_unrestricted(world, state, player, ItemName.TELEPACK)
+                 ))
 
     set_rule(world.get_entrance(RuleNames.DWELLING_TO_JUNGLE),
              lambda state: state.has(WorldName.JUNGLE, player) or state.has(WorldName.PROGRESSIVE, player))
@@ -95,7 +103,11 @@ def set_common_rules(world: "Spelunky2World", player: int):
              has_royalty(world, state, player)
              and has_or_unrestricted(world, state, player, ItemName.EXCALIBUR))
     set_rule(world.get_location(JournalName.BROKEN_SWORD),
-             lambda state: has_or_unrestricted(world, state, player, ItemName.EXCALIBUR))
+             lambda state:
+             (
+                     has_or_unrestricted(world, state, player, ItemName.EXCALIBUR)
+              and has_or_unrestricted(world, state, player, ItemName.CLONE_GUN)
+             ))
     set_rule(world.get_location(JournalName.SCEPTER),
              lambda state: has_or_unrestricted(world, state, player, ItemName.SCEPTER))
     set_rule(world.get_location(JournalName.HOU_YI_BOW),
@@ -103,7 +115,11 @@ def set_common_rules(world: "Spelunky2World", player: int):
     set_rule(world.get_location(JournalName.USHABTI),
              lambda state: has_or_unrestricted(world, state, player, ItemName.USHABTI))
     set_rule(world.get_location(JournalName.EGGPLANT),
-             lambda state: has_or_unrestricted(world, state, player, ItemName.EGGPLANT))
+             lambda state:
+             (
+                 has_or_unrestricted(world, state, player, ItemName.EGGPLANT)
+                 and state.has(WorldName.TIDE_POOL, player) or state.has(WorldName.PROGRESSIVE, player, 3)
+             ))
 
 
 def set_sunken_city_rules(world: "Spelunky2World", player: int):
@@ -219,21 +235,13 @@ def can_access_cosmic_ocean(world: "Spelunky2World", state: CollectionState, pla
 
 
 def set_starter_upgrade_rules(world: "Spelunky2World", player: int):
-    """Ensure starter upgrades require their locked/quest counterpart first."""
-
-    # Get the union of all items selected for any type of upgrade.
     all_upgrades_selected = world.options.waddler_upgrades.value | world.options.item_upgrades.value
-
     for item_name in all_upgrades_selected:
-        upgrade_name = f"{item_name}{UPGRADE_SUFFIX}"
         try:
-            # All upgrades require their base item counterpart
             set_rule(
-                world.get_location(upgrade_name),
-                lambda state,
-                       name=ItemName(item_name).value: has_or_unrestricted(world, state, player, name)
+                world.get_location(f"{item_name}{JOURNAL_SUFFIX}"),
+                lambda state, name=ItemName(item_name).value: has_or_unrestricted(world, state, player, name)
             )
         except KeyError:
-            # This handles cases where an upgrade for an item exists but isn't
-            # a location in the world (e.g., not selected by the player).
+            warning(f"[Spelunky2 - Starter Rules] ERROR! No match for '{item_name}' (May end up with impossible seed)")
             pass

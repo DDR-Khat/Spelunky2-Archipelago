@@ -46,16 +46,16 @@ class Spelunky2ItemData(NamedTuple):
 
 
 filler_items = {
-    ItemName.ROPE_PILE.value:   Spelunky2ItemData(1),
-    ItemName.BOMB_BAG.value:    Spelunky2ItemData(2),
-    ItemName.BOMB_BOX.value:    Spelunky2ItemData(3),
-    ItemName.COOKED_TURKEY.value: Spelunky2ItemData(4),
-    ItemName.ROYAL_JELLY.value: Spelunky2ItemData(5),
-    ItemName.GOLD_BAR.value:    Spelunky2ItemData(6),
-    ItemName.EMERALD_GEM.value: Spelunky2ItemData(7),
-    ItemName.SAPPHIRE_GEM.value: Spelunky2ItemData(8),
-    ItemName.RUBY_GEM.value:    Spelunky2ItemData(9),
-    ItemName.DIAMOND_GEM.value: Spelunky2ItemData(10),
+    ItemName.ROPE_PILE.value:       Spelunky2ItemData(1),
+    ItemName.BOMB_BAG.value:        Spelunky2ItemData(2),
+    ItemName.BOMB_BOX.value:        Spelunky2ItemData(3),
+    ItemName.COOKED_TURKEY.value:   Spelunky2ItemData(4),
+    ItemName.ROYAL_JELLY.value:     Spelunky2ItemData(5),
+    ItemName.GOLD_BAR.value:        Spelunky2ItemData(6),
+    ItemName.EMERALD_GEM.value:     Spelunky2ItemData(7),
+    ItemName.SAPPHIRE_GEM.value:    Spelunky2ItemData(8),
+    ItemName.RUBY_GEM.value:        Spelunky2ItemData(9),
+    ItemName.DIAMOND_GEM.value:     Spelunky2ItemData(10),
 }
 
 characters = {
@@ -133,8 +133,8 @@ traps = {
     ItemName.STUN_TRAP.value:                Spelunky2ItemData(704, ItemClassification.trap, 0),
     ItemName.LOOSE_BOMBS_TRAP.value:         Spelunky2ItemData(705, ItemClassification.trap, 0),
     ItemName.BLINDNESS_TRAP.value:           Spelunky2ItemData(706, ItemClassification.trap, 0),
-    # ItemName.AMNESIA_TRAP.value:           Spelunky2ItemData(707, ItemClassification.trap, 0),
-    # ItemName.ANGRY_SHOPKEEPERS_TRAP.value: Spelunky2ItemData(708, ItemClassification.trap, 0),
+    ItemName.AMNESIA_TRAP.value:             Spelunky2ItemData(707, ItemClassification.trap, 0),
+    ItemName.ANGRY_SHOPKEEPERS_TRAP.value:   Spelunky2ItemData(708, ItemClassification.trap, 0),
     ItemName.PUNISH_BALL_TRAP.value:         Spelunky2ItemData(709, ItemClassification.trap, 0),
 }
 
@@ -163,13 +163,13 @@ filler_weights = {
 }
 
 trap_weights = {
-    ItemName.POISON_TRAP.value:      0,
-    ItemName.CURSE_TRAP.value:       0,
-    ItemName.GHOST_TRAP.value:       0,
-    ItemName.STUN_TRAP.value:        0,
-    ItemName.LOOSE_BOMBS_TRAP.value: 0,
-    ItemName.BLINDNESS_TRAP.value:   0,
-    # ItemName.AMNESIA_TRAP.value:         0,
-    # ItemName.ANGRY_SHOPKEEPERS_TRAP.value:0,
-    ItemName.PUNISH_BALL_TRAP.value: 0,
+    ItemName.POISON_TRAP.value:             0,
+    ItemName.CURSE_TRAP.value:              0,
+    ItemName.GHOST_TRAP.value:              0,
+    ItemName.STUN_TRAP.value:               0,
+    ItemName.LOOSE_BOMBS_TRAP.value:        0,
+    ItemName.BLINDNESS_TRAP.value:          0,
+    ItemName.AMNESIA_TRAP.value:            0,
+    ItemName.ANGRY_SHOPKEEPERS_TRAP.value:  0,
+    ItemName.PUNISH_BALL_TRAP.value:        0,
 }

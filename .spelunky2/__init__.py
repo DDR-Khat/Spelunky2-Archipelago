@@ -157,9 +157,9 @@ class Spelunky2World(World):
         if self.options.shortcut_mode.value == Spelunky2ShortcutMode.PROGRESSIVE:
             unlock_count = 4
             if self.options.goal.value > Spelunky2Goal.EASY:
-                unlock_count += 5
+                unlock_count += 1
             if self.options.goal.value > Spelunky2Goal.HARD:
-                unlock_count += 6
+                unlock_count += 1
             for _ in range(unlock_count):
                 spelunky2_item_pool.append(self.create_item(str(ShortcutName.PROGRESSIVE.value)))
         elif self.options.shortcut_mode.value == Spelunky2ShortcutMode.INDIVIDUAL:
@@ -203,15 +203,8 @@ class Spelunky2World(World):
 
         all_upgrades_selected = self.options.waddler_upgrades.value | self.options.item_upgrades.value
 
-        # Add a single "Upgrade" item for each unique item selected. (Except Alien/Compass . Special Rules)
-        compasses = 2 if ItemName.ALIEN_COMPASS in all_upgrades_selected else (
-                    1 if ItemName.COMPASS in all_upgrades_selected
-                    else 0)
-        for _ in range(compasses):
-            spelunky2_item_pool.append(self.create_item(f"{ItemName.COMPASS}{UPGRADE_SUFFIX}"))
         for item_name in all_upgrades_selected:
-            if item_name not in (ItemName.ALIEN_COMPASS, ItemName.COMPASS):
-                spelunky2_item_pool.append(self.create_item(f"{item_name}{UPGRADE_SUFFIX}"))
+            spelunky2_item_pool.append(self.create_item(f"{item_name}{UPGRADE_SUFFIX}"))
 
         # Permanent upgrades
         for _ in range(self.options.health_upgrades):
@@ -257,25 +250,27 @@ class Spelunky2World(World):
 
         if sum(self.filler_weights.values()) <= 0:
             self.filler_weights = {ItemName.GOLD_BAR.value: 1}
-            warning(f"!WARNING! NO filler items found with a value, \"{self.player_name}\" may want to check their YAML."
-                    f"\n---Assigning Gold bar as filler.")
+            warning(f"!WARNING! No filler weights in \"{self.player_name}\"s settings."
+                    f"\n---Using Gold Bars to proceed with generation.")
 
         if self.options.enable_traps.value:
             self.trap_count = int(self.filler_count * (self.options.trap_weight.value / 100))
             self.filler_count -= self.trap_count
 
-            self.trap_weights[ItemName.POISON_TRAP.value]      = self.options.poison_weight.value
-            self.trap_weights[ItemName.CURSE_TRAP.value]       = self.options.curse_weight.value
-            self.trap_weights[ItemName.GHOST_TRAP.value]       = self.options.ghost_weight.value
-            self.trap_weights[ItemName.STUN_TRAP.value]        = self.options.stun_weight.value
-            self.trap_weights[ItemName.LOOSE_BOMBS_TRAP.value] = self.options.bomb_weight.value
-            self.trap_weights[ItemName.BLINDNESS_TRAP.value]   = self.options.blind_weight.value
-            self.trap_weights[ItemName.PUNISH_BALL_TRAP.value] = self.options.punish_weight.value
+            self.trap_weights[ItemName.POISON_TRAP.value]            = self.options.poison_weight.value
+            self.trap_weights[ItemName.CURSE_TRAP.value]             = self.options.curse_weight.value
+            self.trap_weights[ItemName.GHOST_TRAP.value]             = self.options.ghost_weight.value
+            self.trap_weights[ItemName.STUN_TRAP.value]              = self.options.stun_weight.value
+            self.trap_weights[ItemName.LOOSE_BOMBS_TRAP.value]       = self.options.bomb_weight.value
+            self.trap_weights[ItemName.BLINDNESS_TRAP.value]         = self.options.blind_weight.value
+            self.trap_weights[ItemName.PUNISH_BALL_TRAP.value]       = self.options.punish_weight.value
+            self.trap_weights[ItemName.AMNESIA_TRAP.value]           = self.options.amnesia_weight.value
+            self.trap_weights[ItemName.ANGRY_SHOPKEEPERS_TRAP.value] = self.options.shoppie_weight.value
 
             if sum(self.trap_weights.values()) <= 0:
                 self.trap_weights = {ItemName.BLINDNESS_TRAP.value: 1}
-                warning(f"!WARNING! NO traps items found with a value and traps is on, \"{self.player_name}\" may want to check their YAML."
-                        f"\n---Assigning Blindness as traps.")
+                warning(f"!WARNING! Traps on, but no weights decided in \"{self.player_name}\"s settings."
+                        f"\n---Using Blindness to proceed with generation.")
 
             for _ in range(self.trap_count):
                 spelunky2_item_pool.append(self.create_trap())
@@ -320,45 +315,48 @@ class Spelunky2World(World):
 
     def fill_slot_data(self) -> Mapping[str, Any]:
         slot_data = {
+            "APWorldVersion": self.world_version,
             "goal": self.options.goal.value,
-            "ironman_mode": self.options.goal_ironman.value,
-            "progressive_worlds": bool(self.options.progressive_worlds),
-            "shortcut_mode": self.options.shortcut_mode.value,
-            "increase_starting_wallet": bool(self.options.starting_wallet),
-            "starting_health": self.options.starting_health.value,
-            "starting_bombs": self.options.starting_bombs.value,
-            "starting_ropes": self.options.starting_ropes.value,
-            "starting_characters": [
+            "ironmanMode": bool(self.options.goal_ironman),
+            "progressiveWorlds": bool(self.options.progressive_worlds),
+            "shortcutMode": self.options.shortcut_mode.value,
+            "mustVisitWorld": bool(self.options.must_visit_world),
+            "increaseWallet": bool(self.options.starting_wallet),
+            "startingHealth": self.options.starting_health.value,
+            "startingBombs": self.options.starting_bombs.value,
+            "startingRopes": self.options.starting_ropes.value,
+            "startingCharacters": [
                 self.item_name_to_id[name]
                 for name in (self.options.starting_characters or [ItemName.ANA_SPELUNKY.value])
                 if name in self.item_name_to_id
             ],
-            "health_upgrades": self.options.health_upgrades.value,
-            "bomb_upgrades": self.options.bomb_upgrades.value,
-            "rope_upgrades": self.options.rope_upgrades.value,
-            "restricted_items": list(self.options.restricted_items),
-            "item_upgrades": [
+            "lockedItems": [
+                self.item_name_to_id[name]
+                for name in self.options.restricted_items
+                if name in self.item_name_to_id
+            ],
+            "itemUpgrades": [
                 self.item_name_to_id[f"{name}{UPGRADE_SUFFIX}"]
                 for name in self.options.item_upgrades.value
                 if name not in self.options.waddler_upgrades.value
                 and name in self.item_name_to_id
             ],
-            "waddler_upgrades": [
+            "waddlerUpgrades": [
                 self.item_name_to_id[f"{name}{UPGRADE_SUFFIX}"]
                 for name in self.options.waddler_upgrades.value
                 if name in self.item_name_to_id
             ],
-            "include_hard_locations": bool(self.options.include_hard_locations),
-            "journal_entry_required": bool(self.options.journal_entry_required),
-            "death_link": self.options.death_link.value > 0,
+            "includeHardLocations": bool(self.options.include_hard_locations),
+            "journalEntryRequired": bool(self.options.journal_entry_required),
+            "deathLink": bool(self.options.death_link),
         }
 
         if self.options.goal.value == Spelunky2Goal.CO:
-            slot_data["goal_level"] = self.options.goal_level.value
+            slot_data["goalLevel"] = self.options.goal_level.value
 
-        if slot_data["death_link"]:
-            slot_data["bypass_ankh"] = bool(self.options.bypass_ankh)
-            slot_data["amnesty_count"] = self.options.death_link_amnesty_count.value
-            slot_data["grace_count"] = self.options.death_link_grace_count.value
+        if slot_data["deathLink"]:
+            slot_data["bypassAnkh"] = bool(self.options.bypass_ankh)
+            slot_data["amnesty"] = self.options.death_link_amnesty_count.value
+            slot_data["grace"] = self.options.death_link_grace_count.value
 
         return slot_data
