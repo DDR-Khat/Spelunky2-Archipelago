@@ -35,10 +35,11 @@ return {
         toast(get_string(hash_to_stringid(0xf6a18116)))
     end,
     [Spel2AP.traps.Amnesia] = function(player)
+        player:set_layer(LAYER.FRONT)
         player:set_position(state.level_gen.spawn_x, state.level_gen.spawn_y)
         local playerX, playerY, playerLayer = get_position(player.uid)
         spawn(ENT_TYPE.ITEM_INKSPIT, playerX, playerY, playerLayer, 0, 0)
-        play_sound(VANILLA_SOUND.SHARED_TRIP, player.uid)
+        play_sound(VANILLA_SOUND.SHARED_TRIP, -1)
         player.stun_timer = 60
         player.velocityx = test_flag(player.flags, ENT_FLAG.FACING_LEFT) and -0.15 or 0.15
         player.velocityy = 0.1
