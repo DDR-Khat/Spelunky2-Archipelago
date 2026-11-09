@@ -80,7 +80,7 @@ local deathLookup = {
     [META_DEATHS.MISSED] = "ran the numbers... but was bad at math, and ended up in the wall",
     [ENT_TYPE.MONS_GHOST] = "got too friendly with ghosts",
     [ENT_TYPE.MONS_MEGAJELLYFISH] = "became one with the celestial jellies",
-    ["FLOOR_ALTAR"] = "offered themselves to blood mama",
+    [ENT_TYPE.FLOOR_ALTAR] = "offered themselves to blood mama",
     [ENT_TYPE.PLAYER] = "accidentally killed themselves with a %s"
 }
 
@@ -150,34 +150,26 @@ local function ProcessDeathlink(cause, weapon)
     print(f"[Deathlink] {deathData.cause}")
 end
 
+---@param killer ENT_TYPE
+---@param killed Entity
+---@void An event for being killed by an "instant" killer like ghosts, ghist or jelly.
+function APDeathlink:OnInstantKillerDeath(killer, killed)
+    if killed.uid ~= private.localPlayer.uid then
+        return -- Shouldn't be our player, disregard.
+    end
+    if killed:has_powerup(ENT_TYPE.ITEM_POWERUP_ANKH) then
+        return -- Ankh saved us, don't deathlink
+    end
+    if test_flag(killed.flags, ENT_FLAG.DEAD) then
+        return -- We are already dead some other way.
+    end
+    ProcessDeathlink(killer)
+end
+
 ---@param player Player
 ---@void Handle deathlink callbacks/etc for player to send to multiworld
 function APDeathlink:HookDeathToPlayer(player)
     private.localPlayer = player
-    ---@param other Entity
-    player:set_pre_on_collision2(function(_, other)
-        if not private.deathLinkIsEnabled then
-            return -- Check here IN CASE we change it on the fly. Rather than at spawn of entity
-        end
-        if test_flag(player.flags, ENT_FLAG.DEAD) then
-            return -- If we are already dead, don't die again. (Shoutout to "Welowas" trying to clone puppies)
-        end
-        local isGhost = other.type.id == ENT_TYPE.MONS_GHOST
-        local isJelly = other.type.id == ENT_TYPE.MONS_MEGAJELLYFISH
-        if isGhost == false and isJelly == false then
-            return -- Not a collision we care about.
-        end
-        if private.localPlayer:has_powerup(ENT_TYPE.ITEM_POWERUP_ANKH) then
-            return -- Ankh saved us, don't deathlink
-        end
-        if private.localPlayer.exit_invincibility_timer > 0 then
-            return -- Door exit timer prevents interacting with entities
-        end
-        if test_flag(private.localPlayer.flags, ENT_FLAG.PASSES_THROUGH_OBJECTS) then
-            return -- We are currently passing through items.
-        end
-        ProcessDeathlink(isJelly and ENT_TYPE.MONS_MEGAJELLYFISH or ENT_TYPE.MONS_GHOST)
-    end)
     ---@param culprit Entity
     player:set_pre_kill(function(_, _, culprit)
         if not private.deathLinkIsEnabled then
@@ -208,7 +200,7 @@ function APDeathlink:HookDeathToPlayer(player)
                 deathReason = ENT_TYPE.PLAYER
                 deathWeapon = enum_get_name(ENT_TYPE, localState.cause_of_death_entity_type)
             elseif causeOfDeath == CAUSE_OF_DEATH.ENTITY then
-                deathReason = enum_get_name(ENT_TYPE, localState.cause_of_death_entity_type)
+                deathReason = localState.cause_of_death_entity_type
             elseif causeOfDeath == CAUSE_OF_DEATH.POISONED then
                 deathReason = META_DEATHS.POISON
             elseif causeOfDeath == CAUSE_OF_DEATH.LONG_FALL then
