@@ -8,7 +8,7 @@ from .Items import (Spelunky2Item, item_data_table, filler_items, traps, filler_
                     characters, upgrade_items_dict, locked_items_dict, permanent_upgrades, world_unlocks, quest_items,
                     locked_items, hard_locations, shortcuts)
 from .Locations import Spelunky2Location, location_data_table
-from .Options import Spelunky2Options
+from .Options import Spelunky2Options, option_groups
 from .Regions import region_data_table
 from .Rules import set_common_rules, set_sunken_city_rules, set_cosmic_ocean_rules, set_item_rules
 
@@ -25,6 +25,7 @@ class Spelunky2WebWorld(WebWorld):
         authors=["Eszenn", "DDRKhat"]
     )
     tutorials = [setup_en]
+    option_groups = option_groups
 
 
 class Spelunky2World(World):
@@ -39,6 +40,7 @@ class Spelunky2World(World):
     web = Spelunky2WebWorld()
     options: Spelunky2Options
     options_dataclass = Spelunky2Options
+    option_groups = option_groups
     filler_count = 0
     trap_count = 0
 
