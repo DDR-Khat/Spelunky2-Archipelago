@@ -14,6 +14,9 @@ local META_DEATHS = {
     ["MISSED"] = 10003,
 }
 
+local ghostEntities = AsLookupTable({ENT_TYPE.MONS_GHOST, ENT_TYPE.MONS_GHOST_MEDIUM_SAD, ENT_TYPE.MONS_GHOST_MEDIUM_HAPPY,
+ ENT_TYPE.MONS_GHOST_SMALL_SAD, ENT_TYPE.MONS_GHOST_SMALL_SURPRISED, ENT_TYPE.MONS_GHOST_SMALL_ANGRY, ENT_TYPE.MONS_GHOST_SMALL_HAPPY})
+
 --- C#-like "private" variables. In a table so local functions don't shadow over them.
 local private = {
 ---@type Core
@@ -44,9 +47,16 @@ local private = {
     deathTime = 0,
 ---@type integer # callbackID of a received deathlink
     deathID = -1,
+---@type integer # callbackID for freakin exploding
+    instaGibID = -1,
 ---@type Player # Local player entity
     localPlayer = nil,
 }
+
+local function WipeGibCallback()
+    private.localPlayer:clear_virtual(private.instaGibID)
+    private.instaGibID = -1
+end
 
 local function TryKillPlayer()
     if private.deathID == -1 then
@@ -68,6 +78,8 @@ local function TryKillPlayer()
     if private.bypassAnkh and private.localPlayer:has_powerup(ENT_TYPE.ITEM_POWERUP_ANKH) then
         private.localPlayer:remove_powerup(ENT_TYPE.ITEM_POWERUP_ANKH)
     end
+    WipeGibCallback()
+    private.core.apState:SetLocalPlayer(nil) -- If we are killing the player, let GameState know, to prevent crashes.
     local playerX, playerY, playerL = get_position(private.localPlayer.uid)
     private.localPlayer:kill(true, nil)
     spawn_entity(ENT_TYPE.FX_ALIENBLAST, playerX, playerY, playerL, 0, 0)
@@ -150,28 +162,34 @@ local function ProcessDeathlink(cause, weapon)
     print(f"[Deathlink] {deathData.cause}")
 end
 
----@param killer ENT_TYPE
----@param killed Entity
----@void An event for being killed by an "instant" killer like ghosts, ghist or jelly.
-function APDeathlink:OnInstantKillerDeath(killer, killed)
-    if killed.uid ~= private.localPlayer.uid then
-        return -- Shouldn't be our player, disregard.
-    end
-    if killed:has_powerup(ENT_TYPE.ITEM_POWERUP_ANKH) then
-        return -- Ankh saved us, don't deathlink
-    end
-    if test_flag(killed.flags, ENT_FLAG.DEAD) then
-        return -- We are already dead some other way.
-    end
-    ProcessDeathlink(killer)
-end
-
 ---@param player Player
 ---@void Handle deathlink callbacks/etc for player to send to multiworld
 function APDeathlink:HookDeathToPlayer(player)
     private.localPlayer = player
     ---@param culprit Entity
+    private.instaGibID = player:set_pre_dtor(function()
+        if not private.deathLinkIsEnabled then
+            return -- Check here IN CASE we change it on the fly. Rather than at spawn of entity
+        end
+        local localState = get_local_state()
+        if localState.screen ~= SCREEN.LEVEL then
+            return -- We aren't in a level, so the PLAYER didn't just die, duh.
+        end
+        if test_flag(player.flags, ENT_FLAG.DEAD) == false then
+            return -- We didn't die, do nothing. (probably level transition or restarting)
+        end
+        if player:has_powerup(ENT_TYPE.ITEM_POWERUP_ANKH) then
+            return -- Ankh saved us, don't deathlink
+        end
+        local cause = localState.cause_of_death
+        if cause ~= CAUSE_OF_DEATH.ENTITY then
+            return -- We are using this to check entities. Other instance is probably End -> Restart
+        end
+        local killer = localState.cause_of_death_entity_type
+        ProcessDeathlink(ghostEntities[killer] and ENT_TYPE.MONS_GHOST or killer)
+    end)
     player:set_pre_kill(function(_, _, culprit)
+        WipeGibCallback()
         if not private.deathLinkIsEnabled then
             return -- Check here IN CASE we change it on the fly. Rather than at spawn of entity
         end
@@ -186,6 +204,7 @@ function APDeathlink:HookDeathToPlayer(player)
         if player:has_powerup(ENT_TYPE.ITEM_POWERUP_ANKH) then
             return -- Ankh saved us, don't deathlink
         end
+        private.core.apState:SetLocalPlayer(nil) -- Tell game state we are killing the player.
         -- Have to delay it a gameframe, so that cause of death is properly populated... :|
         set_global_timeout(function()
             local localState = get_local_state()
@@ -198,7 +217,7 @@ function APDeathlink:HookDeathToPlayer(player)
             local deathWeapon
             if IsNotNull(culprit) and culprit.uid == private.localPlayer.uid then
                 deathReason = ENT_TYPE.PLAYER
-                deathWeapon = enum_get_name(ENT_TYPE, localState.cause_of_death_entity_type)
+                deathWeapon = localState.cause_of_death_entity_type
             elseif causeOfDeath == CAUSE_OF_DEATH.ENTITY then
                 deathReason = localState.cause_of_death_entity_type
             elseif causeOfDeath == CAUSE_OF_DEATH.POISONED then

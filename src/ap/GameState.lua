@@ -580,6 +580,9 @@ end
 function APGameState:OnGameFrame()
     CheckJournalState()
     ProcessPopupQueue()
+    if private.localPlayer == nil then
+        return -- Player doesn't exist yet. Let's be safe about this.
+    end
     ProcessFillerQueue()
     ProcessPowerupQueue()
 end
@@ -624,11 +627,11 @@ function APGameState:OnRunStart()
         end
         ::continue::
     end
-    set_global_timeout(function()
+    set_global_interval(function()
         if private.localPlayer == nil then
-            DebugPrint(debugLevel.INFO, "!WARNING! Player setting is failing for some damn reason.")
-            private.localPlayer = get_player(1, false)
+            return -- Player doesn't exist yet. We gotta wait.
         end
+        clear_callback()
         private.localPlayer.health = private.startingHealth
         private.localPlayer.inventory.bombs = private.startingBombs
         private.localPlayer.inventory.ropes = private.startingRopes
