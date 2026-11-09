@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from Options import Toggle, DefaultOnToggle, Range, Choice, PerGameCommonOptions, DeathLink, ItemSet
-from .enums import ItemName, Spelunky2Goal, Spelunky2ShortcutMode
+from .enums import ItemName, Spelunky2Goal, Spelunky2ShortcutMode, QilinMode
 from .Items import (item_options, locked_items, powerup_options, equip_options, quest_items, character_options,
                     hard_locations)
 
@@ -161,7 +161,7 @@ class BombUpgrades(Range):
     display_name = "Starting Bombs Upgrades"
     range_start = 0
     range_end = 30
-    default = 5
+    default = 6
 
 
 class StartingRopes(Range):
@@ -177,7 +177,7 @@ class RopeUpgrades(Range):
     display_name = "Starting Rope Upgrades"
     range_start = 0
     range_end = 20
-    default = 0
+    default = 6
 
 
 class RestrictedItems(ItemSet):
@@ -225,8 +225,17 @@ class UdjatSkipLogic(Toggle):
     """Sets if progression logic should assume you can perform Udjat skipping to get into Black Market/Vlad's Castle"""
 
 
-class QilinSkipLogic(Toggle):
-    """Sets if progression logic should assume you can perform Qilin skip"""
+class QilinSkipLogic(Choice):
+    """Sets if progression logic should assume you can perform Qilin skip
+    'Off' is no skip, you must receive Qilin to access Sunken City
+    'Vlad' is Vlad's cape plus Climbing Gloves
+    'Both' is Jetpack OR Vlad combination
+    'Bubble' assumes you know some way to bypass Qilin aka No logic"""
+    option_Off = QilinMode.OFF
+    option_Bubble = QilinMode.BUBBLE
+    option_Jetpack = QilinMode.JP
+    option_Vlad = QilinMode.VLAD
+    option_Both = QilinMode.JP + QilinMode.VLAD
 
 
 class KinguExcaliburSkipLogic(Toggle):
@@ -439,7 +448,7 @@ class Spelunky2Options(PerGameCommonOptions):
     waddler_upgrades: WaddlerUpgrades
     can_ankh_skip: AnkhSkipLogic
     can_udjat_skip: UdjatSkipLogic
-    can_qilin_skip: QilinSkipLogic
+    qilin_skip_logic: QilinSkipLogic
     can_kingu_skip: KinguExcaliburSkipLogic
     can_mothership_skip: AlienCompassSkipLogic
     rope_pile_weight: RopePileWeight
