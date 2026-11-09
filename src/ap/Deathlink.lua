@@ -86,12 +86,12 @@ local deathLookup = {
 
 local function GetDeathReason(killer, weapon)
     if killer == ENT_TYPE.PLAYER then
-        return string.format(deathLookup[killer], weapon)
+        return string.format(deathLookup[killer], enum_get_name(ENT_TYPE, weapon))
     end
     if deathLookup[killer] ~= nil then
         return deathLookup[killer]
     end
-    return string.format("was killed by a %s (WIP message)", killer)
+    return string.format("was killed by a %s (WIP message)", enum_get_name(ENT_TYPE, killer))
 end
 
 ---@void Update the list of names presented in the dropdown for Blacklisting players
