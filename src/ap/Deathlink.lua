@@ -159,6 +159,9 @@ function APDeathlink:HookDeathToPlayer(player)
         if not private.deathLinkIsEnabled then
             return -- Check here IN CASE we change it on the fly. Rather than at spawn of entity
         end
+        if test_flag(player.flags, ENT_FLAG.DEAD) then
+            return -- If we are already dead, don't die again. (Shoutout to "Welowas" trying to clone puppies)
+        end
         local isGhost = other.type.id == ENT_TYPE.MONS_GHOST
         local isJelly = other.type.id == ENT_TYPE.MONS_MEGAJELLYFISH
         if isGhost == false and isJelly == false then
