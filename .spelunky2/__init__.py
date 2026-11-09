@@ -10,7 +10,7 @@ from .Items import (Spelunky2Item, item_data_table, filler_items, traps, filler_
 from .Locations import Spelunky2Location, location_data_table
 from .Options import Spelunky2Options
 from .Regions import region_data_table
-from .Rules import set_common_rules, set_sunken_city_rules, set_cosmic_ocean_rules, set_starter_upgrade_rules
+from .Rules import set_common_rules, set_sunken_city_rules, set_cosmic_ocean_rules, set_item_rules
 
 
 class Spelunky2WebWorld(WebWorld):
@@ -291,6 +291,10 @@ class Spelunky2World(World):
     def set_rules(self) -> None:
         set_common_rules(self, self.player)
 
+        self.multiworld.register_indirect_condition(
+            self.get_region(LocationName.VLADS_CASTLE), self.get_entrance(RuleNames.ICE_CAVES_TO_MOTHERSHIP)
+        )
+
         if self.options.goal != Spelunky2Goal.EASY:
             set_sunken_city_rules(self, self.player)
             self.multiworld.register_indirect_condition(
@@ -305,13 +309,6 @@ class Spelunky2World(World):
             self.multiworld.register_indirect_condition(
                 self.get_region(WorldName.SUNKEN_CITY), self.get_entrance(RuleNames.SUNKEN_CITY_TO_COSMIC_OCEAN)
             )
-
-        # Add the rule-setter for starter item upgrades
-        set_starter_upgrade_rules(self, self.player)
-
-        self.multiworld.register_indirect_condition(
-            self.get_region(LocationName.VLADS_CASTLE), self.get_entrance(RuleNames.ICE_CAVES_TO_MOTHERSHIP)
-        )
 
     def fill_slot_data(self) -> Mapping[str, Any]:
         slot_data = {

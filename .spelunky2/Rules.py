@@ -1,6 +1,7 @@
 from logging import warning
 from typing import TYPE_CHECKING
 from .enums import WorldName, RuleNames, ItemName, LocationName, JournalName, JOURNAL_SUFFIX
+from .Items import locked_items
 
 from BaseClasses import CollectionState
 from worlds.generic.Rules import set_rule
@@ -18,6 +19,7 @@ def has_or_unrestricted(world, state, player, item_name: str) -> bool:
 
 
 def set_common_rules(world: "Spelunky2World", player: int):
+    set_item_rules(world, player)
     set_rule(world.get_entrance(RuleNames.MENU_TO_DWELLING), lambda state: True)
 
     if world.options.death_link:
@@ -234,14 +236,13 @@ def can_access_cosmic_ocean(world: "Spelunky2World", state: CollectionState, pla
     )
 
 
-def set_starter_upgrade_rules(world: "Spelunky2World", player: int):
-    all_upgrades_selected = world.options.waddler_upgrades.value | world.options.item_upgrades.value
-    for item_name in all_upgrades_selected:
+def set_item_rules(world: "Spelunky2World", player: int):
+    for item_name in locked_items:
         try:
             set_rule(
                 world.get_location(f"{item_name}{JOURNAL_SUFFIX}"),
                 lambda state, name=ItemName(item_name).value: has_or_unrestricted(world, state, player, name)
             )
         except KeyError:
-            warning(f"[Spelunky2 - Starter Rules] ERROR! No match for '{item_name}' (May end up with impossible seed)")
+            warning(f"[Spelunky2 - set_item_rules] ERROR! No match for '{item_name}' (May end up with impossible seed)")
             pass
