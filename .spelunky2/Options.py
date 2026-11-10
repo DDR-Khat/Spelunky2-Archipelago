@@ -47,7 +47,9 @@ class Goal(Choice):
 
 class GoalLevel(Range):
     """Which level in Cosmic Ocean are you required to clear to consider your game as beaten.
-    This option can be ignored if your goal is not set to \"CO\""""
+    This option can be ignored if your goal is not set to \"CO\"
+    Cosmic checkpoints are added to the item pool which starters you deeper for each one you have received
+    (Except if ironman mode is on, no checkpoints will be generated)"""
     display_name = "Cosmic Ocean Goal Level"
     range_start = 5
     range_end = 99

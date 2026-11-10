@@ -834,6 +834,11 @@ function APGameState:GetAvailableCharacters()
     return private.availableCharacters
 end
 
+---@return boolean
+function APGameState:IsIronmanMode()
+    return private.isIronman
+end
+
 ---Any goal-state modifier checks such as ironman mode
 ---@return boolean
 function APGameState:CanGoal()
