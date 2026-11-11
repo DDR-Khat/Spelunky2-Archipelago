@@ -1,8 +1,7 @@
 local Hooks = {}
 
 local entitiesToWatch = {}
-local petEnts = ENT_TYPE.MONS_PET_HAMSTER | ENT_TYPE.MONS_PET_CAT | ENT_TYPE.MONS_PET_DOG
-local entTypeHooks = MASK.ITEM | MASK.MOUNT | petEnts | ENT_TYPE.PLAYER
+local entTypeHooks = MASK.ITEM | MASK.MOUNT | MASK.MONSTER | MASK.PLAYER
 local replacedEntities = {}
 local screensToWatch = {}
 

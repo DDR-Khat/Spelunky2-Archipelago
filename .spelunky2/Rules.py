@@ -1,6 +1,7 @@
 from logging import warning
 from typing import TYPE_CHECKING
-from .enums import WorldName, RuleNames, ItemName, LocationName, JournalName, JOURNAL_SUFFIX
+from .enums import WorldName, RuleNames, ItemName, LocationName, JournalName, JOURNAL_SUFFIX, QilinMode
+from .Items import locked_items
 
 from BaseClasses import CollectionState
 from worlds.generic.Rules import set_rule
@@ -18,22 +19,24 @@ def has_or_unrestricted(world, state, player, item_name: str) -> bool:
 
 
 def set_common_rules(world: "Spelunky2World", player: int):
+    set_item_rules(world, player)
     set_rule(world.get_entrance(RuleNames.MENU_TO_DWELLING), lambda state: True)
 
-    if world.options.death_link:
+    if world.options.death_link.value:
         set_rule(world.get_location(JournalName.GHOST),
                  lambda state: has_or_unrestricted(world, state, player, ItemName.ANKH))
         set_rule(world.get_location(JournalName.SPIKES),
                  lambda state:
                  (
                          has_or_unrestricted(world, state, player, ItemName.ANKH)
-                         or has_or_unrestricted(world, state, player, ItemName.TELEPACK)
+                         or
+                         has_or_unrestricted(world, state, player, ItemName.TELEPACK)
                  ))
 
     set_rule(world.get_entrance(RuleNames.DWELLING_TO_JUNGLE),
-             lambda state: state.has(WorldName.JUNGLE, player) or state.has(WorldName.PROGRESSIVE, player))
+             lambda state: has_jungle(state, player))
     set_rule(world.get_entrance(RuleNames.DWELLING_TO_VOLCANA),
-             lambda state: state.has(WorldName.VOLCANA, player) or state.has(WorldName.PROGRESSIVE, player))
+             lambda state: has_volcana(state, player))
     set_rule(world.get_entrance(RuleNames.JUNGLE_TO_OLMEC),
              lambda state: state.has(WorldName.OLMECS_LAIR, player) or state.has(WorldName.PROGRESSIVE, player, 2))
     set_rule(world.get_entrance(RuleNames.VOLCANA_TO_OLMEC),
@@ -56,24 +59,28 @@ def set_common_rules(world: "Spelunky2World", player: int):
              lambda state:
              (
                      has_or_unrestricted(world, state, player, ItemName.UDJAT_EYE)
-                     or world.options.can_udjat_skip
+                     or
+                     world.options.can_udjat_skip
              ))
     set_rule(world.get_entrance(RuleNames.VOLCANA_TO_VLADS_CASTLE),
              lambda state:
              (
-                 has_or_unrestricted(world, state, player, ItemName.UDJAT_EYE)
-                 or world.options.can_udjat_skip
+                     has_or_unrestricted(world, state, player, ItemName.UDJAT_EYE)
+                     or
+                     world.options.can_udjat_skip
              ))
     set_rule(world.get_entrance(RuleNames.TIDEPOOL_TO_ABZU),
              lambda state:
              (
-                 has_or_unrestricted(world, state, player, ItemName.ANKH)
-                 or world.options.can_ankh_skip
+                     has_or_unrestricted(world, state, player, ItemName.ANKH)
+                     or
+                     world.options.can_ankh_skip
              ))
     set_rule(world.get_entrance(RuleNames.TEMPLE_TO_CITY_OF_GOLD),
              lambda state:
              has_royalty(world, state, player)
-             and has_or_unrestricted(world, state, player, ItemName.SCEPTER))
+             and
+             has_or_unrestricted(world, state, player, ItemName.SCEPTER))
     set_rule(world.get_entrance(RuleNames.CITY_OF_GOLD_TO_DUAT),
              lambda state: has_or_unrestricted(world, state, player, ItemName.ANKH))
     set_rule(world.get_entrance(RuleNames.ICE_CAVES_TO_MOTHERSHIP),
@@ -81,7 +88,12 @@ def set_common_rules(world: "Spelunky2World", player: int):
 
     # People Entries
     set_rule(world.get_location(JournalName.EGGPLANT_CHILD),
-             lambda state: has_or_unrestricted(world, state, player, ItemName.EGGPLANT))
+             lambda state:
+             (
+                     has_or_unrestricted(world, state, player, ItemName.EGGPLANT)
+                     and
+                     state.has(WorldName.ICE_CAVES, player) or state.has(WorldName.PROGRESSIVE, player, 4)
+             ))
     # Bestiary Entries
     set_rule(world.get_location(JournalName.QILIN),
              lambda state: can_obtain_qilin(world, state, player))
@@ -101,12 +113,14 @@ def set_common_rules(world: "Spelunky2World", player: int):
     set_rule(world.get_location(JournalName.EXCALIBUR),
              lambda state:
              has_royalty(world, state, player)
-             and has_or_unrestricted(world, state, player, ItemName.EXCALIBUR))
+             and
+             has_or_unrestricted(world, state, player, ItemName.EXCALIBUR))
     set_rule(world.get_location(JournalName.BROKEN_SWORD),
              lambda state:
              (
                      has_or_unrestricted(world, state, player, ItemName.EXCALIBUR)
-              and has_or_unrestricted(world, state, player, ItemName.CLONE_GUN)
+                     and
+                     has_or_unrestricted(world, state, player, ItemName.CLONE_GUN)
              ))
     set_rule(world.get_location(JournalName.SCEPTER),
              lambda state: has_or_unrestricted(world, state, player, ItemName.SCEPTER))
@@ -117,8 +131,9 @@ def set_common_rules(world: "Spelunky2World", player: int):
     set_rule(world.get_location(JournalName.EGGPLANT),
              lambda state:
              (
-                 has_or_unrestricted(world, state, player, ItemName.EGGPLANT)
-                 and state.has(WorldName.TIDE_POOL, player) or state.has(WorldName.PROGRESSIVE, player, 3)
+                     has_or_unrestricted(world, state, player, ItemName.EGGPLANT)
+                     and
+                     state.has(WorldName.TIDE_POOL, player) or state.has(WorldName.PROGRESSIVE, player, 3)
              ))
 
 
@@ -140,44 +155,53 @@ def set_cosmic_ocean_rules(world: "Spelunky2World", player: int):
 def has_royalty(world: "Spelunky2World", state: CollectionState, player: int):
     return (
             has_or_unrestricted(world, state, player, ItemName.UDJAT_EYE)
-            and (
-                    state.has_all([WorldName.JUNGLE], player)
-                    and has_or_unrestricted(world, state, player, ItemName.HEDJET)
-                    or state.has_all([WorldName.VOLCANA], player)
-                    and has_or_unrestricted(world, state, player, ItemName.CROWN)
-                    or (
-                            state.has(WorldName.PROGRESSIVE, player)
-                            and (
-                                    has_or_unrestricted(world, state, player, ItemName.HEDJET)
-                                    or has_or_unrestricted(world, state, player, ItemName.CROWN)
-                            )
-                    )
-            )
+            and
+            ((
+                     has_jungle(state, player)
+                     and
+                     has_or_unrestricted(world, state, player, ItemName.HEDJET)
+             )
+             or
+             (
+                     has_volcana(state, player)
+                     and
+                     has_or_unrestricted(world, state, player, ItemName.CROWN)
+             ))
     )
+
+
+def has_jungle(state: CollectionState, player: int) -> bool:
+    return state.has(WorldName.JUNGLE, player) or state.has(WorldName.PROGRESSIVE, player)
+
+
+def has_volcana(state: CollectionState, player: int) -> bool:
+    return state.has(WorldName.VOLCANA, player) or state.has(WorldName.PROGRESSIVE, player)
+
+
+def has_cosmic(state: CollectionState, player: int) -> bool:
+    return state.has(WorldName.COSMIC_OCEAN, player) or state.has(WorldName.PROGRESSIVE, player, 7)
 
 
 def has_world_2(state: CollectionState, player: int) -> bool:
-    return (
-            state.has_any(
-                [WorldName.JUNGLE.value, WorldName.VOLCANA],
-                player
-            )
-            or state.has(WorldName.PROGRESSIVE, player)
-    )
+    return has_jungle(state, player) or has_volcana(state, player)
 
 
 def can_obtain_alien_compass(state: CollectionState, player: int) -> bool:
     return (
-            state.has_all([WorldName.VOLCANA, WorldName.OLMECS_LAIR, WorldName.TEMPLE], player)
-            and state.can_reach(LocationName.VLADS_CASTLE, "Region", player)
-            or state.has(WorldName.PROGRESSIVE, player, 3)
+            (
+                    state.has_all([WorldName.VOLCANA, WorldName.OLMECS_LAIR, WorldName.TEMPLE], player)
+                    or
+                    state.has(WorldName.PROGRESSIVE, player, 3)
+            )
+            and
+            state.can_reach(LocationName.VLADS_CASTLE, "Region", player)
     )
 
 
 def can_access_mothership(world: "Spelunky2World", state: CollectionState, player: int) -> bool:
     return (
-        can_obtain_alien_compass(state, player)
-        or world.options.can_mothership_skip
+            can_obtain_alien_compass(state, player)
+            or world.options.can_mothership_skip
     )
 
 
@@ -192,8 +216,8 @@ def can_obtain_tablet(world: "Spelunky2World", state: CollectionState, player: i
                             state.can_reach(LocationName.ABZU, "Region", player)
                             and
                             (
-                                state.can_reach(JournalName.EXCALIBUR, "Location", player)
-                                or world.options.can_kingu_skip
+                                    state.can_reach(JournalName.EXCALIBUR, "Location", player)
+                                    or world.options.can_kingu_skip
                             )
                     )
             )
@@ -210,38 +234,50 @@ def can_obtain_qilin(world: "Spelunky2World", state: CollectionState, player: in
 def can_access_sunken_city(world: "Spelunky2World", state: CollectionState, player: int) -> bool:
     return (
             (
-                    state.has(WorldName.SUNKEN_CITY, player)
-                    or state.has(WorldName.PROGRESSIVE, player, 6)
+                    state.has(WorldName.SUNKEN_CITY, player) or state.has(WorldName.PROGRESSIVE, player, 6)
             )
             and
             (
-                    can_obtain_qilin(world, state, player)
-                    or world.options.can_qilin_skip
+                    can_obtain_qilin(world, state, player) or can_qilin_skip(world, state, player)
             )
     )
+
+
+def has_climbing_vlad(world: "Spelunky2World", state: CollectionState, player: int) -> bool:
+    return (
+            has_or_unrestricted(world, state, player, ItemName.VLADS_CAPE)
+            and
+            has_or_unrestricted(world, state, player, ItemName.CLIMBING_GLOVES)
+    )
+
+
+def can_qilin_skip(world: "Spelunky2World", state: CollectionState, player: int) -> bool:
+    if world.options.qilin_skip_logic == QilinMode.OFF:
+        return False
+    elif world.options.qilin_skip_logic == QilinMode.BUBBLE:
+        return True
+    elif world.options.qilin_skip_logic == QilinMode.JP:
+        return has_or_unrestricted(world, state, player, ItemName.JETPACK)
+    elif world.options.qilin_skip_logic == QilinMode.VLAD:
+        return has_climbing_vlad(world, state, player)
+    else:
+        return has_or_unrestricted(world, state, player, ItemName.JETPACK) or has_climbing_vlad(world, state, player)
 
 
 def can_access_cosmic_ocean(world: "Spelunky2World", state: CollectionState, player: int) -> bool:
     return (
             has_or_unrestricted(world, state, player, ItemName.HOU_YI_BOW)
             and has_or_unrestricted(world, state, player, ItemName.ARROW_OF_LIGHT)
-            and
-            (
-                    state.has(WorldName.COSMIC_OCEAN, player)
-                    or state.has(WorldName.PROGRESSIVE, player, 7)
-            )
+            and has_cosmic(state, player)
             and can_access_sunken_city(world, state, player)
     )
 
 
-def set_starter_upgrade_rules(world: "Spelunky2World", player: int):
-    all_upgrades_selected = world.options.waddler_upgrades.value | world.options.item_upgrades.value
-    for item_name in all_upgrades_selected:
+def set_item_rules(world: "Spelunky2World", player: int):
+    for item_name in locked_items:
         try:
-            set_rule(
-                world.get_location(f"{item_name}{JOURNAL_SUFFIX}"),
-                lambda state, name=ItemName(item_name).value: has_or_unrestricted(world, state, player, name)
-            )
+            set_rule(world.get_location(f"{item_name}{JOURNAL_SUFFIX}"),
+                     lambda state, name=ItemName(item_name).value: has_or_unrestricted(world, state, player, name))
         except KeyError:
-            warning(f"[Spelunky2 - Starter Rules] ERROR! No match for '{item_name}' (May end up with impossible seed)")
+            warning(f"[Spelunky2 - set_item_rules] ERROR! No match for '{item_name}' (May end up with impossible seed)")
             pass

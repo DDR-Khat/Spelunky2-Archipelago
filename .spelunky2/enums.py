@@ -21,6 +21,13 @@ class Spelunky2ShortcutMode(IntEnum):
     INDIVIDUAL = 2
 
 
+class QilinMode(IntEnum):
+    OFF = 0
+    BUBBLE = 1
+    JP = 2
+    VLAD = 3
+
+
 class WorldName(StrEnum):
     # Worlds
     DWELLING = "Dwelling"

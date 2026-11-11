@@ -14,6 +14,9 @@ local META_DEATHS = {
     ["MISSED"] = 10003,
 }
 
+local ghostEntities = AsLookupTable({ENT_TYPE.MONS_GHOST, ENT_TYPE.MONS_GHOST_MEDIUM_SAD, ENT_TYPE.MONS_GHOST_MEDIUM_HAPPY,
+ ENT_TYPE.MONS_GHOST_SMALL_SAD, ENT_TYPE.MONS_GHOST_SMALL_SURPRISED, ENT_TYPE.MONS_GHOST_SMALL_ANGRY, ENT_TYPE.MONS_GHOST_SMALL_HAPPY})
+
 --- C#-like "private" variables. In a table so local functions don't shadow over them.
 local private = {
 ---@type Core
@@ -44,9 +47,16 @@ local private = {
     deathTime = 0,
 ---@type integer # callbackID of a received deathlink
     deathID = -1,
+---@type integer # callbackID for freakin exploding
+    instaGibID = -1,
 ---@type Player # Local player entity
     localPlayer = nil,
 }
+
+local function WipeGibCallback()
+    private.localPlayer:clear_virtual(private.instaGibID)
+    private.instaGibID = -1
+end
 
 local function TryKillPlayer()
     if private.deathID == -1 then
@@ -68,6 +78,8 @@ local function TryKillPlayer()
     if private.bypassAnkh and private.localPlayer:has_powerup(ENT_TYPE.ITEM_POWERUP_ANKH) then
         private.localPlayer:remove_powerup(ENT_TYPE.ITEM_POWERUP_ANKH)
     end
+    WipeGibCallback()
+    private.core.apState:SetLocalPlayer(nil) -- If we are killing the player, let GameState know, to prevent crashes.
     local playerX, playerY, playerL = get_position(private.localPlayer.uid)
     private.localPlayer:kill(true, nil)
     spawn_entity(ENT_TYPE.FX_ALIENBLAST, playerX, playerY, playerL, 0, 0)
@@ -80,18 +92,18 @@ local deathLookup = {
     [META_DEATHS.MISSED] = "ran the numbers... but was bad at math, and ended up in the wall",
     [ENT_TYPE.MONS_GHOST] = "got too friendly with ghosts",
     [ENT_TYPE.MONS_MEGAJELLYFISH] = "became one with the celestial jellies",
-    ["FLOOR_ALTAR"] = "offered themselves to blood mama",
+    [ENT_TYPE.FLOOR_ALTAR] = "offered themselves to blood mama",
     [ENT_TYPE.PLAYER] = "accidentally killed themselves with a %s"
 }
 
 local function GetDeathReason(killer, weapon)
     if killer == ENT_TYPE.PLAYER then
-        return string.format(deathLookup[killer], weapon)
+        return string.format(deathLookup[killer], enum_get_name(ENT_TYPE, weapon))
     end
     if deathLookup[killer] ~= nil then
         return deathLookup[killer]
     end
-    return string.format("was killed by a %s (WIP message)", killer)
+    return string.format("was killed by a %s (WIP message)", enum_get_name(ENT_TYPE, killer))
 end
 
 ---@void Update the list of names presented in the dropdown for Blacklisting players
@@ -154,29 +166,30 @@ end
 ---@void Handle deathlink callbacks/etc for player to send to multiworld
 function APDeathlink:HookDeathToPlayer(player)
     private.localPlayer = player
-    ---@param other Entity
-    player:set_pre_on_collision2(function(_, other)
+    ---@param culprit Entity
+    private.instaGibID = player:set_pre_dtor(function()
         if not private.deathLinkIsEnabled then
             return -- Check here IN CASE we change it on the fly. Rather than at spawn of entity
         end
-        local isGhost = other.type.id == ENT_TYPE.MONS_GHOST
-        local isJelly = other.type.id == ENT_TYPE.MONS_MEGAJELLYFISH
-        if isGhost == false and isJelly == false then
-            return -- Not a collision we care about.
+        local localState = get_local_state()
+        if localState.screen ~= SCREEN.LEVEL then
+            return -- We aren't in a level, so the PLAYER didn't just die, duh.
         end
-        if private.localPlayer:has_powerup(ENT_TYPE.ITEM_POWERUP_ANKH) then
+        if test_flag(player.flags, ENT_FLAG.DEAD) == false then
+            return -- We didn't die, do nothing. (probably level transition or restarting)
+        end
+        if player:has_powerup(ENT_TYPE.ITEM_POWERUP_ANKH) then
             return -- Ankh saved us, don't deathlink
         end
-        if private.localPlayer.exit_invincibility_timer > 0 then
-            return -- Door exit timer prevents interacting with entities
+        local cause = localState.cause_of_death
+        if cause ~= CAUSE_OF_DEATH.ENTITY then
+            return -- We are using this to check entities. Other instance is probably End -> Restart
         end
-        if test_flag(private.localPlayer.flags, ENT_FLAG.PASSES_THROUGH_OBJECTS) then
-            return -- We are currently passing through items.
-        end
-        ProcessDeathlink(isJelly and ENT_TYPE.MONS_MEGAJELLYFISH or ENT_TYPE.MONS_GHOST)
+        local killer = localState.cause_of_death_entity_type
+        ProcessDeathlink(ghostEntities[killer] and ENT_TYPE.MONS_GHOST or killer)
     end)
-    ---@param culprit Entity
     player:set_pre_kill(function(_, _, culprit)
+        WipeGibCallback()
         if not private.deathLinkIsEnabled then
             return -- Check here IN CASE we change it on the fly. Rather than at spawn of entity
         end
@@ -191,6 +204,7 @@ function APDeathlink:HookDeathToPlayer(player)
         if player:has_powerup(ENT_TYPE.ITEM_POWERUP_ANKH) then
             return -- Ankh saved us, don't deathlink
         end
+        private.core.apState:SetLocalPlayer(nil) -- Tell game state we are killing the player.
         -- Have to delay it a gameframe, so that cause of death is properly populated... :|
         set_global_timeout(function()
             local localState = get_local_state()
@@ -203,9 +217,9 @@ function APDeathlink:HookDeathToPlayer(player)
             local deathWeapon
             if IsNotNull(culprit) and culprit.uid == private.localPlayer.uid then
                 deathReason = ENT_TYPE.PLAYER
-                deathWeapon = enum_get_name(ENT_TYPE, localState.cause_of_death_entity_type)
+                deathWeapon = localState.cause_of_death_entity_type
             elseif causeOfDeath == CAUSE_OF_DEATH.ENTITY then
-                deathReason = enum_get_name(ENT_TYPE, localState.cause_of_death_entity_type)
+                deathReason = localState.cause_of_death_entity_type
             elseif causeOfDeath == CAUSE_OF_DEATH.POISONED then
                 deathReason = META_DEATHS.POISON
             elseif causeOfDeath == CAUSE_OF_DEATH.LONG_FALL then

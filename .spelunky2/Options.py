@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from Options import Toggle, DefaultOnToggle, Range, Choice, PerGameCommonOptions, DeathLink, ItemSet
-from .enums import ItemName, Spelunky2Goal, Spelunky2ShortcutMode
+from Options import OptionGroup, Toggle, DefaultOnToggle, Range, Choice, PerGameCommonOptions, DeathLink, ItemSet
+from .enums import ItemName, Spelunky2Goal, Spelunky2ShortcutMode, QilinMode
 from .Items import (item_options, locked_items, powerup_options, equip_options, quest_items, character_options,
                     hard_locations)
 
@@ -47,7 +47,9 @@ class Goal(Choice):
 
 class GoalLevel(Range):
     """Which level in Cosmic Ocean are you required to clear to consider your game as beaten.
-    This option can be ignored if your goal is not set to \"CO\""""
+    This option can be ignored if your goal is not set to \"CO\"
+    Cosmic checkpoints are added to the item pool which starters you deeper for each one you have received
+    (Except if ironman mode is on, no checkpoints will be generated)"""
     display_name = "Cosmic Ocean Goal Level"
     range_start = 5
     range_end = 99
@@ -161,7 +163,7 @@ class BombUpgrades(Range):
     display_name = "Starting Bombs Upgrades"
     range_start = 0
     range_end = 30
-    default = 5
+    default = 6
 
 
 class StartingRopes(Range):
@@ -177,7 +179,7 @@ class RopeUpgrades(Range):
     display_name = "Starting Rope Upgrades"
     range_start = 0
     range_end = 20
-    default = 0
+    default = 6
 
 
 class RestrictedItems(ItemSet):
@@ -219,22 +221,36 @@ Options (any selected here override options in item_upgrades):
 
 class AnkhSkipLogic(Toggle):
     """Sets if progression logic should assume you can perform Ankh skipping in Tidepool"""
+    display_name = "Tidepool Death Skip"
 
 
 class UdjatSkipLogic(Toggle):
     """Sets if progression logic should assume you can perform Udjat skipping to get into Black Market/Vlad's Castle"""
+    display_name = "Require Udjat Eye"
 
 
-class QilinSkipLogic(Toggle):
-    """Sets if progression logic should assume you can perform Qilin skip"""
+class QilinSkipLogic(Choice):
+    """Sets if progression logic should assume you can perform Qilin skip
+    'Off' is no skip, you must receive Qilin to access Sunken City
+    'Vlad' is Vlad's cape plus Climbing Gloves
+    'Both' is Jetpack OR Vlad combination
+    'Bubble' assumes you know some way to bypass Qilin aka No logic"""
+    display_name = "Qilin Skip"
+    option_Off = QilinMode.OFF
+    option_Bubble = QilinMode.BUBBLE
+    option_Jetpack = QilinMode.JP
+    option_Vlad = QilinMode.VLAD
+    option_Both = QilinMode.JP + QilinMode.VLAD
 
 
 class KinguExcaliburSkipLogic(Toggle):
     """Sets if progression should assume you can kill Kingu without needing Excalibur to break the shell"""
+    display_name = "Slay Kingu without Excalibur"
 
 
 class AlienCompassSkipLogic(Toggle):
     """Sets if progression should assume you know how to find the Mothership without Alien Compass"""
+    display_name = "Mothership Compass Skip"
 
 
 class RopePileWeight(Range):
@@ -418,30 +434,30 @@ class Spelunky2Options(PerGameCommonOptions):
     goal_level: GoalLevel
     goal_ironman: GoalIronmanMode
     death_link: DeathLink
-    bypass_ankh: DeathLinkBypassesAnkh
     death_link_amnesty_count: DeathLinkAmnesty
     death_link_grace_count: DeathLinkGrace
-    include_hard_locations: IncludeHardLocations
-    journal_entry_required: JournalEntryRequired
-    starting_wallet: IncreaseStartingWallet
-    starting_characters: StartingCharacters
+    bypass_ankh: DeathLinkBypassesAnkh
     progressive_worlds: ProgressiveWorlds
     shortcut_mode: ShortcutsMode
     must_visit_world: MustVisitWorld
+    starting_wallet: IncreaseStartingWallet
     starting_health: StartingHealth
-    health_upgrades: HealthUpgrades
     starting_bombs: StartingBombs
-    bomb_upgrades: BombUpgrades
     starting_ropes: StartingRopes
+    health_upgrades: HealthUpgrades
+    bomb_upgrades: BombUpgrades
     rope_upgrades: RopeUpgrades
-    restricted_items: RestrictedItems
+    journal_entry_required: JournalEntryRequired
     item_upgrades: ItemUpgrades
     waddler_upgrades: WaddlerUpgrades
+    include_hard_locations: IncludeHardLocations
     can_ankh_skip: AnkhSkipLogic
     can_udjat_skip: UdjatSkipLogic
-    can_qilin_skip: QilinSkipLogic
+    qilin_skip_logic: QilinSkipLogic
     can_kingu_skip: KinguExcaliburSkipLogic
     can_mothership_skip: AlienCompassSkipLogic
+    starting_characters: StartingCharacters
+    restricted_items: RestrictedItems
     rope_pile_weight: RopePileWeight
     bomb_bag_weight: BombBagWeight
     bomb_box_weight: BombBoxWeight
@@ -463,3 +479,21 @@ class Spelunky2Options(PerGameCommonOptions):
     punish_weight: PunishBallTrapChance
     amnesia_weight: AmnesiaTrapChance
     shoppie_weight: AngryShopkeepersChance
+
+
+option_groups = [
+    OptionGroup("Goal", [Goal, GoalLevel, GoalIronmanMode]),
+    OptionGroup("Deathlink", [DeathLink, DeathLinkAmnesty, DeathLinkGrace, DeathLinkBypassesAnkh]),
+    OptionGroup("Level", [ProgressiveWorlds, ShortcutsMode, MustVisitWorld]),
+    OptionGroup("Player progression", [IncreaseStartingWallet, StartingHealth, StartingBombs, StartingRopes,
+                                       HealthUpgrades, BombUpgrades, RopeUpgrades, JournalEntryRequired, ItemUpgrades,
+                                       WaddlerUpgrades]),
+    OptionGroup("Logic", [IncludeHardLocations, AnkhSkipLogic, UdjatSkipLogic, QilinSkipLogic, KinguExcaliburSkipLogic,
+                          AlienCompassSkipLogic, StartingCharacters, RestrictedItems]),
+    OptionGroup("Filler/Trap weights", [RopePileWeight, BombBagWeight, BombBoxWeight, CookedTurkeyWeight,
+                                        RoyalJellyWeight, GoldBarWeight, EmeraldGemWeight, SapphireGemWeight,
+                                        RubyGemWeight, DiamondGemWeight, EnableTraps, TrapWeight, PoisonTrapChance,
+                                        CurseTrapChance, GhostTrapChance, StunTrapChance, LooseBombsTrapChance,
+                                        BlindnessTrapChance, PunishBallTrapChance, AmnesiaTrapChance,
+                                        AngryShopkeepersChance]),
+]

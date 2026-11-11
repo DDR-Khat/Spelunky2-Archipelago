@@ -8,9 +8,11 @@ from .Items import (Spelunky2Item, item_data_table, filler_items, traps, filler_
                     characters, upgrade_items_dict, locked_items_dict, permanent_upgrades, world_unlocks, quest_items,
                     locked_items, hard_locations, shortcuts)
 from .Locations import Spelunky2Location, location_data_table
-from .Options import Spelunky2Options
+from .Options import Spelunky2Options, option_groups
 from .Regions import region_data_table
-from .Rules import set_common_rules, set_sunken_city_rules, set_cosmic_ocean_rules, set_starter_upgrade_rules
+from .Rules import set_common_rules, set_sunken_city_rules, set_cosmic_ocean_rules, set_item_rules
+
+supportedClient = "0.5.0"
 
 
 class Spelunky2WebWorld(WebWorld):
@@ -25,6 +27,7 @@ class Spelunky2WebWorld(WebWorld):
         authors=["Eszenn", "DDRKhat"]
     )
     tutorials = [setup_en]
+    option_groups = option_groups
 
 
 class Spelunky2World(World):
@@ -39,6 +42,7 @@ class Spelunky2World(World):
     web = Spelunky2WebWorld()
     options: Spelunky2Options
     options_dataclass = Spelunky2Options
+    option_groups = option_groups
     filler_count = 0
     trap_count = 0
 
@@ -68,7 +72,7 @@ class Spelunky2World(World):
         starting_characters = set(self.options.starting_characters or [ItemName.ANA_SPELUNKY.value])
 
         # Convert character names → journal entry names
-        starting_character_journal_locations = { f"{char_name} Journal Entry" for char_name in starting_characters }
+        starting_character_journal_locations = {f"{char_name} Journal Entry" for char_name in starting_characters}
 
         if self.options.goal < Spelunky2Goal.CO:
             exclude_regions.append(WorldName.COSMIC_OCEAN)
@@ -100,9 +104,9 @@ class Spelunky2World(World):
                     location_name: self.location_name_to_id[location_name]
                     for location_name, location_data in location_data_table.items()
                     if location_data.region == region_name
-                    and location_data.goal <= self.options.goal
-                    and (location_name not in hard_locations or self.options.include_hard_locations)
-                    and location_name not in starting_character_journal_locations
+                       and location_data.goal <= self.options.goal
+                       and (location_name not in hard_locations or self.options.include_hard_locations)
+                       and location_name not in starting_character_journal_locations
                 }, Spelunky2Location)
 
         if self.options.goal == Spelunky2Goal.HARD:
@@ -221,7 +225,7 @@ class Spelunky2World(World):
             )
 
         # Cosmic Ocean checkpoints
-        if self.options.goal.value == Spelunky2Goal.CO:
+        if self.options.goal.value == Spelunky2Goal.CO and self.options.goal_ironman is not True:
             for _ in range(int((self.options.goal_level.value - 1) / 10)):
                 spelunky2_item_pool.append(
                     self.create_item(str(ItemName.COSMIC_OCEAN_CP))
@@ -237,15 +241,15 @@ class Spelunky2World(World):
         locations_count = len(self.multiworld.get_unfilled_locations(self.player))
         self.filler_count = locations_count - len(spelunky2_item_pool)
 
-        self.filler_weights[ItemName.ROPE_PILE.value]   = self.options.rope_pile_weight.value
-        self.filler_weights[ItemName.BOMB_BAG.value]    = self.options.bomb_bag_weight.value
-        self.filler_weights[ItemName.BOMB_BOX.value]    = self.options.bomb_box_weight.value
+        self.filler_weights[ItemName.ROPE_PILE.value] = self.options.rope_pile_weight.value
+        self.filler_weights[ItemName.BOMB_BAG.value] = self.options.bomb_bag_weight.value
+        self.filler_weights[ItemName.BOMB_BOX.value] = self.options.bomb_box_weight.value
         self.filler_weights[ItemName.COOKED_TURKEY.value] = self.options.cooked_turkey_weight.value
         self.filler_weights[ItemName.ROYAL_JELLY.value] = self.options.royal_jelly_weight.value
-        self.filler_weights[ItemName.GOLD_BAR.value]    = self.options.gold_bar_weight.value
+        self.filler_weights[ItemName.GOLD_BAR.value] = self.options.gold_bar_weight.value
         self.filler_weights[ItemName.EMERALD_GEM.value] = self.options.emerald_gem_weight.value
         self.filler_weights[ItemName.SAPPHIRE_GEM.value] = self.options.sapphire_gem_weight.value
-        self.filler_weights[ItemName.RUBY_GEM.value]    = self.options.ruby_gem_weight.value
+        self.filler_weights[ItemName.RUBY_GEM.value] = self.options.ruby_gem_weight.value
         self.filler_weights[ItemName.DIAMOND_GEM.value] = self.options.diamond_gem_weight.value
 
         if sum(self.filler_weights.values()) <= 0:
@@ -257,14 +261,14 @@ class Spelunky2World(World):
             self.trap_count = int(self.filler_count * (self.options.trap_weight.value / 100))
             self.filler_count -= self.trap_count
 
-            self.trap_weights[ItemName.POISON_TRAP.value]            = self.options.poison_weight.value
-            self.trap_weights[ItemName.CURSE_TRAP.value]             = self.options.curse_weight.value
-            self.trap_weights[ItemName.GHOST_TRAP.value]             = self.options.ghost_weight.value
-            self.trap_weights[ItemName.STUN_TRAP.value]              = self.options.stun_weight.value
-            self.trap_weights[ItemName.LOOSE_BOMBS_TRAP.value]       = self.options.bomb_weight.value
-            self.trap_weights[ItemName.BLINDNESS_TRAP.value]         = self.options.blind_weight.value
-            self.trap_weights[ItemName.PUNISH_BALL_TRAP.value]       = self.options.punish_weight.value
-            self.trap_weights[ItemName.AMNESIA_TRAP.value]           = self.options.amnesia_weight.value
+            self.trap_weights[ItemName.POISON_TRAP.value] = self.options.poison_weight.value
+            self.trap_weights[ItemName.CURSE_TRAP.value] = self.options.curse_weight.value
+            self.trap_weights[ItemName.GHOST_TRAP.value] = self.options.ghost_weight.value
+            self.trap_weights[ItemName.STUN_TRAP.value] = self.options.stun_weight.value
+            self.trap_weights[ItemName.LOOSE_BOMBS_TRAP.value] = self.options.bomb_weight.value
+            self.trap_weights[ItemName.BLINDNESS_TRAP.value] = self.options.blind_weight.value
+            self.trap_weights[ItemName.PUNISH_BALL_TRAP.value] = self.options.punish_weight.value
+            self.trap_weights[ItemName.AMNESIA_TRAP.value] = self.options.amnesia_weight.value
             self.trap_weights[ItemName.ANGRY_SHOPKEEPERS_TRAP.value] = self.options.shoppie_weight.value
 
             if sum(self.trap_weights.values()) <= 0:
@@ -291,6 +295,10 @@ class Spelunky2World(World):
     def set_rules(self) -> None:
         set_common_rules(self, self.player)
 
+        self.multiworld.register_indirect_condition(
+            self.get_region(LocationName.VLADS_CASTLE), self.get_entrance(RuleNames.ICE_CAVES_TO_MOTHERSHIP)
+        )
+
         if self.options.goal != Spelunky2Goal.EASY:
             set_sunken_city_rules(self, self.player)
             self.multiworld.register_indirect_condition(
@@ -306,16 +314,9 @@ class Spelunky2World(World):
                 self.get_region(WorldName.SUNKEN_CITY), self.get_entrance(RuleNames.SUNKEN_CITY_TO_COSMIC_OCEAN)
             )
 
-        # Add the rule-setter for starter item upgrades
-        set_starter_upgrade_rules(self, self.player)
-
-        self.multiworld.register_indirect_condition(
-            self.get_region(LocationName.VLADS_CASTLE), self.get_entrance(RuleNames.ICE_CAVES_TO_MOTHERSHIP)
-        )
-
     def fill_slot_data(self) -> Mapping[str, Any]:
         slot_data = {
-            "APWorldVersion": self.world_version,
+            "APWorldVersion": supportedClient,
             "goal": self.options.goal.value,
             "ironmanMode": bool(self.options.goal_ironman),
             "progressiveWorlds": bool(self.options.progressive_worlds),
@@ -339,7 +340,7 @@ class Spelunky2World(World):
                 self.item_name_to_id[f"{name}{UPGRADE_SUFFIX}"]
                 for name in self.options.item_upgrades.value
                 if name not in self.options.waddler_upgrades.value
-                and name in self.item_name_to_id
+                   and name in self.item_name_to_id
             ],
             "waddlerUpgrades": [
                 self.item_name_to_id[f"{name}{UPGRADE_SUFFIX}"]
