@@ -12,6 +12,8 @@ from .Options import Spelunky2Options, option_groups
 from .Regions import region_data_table
 from .Rules import set_common_rules, set_sunken_city_rules, set_cosmic_ocean_rules, set_item_rules
 
+supportedClient = "0.5.0"
+
 
 class Spelunky2WebWorld(WebWorld):
     theme = "stone"
@@ -314,7 +316,7 @@ class Spelunky2World(World):
 
     def fill_slot_data(self) -> Mapping[str, Any]:
         slot_data = {
-            "APWorldVersion": self.world_version,
+            "APWorldVersion": supportedClient,
             "goal": self.options.goal.value,
             "ironmanMode": bool(self.options.goal_ironman),
             "progressiveWorlds": bool(self.options.progressive_worlds),

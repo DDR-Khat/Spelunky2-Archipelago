@@ -222,7 +222,7 @@ function APNetworkState:IsSupportedVersion(serverVersion)
     end
     if self:IsClientOutdated(serverVersion) then
         private.apClient:Say("Joined with a too old version, disconnecting.")
-        self:HandleDisconnect(f"Client is too old ({table.concat(private.coreModule.supportedVersion, \".\")}), server supports {table.concat(externalVersion, \".\")} or newer")
+        self:HandleDisconnect(f"Client is too old ({table.concat(private.coreModule.supportedVersion, \".\")}), server supports {table.concat(serverVersion, \".\")} or newer")
         return false
     end
     return true
