@@ -3,7 +3,7 @@ meta =
     name = "Archipelago",
     description = "Adds Archipelago Multiworld Randomizer support",
     author = "DDRKhat",
-    version = "0.5.0",
+    version = "0.5.1",
     online_safe = false,
     unsafe = true
 }
